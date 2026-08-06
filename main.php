@@ -1495,15 +1495,15 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	</div>
 
 <!--===============================================================================================-->
-<script src="<?= $BASE_URL ?>vendor/jquery/jquery-3.2.1.min.js"></script>
+<script src="<?= BASE_URL ?>vendor/jquery/jquery-3.2.1.min.js"></script>
 <!--===============================================================================================-->
-<script src="<?= $BASE_URL ?>vendor/animsition/js/animsition.min.js"></script>
+<script src="<?= BASE_URL ?>vendor/animsition/js/animsition.min.js"></script>
 <!--===============================================================================================-->
-<script src="<?= $BASE_URL ?>vendor/bootstrap/js/popper.js"></script>
-<script src="<?= $BASE_URL ?>vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="<?= BASE_URL ?>vendor/bootstrap/js/popper.js"></script>
+<script src="<?= BASE_URL ?>vendor/bootstrap/js/bootstrap.min.js"></script>
 
 <!--===============================================================================================-->
-<script src="<?= $BASE_URL ?>vendor/select2/select2.min.js"></script>
+<script src="<?= BASE_URL ?>vendor/select2/select2.min.js"></script>
 <script>
     $(".js-select2").each(function () {
         $(this).select2({
@@ -1514,21 +1514,21 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 </script>
 
 <!--===============================================================================================-->
-<script src="<?= $BASE_URL ?>vendor/daterangepicker/moment.min.js"></script>
-<script src="<?= $BASE_URL ?>vendor/daterangepicker/daterangepicker.js"></script>
+<script src="<?= BASE_URL ?>vendor/daterangepicker/moment.min.js"></script>
+<script src="<?= BASE_URL ?>vendor/daterangepicker/daterangepicker.js"></script>
 
 <!--===============================================================================================-->
-<script src="<?= $BASE_URL ?>vendor/slick/slick.min.js"></script>
-<script src="<?= $BASE_URL ?>js/slick-custom.js"></script>
+<script src="<?= BASE_URL ?>vendor/slick/slick.min.js"></script>
+<script src="<?= BASE_URL ?>js/slick-custom.js"></script>
 
 <!--===============================================================================================-->
-<script src="<?= $BASE_URL ?>vendor/parallax100/parallax100.js"></script>
+<script src="<?= BASE_URL ?>vendor/parallax100/parallax100.js"></script>
 <script>
     $('.parallax100').parallax100();
 </script>
 
 <!--===============================================================================================-->
-<script src="<?= $BASE_URL ?>vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
+<script src="<?= BASE_URL ?>vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
 <script>
     $('.gallery-lb').each(function () {
         $(this).magnificPopup({
@@ -1543,8 +1543,9 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 </script>
 
 <!--===============================================================================================-->
-<script src="<?= $BASE_URL ?>vendor/isotope/isotope.pkgd.min.js"></script>
+<script src="<?= BASE_URL ?>vendor/isotope/isotope.pkgd.min.js"></script>
 
 <!--===============================================================================================-->
-<script src="<?= $BASE_URL ?>vendor/sweetalert/sweetalert.min.js"></script>
+<script src="<?= BASE_URL ?>vendor/sweetalert/sweetalert.min.js"></script>
+</body>
 </html>
