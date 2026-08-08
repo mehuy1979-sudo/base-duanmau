@@ -514,7 +514,7 @@
                                         <td>
                                             <div class="quantity-input">
                                                 <button type="button" onclick="decreaseQuantity(this)">−</button>
-                                                <input type="number" min="1" value="<?= $item['quantity'] ?>" readonly>
+                                                <input type="number" min="1" name="quantities[<?= $item['id'] ?>]" value="<?= $item['quantity'] ?>" readonly>
                                                 <button type="button" onclick="increaseQuantity(this)">+</button>
                                             </div>
                                         </td>
@@ -535,7 +535,13 @@
                             <input type="text" name="coupon_code" placeholder="Mã Giảm Giá" required>
                             <button type="submit" class="btn-apply-coupon">ÁP DỤNG MÃ</button>
                         </form>
-                        <button type="button" onclick="updateCart()" class="btn-update-cart">CẬP NHẬT GIỎ</button>
+                        <button type="submit" form="cart-update-form" class="btn-update-cart">CẬP NHẬT GIỎ</button>
+                    </div>
+                    <form id="cart-update-form" method="POST" action="?action=/cart/update" style="display:none;">
+                        <?php foreach ($cart as $item): ?>
+                            <input type="hidden" name="quantities[<?= $item['id'] ?>]" value="<?= $item['quantity'] ?>">
+                        <?php endforeach; ?>
+                    </form>
                     </div>
                 <?php endif; ?>
             </div>
@@ -775,8 +781,7 @@
         }
 
         function proceedToCheckout() {
-            alert('Chuyển tới trang thanh toán');
-            // window.location.href = '?action=/checkout';
+            window.location.href = '?action=/checkout';
         }
     </script>
 </body>

@@ -2,38 +2,49 @@
 
 class CartController
 {
-    public function index() 
+    private function initCart(): array
     {
-        // Khởi tạo session nếu chưa có
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
 
-        // Lấy dữ liệu giỏ hàng từ session (mẫu)
-        $cart = $_SESSION['cart'] ?? [
-            [
-                'id' => 1,
-                'name' => 'Áo khoác nhẹ',
-                'price' => 36.00,
-                'quantity' => 2,
-                'image' => 'jacket.png',
-                'total' => 72.00
-            ],
-            [
-                'id' => 2,
-                'name' => 'Dâu tây tươi',
-                'price' => 16.00,
-                'quantity' => 1,
-                'image' => 'strawberry.png',
-                'total' => 16.00
-            ]
-        ];
+        $cart = $_SESSION['cart'] ?? [[
+            'id' => 1,
+            'name' => 'Tiger Hoody',
+            'price' => 1600000,
+            'quantity' => 1,
+            'image' => 'product-01.jpg',
+            'size' => 'L',
+            'total' => 1600000,
+        ]];
 
+        foreach ($cart as $index => $item) {
+            $cart[$index]['total'] = (float) ($item['price'] ?? 0) * (int) ($item['quantity'] ?? 1);
+        }
+
+        $_SESSION['cart'] = $cart;
+
+        return $cart;
+    }
+
+    public function index()
+    {
+        $cart = $this->initCart();
         $subtotal = array_sum(array_column($cart, 'total'));
         $shipping = 0;
         $total = $subtotal + $shipping;
 
         require_once PATH_VIEW . 'cart.php';
+    }
+
+    public function checkout()
+    {
+        $cart = $this->initCart();
+        $subtotal = array_sum(array_column($cart, 'total'));
+        $shipping = 0;
+        $total = $subtotal + $shipping;
+
+        require_once PATH_VIEW . 'checkout.php';
     }
 
     public function addToCart()
@@ -50,10 +61,12 @@ class CartController
                 $_SESSION['cart'] = [];
             }
 
-            // Thêm vào giỏ hàng
             $_SESSION['cart'][] = [
                 'id' => $product_id,
-                'quantity' => $quantity
+                'quantity' => $quantity,
+                'name' => 'Sản phẩm mới',
+                'price' => 0,
+                'total' => 0,
             ];
 
             header('Location: ?action=/cart');
@@ -70,8 +83,8 @@ class CartController
         $product_id = $_GET['id'] ?? null;
 
         if ($product_id && isset($_SESSION['cart'])) {
-            $_SESSION['cart'] = array_filter($_SESSION['cart'], function($item) use ($product_id) {
-                return $item['id'] != $product_id;
+            $_SESSION['cart'] = array_filter($_SESSION['cart'], function ($item) use ($product_id) {
+                return ($item['id'] ?? null) != $product_id;
             });
 
             header('Location: ?action=/cart');
@@ -90,7 +103,8 @@ class CartController
 
             foreach ($_SESSION['cart'] as &$item) {
                 if (isset($quantities[$item['id']])) {
-                    $item['quantity'] = max(1, (int)$quantities[$item['id']]);
+                    $item['quantity'] = max(1, (int) $quantities[$item['id']]);
+                    $item['total'] = (float) ($item['price'] ?? 0) * (int) $item['quantity'];
                 }
             }
 
