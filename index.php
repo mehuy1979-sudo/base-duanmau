@@ -1,4 +1,4 @@
-<?php 
+Ư<?php 
 
 session_start();
 
