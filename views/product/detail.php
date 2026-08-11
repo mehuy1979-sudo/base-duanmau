@@ -363,16 +363,16 @@
 
                         <div class="flex-w flex-r-m p-b-10">
                             <div class="size-203 flex-c-m respon6">
-                                Color
+                                Màu
                             </div>
                             <div class="size-204 respon6-next">
                                 <div class="rs1-select2 bor8 bg0">
                                     <select class="js-select2" name="color">
                                         <option>Chọn</option>
-                                        <option>Red</option>
-                                        <option>Blue</option>
-                                        <option>White</option>
-                                        <option>Grey</option>
+                                        <option>Đỏ</option>
+                                        <option>Xanh dương</option>
+                                        <option>Trắng</option>
+                                        <option>Nâu</option>
                                     </select>
                                     <div class="dropDownSelect2"></div>
                                 </div>
@@ -423,6 +423,179 @@
             </div>
         </div>
     </div>
+    <div class="bor10 m-t-50 p-t-43 p-b-40">
+				<!-- Tab01 -->
+				<div class="tab01">
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item p-b-10">
+							<a class="nav-link active" data-toggle="tab" href="#description" role="tab">Mô tả sản phẩm</a>
+						</li>
+
+						<li class="nav-item p-b-10">
+							<a class="nav-link" data-toggle="tab" href="#information" role="tab">Thông tin sản phẩm</a>
+						</li>
+
+						<li class="nav-item p-b-10">
+							<a class="nav-link" data-toggle="tab" href="#reviews" role="tab">Đánh giá (1)</a>
+						</li>
+					</ul>
+
+					<!-- Tab panes -->
+					<div class="tab-content p-t-43">
+						<!-- - -->
+						<div class="tab-pane fade show active" id="description" role="tabpanel">
+							<div class="how-pos2 p-lr-15-md">
+								<p class="stext-102 cl6">
+									Áo khoác nam màu xanh navy mang phong cách tối giản, hiện đại và thanh lịch. Thiết kế dáng áo gọn gàng với cổ bẻ, tay dài và hàng nút phía trước. Hai túi ngực tạo điểm nhấn khỏe khoắn, trong khi chất liệu có vẻ nhẹ và đứng dáng, phù hợp để mặc hằng ngày.
+								</p>
+							</div>
+						</div>
+
+						<!-- - -->
+						<div class="tab-pane fade" id="information" role="tabpanel">
+							<div class="row">
+								<div class="col-sm-10 col-md-8 col-lg-6 m-lr-auto">
+									<ul class="p-lr-28 p-lr-15-sm">
+										<li class="flex-w flex-t p-b-7">
+											<span class="stext-102 cl3 size-205">
+												Cân nặng
+											</span>
+
+											<span class="stext-102 cl6 size-206">
+												0.79 kg
+											</span>
+										</li>
+
+										<li class="flex-w flex-t p-b-7">
+											<span class="stext-102 cl3 size-205">
+												Kích thước
+											</span>
+
+											<span class="stext-102 cl6 size-206">
+												110 x 33 x 100 cm
+											</span>
+										</li>
+
+										<li class="flex-w flex-t p-b-7">
+											<span class="stext-102 cl3 size-205">
+												Chất liệu
+											</span>
+
+											<span class="stext-102 cl6 size-206">
+												60% cotton
+											</span>
+										</li>
+
+										<li class="flex-w flex-t p-b-7">
+											<span class="stext-102 cl3 size-205">
+												Màu
+											</span>
+
+											<span class="stext-102 cl6 size-206">
+												Đen, Xanh dương, Nâu, Xanh lá, Đỏ, Trắng
+											</span>
+										</li>
+
+										<li class="flex-w flex-t p-b-7">
+											<span class="stext-102 cl3 size-205">
+												Size
+											</span>
+
+											<span class="stext-102 cl6 size-206">
+												XL, L, M, S
+											</span>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+
+						<!-- - -->
+						<div class="tab-pane fade" id="reviews" role="tabpanel">
+							<div class="row">
+								<div class="col-sm-10 col-md-8 col-lg-6 m-lr-auto">
+									<div class="p-b-30 m-lr-15-sm">
+										<!-- Review -->
+										<div class="flex-w flex-t p-b-68">
+											<div class="wrap-pic-s size-109 bor0 of-hidden m-r-18 m-t-6">
+												<img src="images/avatar-01.jpg" alt="AVATAR">
+											</div>
+
+											<div class="size-207">
+												<div class="flex-w flex-sb-m p-b-17">
+													<span class="mtext-107 cl2 p-r-20">
+														Nguyễn Văn Nam
+													</span>
+
+													<span class="fs-18 cl11">
+														<i class="zmdi zmdi-star"></i>
+														<i class="zmdi zmdi-star"></i>
+														<i class="zmdi zmdi-star"></i>
+														<i class="zmdi zmdi-star"></i>
+														<i class="zmdi zmdi-star-half"></i>
+													</span>
+												</div>
+
+												<p class="stext-102 cl6">
+													Áo đẹp chất lượng
+												</p>
+											</div>
+										</div>
+										
+										<!-- Add review -->
+										<form class="w-full">
+											<h5 class="mtext-108 cl2 p-b-7">
+												Thêm đánh giá
+											</h5>
+
+											<p class="stext-102 cl6">
+												Địa chỉ email của bạn sẽ được bảo mật và không hiển thị công kha
+											</p>
+
+											<div class="flex-w flex-m p-t-50 p-b-23">
+												<span class="stext-102 cl3 m-r-16">
+													Đánh giá của bạn
+												</span>
+
+												<span class="wrap-rating fs-18 cl11 pointer">
+													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
+													<input class="dis-none" type="number" name="rating">
+												</span>
+											</div>
+
+											<div class="row p-b-25">
+												<div class="col-12 p-b-5">
+													<label class="stext-102 cl3" for="review">Nhận xét của bạn</label>
+													<textarea class="size-110 bor8 stext-102 cl2 p-lr-20 p-tb-10" id="review" name="review"></textarea>
+												</div>
+
+												<div class="col-sm-6 p-b-5">
+													<label class="stext-102 cl3" for="name">Tên</label>
+													<input class="size-111 bor8 stext-102 cl2 p-lr-20" id="name" type="text" name="name">
+												</div>
+
+												<div class="col-sm-6 p-b-5">
+													<label class="stext-102 cl3" for="email">Email</label>
+													<input class="size-111 bor8 stext-102 cl2 p-lr-20" id="email" type="text" name="email">
+												</div>
+											</div>
+
+											<button class="flex-c-m stext-101 cl0 size-112 bg7 bor11 hov-btn3 p-lr-15 trans-04 m-b-10">
+												Xác nhận
+											</button>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
     <!-- Footer -->
     <footer class="footer-section" style="background-color: #2a2a2a; color: #ccc; padding: 60px 0 40px; margin-top: 80px;">
@@ -430,45 +603,45 @@
             <div class="row" style="margin-bottom: 50px;">
                 <!-- Categories -->
                 <div class="col-md-3 col-sm-6 mb-4">
-                    <h5 style="color: #fff; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">Categories</h5>
+                    <h5 style="color: #fff; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">Sản phẩm</h5>
                     <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 12px;"><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">Women</a></li>
-                        <li style="margin-bottom: 12px;"><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">Men</a></li>
-                        <li style="margin-bottom: 12px;"><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">Shoes</a></li>
-                        <li><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">Watches</a></li>
+                        <li style="margin-bottom: 12px;"><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">Nữ</a></li>
+                        <li style="margin-bottom: 12px;"><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">Nam</a></li>
+                        <li style="margin-bottom: 12px;"><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">Giày</a></li>
+                        <li><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">Đồng hồ</a></li>
                     </ul>
                 </div>
 
                 <!-- Help -->
                 <div class="col-md-3 col-sm-6 mb-4">
-                    <h5 style="color: #fff; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">Help</h5>
+                    <h5 style="color: #fff; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">Trợ giúp</h5>
                     <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 12px;"><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">Track Order</a></li>
-                        <li style="margin-bottom: 12px;"><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">Returns</a></li>
-                        <li style="margin-bottom: 12px;"><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">Shipping</a></li>
-                        <li><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">FAQs</a></li>
+                        <li style="margin-bottom: 12px;"><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">Theo dõi đơn hàng</a></li>
+                        <li style="margin-bottom: 12px;"><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">Chính sách đổi trả</a></li>
+                        <li style="margin-bottom: 12px;"><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">Chính sách vận chuyển</a></li>
+                        <li><a href="#" style="color: #999; text-decoration: none; transition: color 0.3s;">Câu hỏi thường gặp</a></li>
                     </ul>
                 </div>
 
                 <!-- Get In Touch -->
                 <div class="col-md-3 col-sm-6 mb-4">
-                    <h5 style="color: #fff; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">Get In Touch</h5>
+                    <h5 style="color: #fff; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">Liên hệ với chúng tôi</h5>
                     <p style="color: #999; line-height: 1.8; margin-bottom: 20px;">
-                        Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us on (+1) 96 716 6879
+                        Bạn có câu hỏi? Hãy ghé cửa hàng tại 123 Đường Nguyễn Trãi, Quận 1, TP. Hồ Chí Minh hoặc gọi cho chúng tôi qua số (+84) 912 345 678.
                     </p>
                     <div style="display: flex; gap: 15px;">
                         <a href="#" style="color: #999; font-size: 18px; transition: color 0.3s;"><i class="fa fa-facebook"></i></a>
-                        <a href="#" style="color: #999; font-size: 18px; transition: color 0.3s;"><i class="fa fa-instagram"></i></a>
+                        <a href="#" style="color: #999; font-size: 18px; transition: color 0.3s;"><i class="fa fa-instagram"></i></a>   
                         <a href="#" style="color: #999; font-size: 18px; transition: color 0.3s;"><i class="fa fa-pinterest"></i></a>
                     </div>
                 </div>
 
                 <!-- Newsletter -->
                 <div class="col-md-3 col-sm-6 mb-4">
-                    <h5 style="color: #fff; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">Newsletter</h5>
+                    <h5 style="color: #fff; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">Đăng ký nhận thông tin mới nhất</h5>
                     <div style="display: flex; flex-direction: column; gap: 12px;">
                         <input type="email" placeholder="email@example.com" style="padding: 12px 15px; border: none; border-radius: 20px; background-color: #f5f5f5; color: #333; font-size: 14px;">
-                        <button style="padding: 12px 30px; background-color: #5b6df2; color: white; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: background-color 0.3s;">Subscribe</button>
+                        <button style="padding: 12px 30px; background-color: #5b6df2; color: white; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: background-color 0.3s;">Đăng ký</button>
                     </div>
                 </div>
             </div>

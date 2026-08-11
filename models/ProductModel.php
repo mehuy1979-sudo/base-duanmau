@@ -26,7 +26,7 @@ class ProductModel extends BaseModel
             'id' => (int) $id,
             'name' => 'Lightweight Jacket',
             'price' => 29.99,
-            'description' => 'This is a sample product description shown because the database is currently unavailable.',
+            'description' => 'Áo khoác thời trang nam.',
             'image' => null,
         ];
     }
