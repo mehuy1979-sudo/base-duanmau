@@ -255,6 +255,12 @@
             color: #111;
         }
 
+        .checkout-form select:disabled {
+            background: #f2f2f2;
+            color: #999;
+            cursor: not-allowed;
+        }
+
         .checkout-form textarea {
             min-height: 112px;
             resize: vertical;
@@ -286,6 +292,10 @@
             color: #ff3b2a;
         }
 
+        .summary-line .value.green {
+            color: #28a745;
+        }
+
         .checkout-btn {
             margin-top: 10px;
             width: 100%;
@@ -303,6 +313,40 @@
         .checkout-btn:hover {
             background: #000;
         }
+        .payment-method {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 5px;
+}
+
+.payment-option {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.payment-option:hover {
+    border-color: #111;
+}
+
+.payment-option input {
+    width: 18px !important;
+    height: 18px;
+    min-height: auto !important;
+    margin: 0;
+}
+
+.payment-option span {
+    font-size: 14px;
+    font-weight: 600;
+}
 
         .link-back {
             display: inline-block;
@@ -311,6 +355,16 @@
             width: 100%;
             color: #ff3b2a;
             text-decoration: none;
+            font-weight: 600;
+        }
+
+        .error-box {
+            background: #fdecea;
+            border: 1px solid #f5c2c0;
+            color: #b3261e;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
             font-weight: 600;
         }
 
@@ -388,77 +442,323 @@
         <section class="panel">
             <h2 class="panel-title">Thông tin đặt hàng</h2>
 
-            <div class="cart-item">
-                <div class="product-thumb">hoodie</div>
-                <div class="product-meta">
-                    <h4>Tiger Hoody</h4>
-                    <p>Size: L</p>
-                </div>
-                <div class="price">1</div>
-                <div class="price red">1,600,000 VNĐ</div>
-            </div>
+            <?php if (!empty($_SESSION['error'])): ?>
+                <div class="error-box"><?= htmlspecialchars($_SESSION['error']) ?></div>
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
 
-            <form class="checkout-form" method="POST" action="#">
-                <div class="field full">
-                    <label>Họ và tên</label>
-                    <input type="text" placeholder="Nhập họ và tên" value="">
-                </div>
+            <?php foreach ($cart as $item): ?>
+    <div class="cart-item">
 
-                <div class="field">
-                    <label>Email</label>
-                    <input type="email" placeholder="Nhập email" value="">
-                </div>
+        <div class="product-thumb">
+            <?php if (!empty($item['image'])): ?>
+                <img
+                    src="<?= BASE_URL ?>views/images/<?= htmlspecialchars($item['image']) ?>"
+                    alt="<?= htmlspecialchars($item['name']) ?>"
+                    style="width:100%; height:100%; object-fit:cover;"
+                >
+            <?php else: ?>
+                hoodie
+            <?php endif; ?>
+        </div>
 
-                <div class="field">
-                    <label>Số điện thoại</label>
-                    <input type="tel" placeholder="Nhập số điện thoại" value="">
-                </div>
+        <div class="product-meta">
+            <h4><?= htmlspecialchars($item['name']) ?></h4>
 
-                <div class="field full">
-                    <label>Số nhà ngõ đường</label>
-                    <input type="text" placeholder="Nhập địa chỉ" value="">
-                </div>
+            <?php if (!empty($item['size'])): ?>
+                <p>Size: <?= htmlspecialchars($item['size']) ?></p>
+            <?php endif; ?>
+        </div>
 
-                <div class="field">
-                    <label>Tỉnh / Thành phố</label>
-                    <select>
-                        <option>-- Tỉnh / Thành phố --</option>
-                        <option>Hà Nội</option>
-                        <option>Đà Nẵng</option>
-                        <option>Hồ Chí Minh</option>
-                    </select>
-                </div>
+        <div class="price">
+            <?= (int) $item['quantity'] ?>
+        </div>
 
-                <div class="field">
-                    <label>Quận / Huyện</label>
-                    <select>
-                        <option>-- Quận / Huyện --</option>
-                        <option>Quận 1</option>
-                        <option>Quận 7</option>
-                        <option>Ba Đình</option>
-                    </select>
-                </div>
+        <div class="price red">
+            <?= number_format($item['total'], 0, ',', '.') ?> VNĐ
+        </div>
 
-                <div class="field full">
-                    <label>Ghi chú</label>
-                    <textarea placeholder="Ghi chú đơn hàng"></textarea>
-                </div>
-            </form>
+    </div>
+<?php endforeach; ?>
+
+            <form class="checkout-form" method="POST" action="?action=/place-order" id="checkoutForm">
+
+    <div class="field full">
+        <label>Họ và tên</label>
+
+        <input
+            type="text"
+            name="customer_name"
+            placeholder="Nhập họ và tên"
+            value="<?= htmlspecialchars($_POST['customer_name'] ?? '') ?>"
+            required
+        >
+    </div>
+
+
+    <div class="field">
+        <label>Email</label>
+
+        <input
+            type="email"
+            name="email"
+            placeholder="Nhập email"
+            value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
+            required
+        >
+    </div>
+
+
+    <div class="field">
+        <label>Số điện thoại</label>
+
+        <input
+            type="tel"
+            name="phone"
+            placeholder="Nhập số điện thoại"
+            pattern="^[0-9]{9,11}$"
+            value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"
+            required
+        >
+    </div>
+
+
+    <div class="field full">
+        <label>Số nhà ngõ đường</label>
+
+        <input
+            type="text"
+            name="address"
+            placeholder="Nhập địa chỉ"
+            value="<?= htmlspecialchars($_POST['address'] ?? '') ?>"
+            required
+        >
+    </div>
+
+
+    <div class="field">
+        <label>Tỉnh / Thành phố</label>
+
+        <select name="city" id="city-select" required>
+
+            <option value="">
+                -- Tỉnh / Thành phố --
+            </option>
+
+            <option value="Hà Nội">Hà Nội</option>
+            <option value="Đà Nẵng">Đà Nẵng</option>
+            <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+
+        </select>
+    </div>
+
+
+    <div class="field">
+        <label>Quận / Huyện</label>
+
+        <select name="district" id="district-select" required disabled>
+            <option value="">-- Chọn tỉnh/thành trước --</option>
+        </select>
+    </div>
+
+
+    <div class="field full">
+        <label>Ghi chú</label>
+
+        <textarea
+            name="note"
+            placeholder="Ghi chú đơn hàng"
+        ><?= htmlspecialchars($_POST['note'] ?? '') ?></textarea>
+    </div>
+
+
+    <!-- PHƯƠNG THỨC THANH TOÁN -->
+
+    <div class="field full">
+
+        <label>Phương thức thanh toán</label>
+
+        <div class="payment-method">
+
+            <label class="payment-option">
+
+                <input
+                    type="radio"
+                    name="payment_method"
+                    value="cod"
+                    checked
+                >
+
+                <span>
+                    💵 Thanh toán khi nhận hàng (COD)
+                </span>
+
+            </label>
+
+
+            <label class="payment-option">
+
+                <input
+                    type="radio"
+                    name="payment_method"
+                    value="bank"
+                >
+
+                <span>
+                    🏦 Chuyển khoản ngân hàng
+                </span>
+
+            </label>
+
+        </div>
+
+    </div>
+
+
+    <!-- NÚT ĐẶT HÀNG -->
+
+    <div class="field full">
+
+        <button
+            class="checkout-btn"
+            type="submit"
+        >
+            Đặt hàng
+        </button>
+
+    </div>
+
+</form>
         </section>
 
         <aside class="panel summary-box">
-            <div class="summary-line">
-                <span class="label">Đơn giá</span>
-                <span class="value">1,600,000 VNĐ</span>
-            </div>
-            <div class="summary-line">
-                <span class="label">Thành tiền</span>
-                <span class="value red">1,600,000 VNĐ</span>
-            </div>
 
-            <button class="checkout-btn" type="button">Thanh toán</button>
-            <a class="link-back" href="?action=/cart">← Quay lại giỏ hàng</a>
-        </aside>
+    <div class="summary-line">
+
+        <span class="label">
+            Đơn giá
+        </span>
+
+        <span class="value">
+            <?= number_format($subtotal, 0, ',', '.') ?> VNĐ
+        </span>
+
+    </div>
+
+    <?php if (!empty($coupon_code)): ?>
+    <div class="summary-line">
+
+        <span class="label">
+            Giảm giá (<?= htmlspecialchars($coupon_code) ?>)
+        </span>
+
+        <span class="value green">
+            −<?= number_format($discount, 0, ',', '.') ?> VNĐ
+        </span>
+
+    </div>
+    <?php endif; ?>
+
+    <div class="summary-line">
+
+        <span class="label">
+            Phí vận chuyển
+        </span>
+
+        <span class="value">
+            <?= number_format($shipping, 0, ',', '.') ?> VNĐ
+        </span>
+
+    </div>
+
+
+    <div class="summary-line">
+
+        <span class="label">
+            Thành tiền
+        </span>
+
+        <span class="value red">
+            <?= number_format($total, 0, ',', '.') ?> VNĐ
+        </span>
+
+    </div>
+
+
+    <a
+        class="link-back"
+        href="?action=/cart"
+    >
+        ← Quay lại giỏ hàng
+    </a>
+
+</aside>
     </main>
+
+    <script>
+        // Danh sách quận/huyện theo từng tỉnh/thành phố
+        const districtData = {
+            "Hà Nội": ["Ba Đình", "Cầu Giấy", "Đống Đa", "Hai Bà Trưng", "Hoàn Kiếm", "Thanh Xuân"],
+            "Đà Nẵng": ["Hải Châu", "Thanh Khê", "Sơn Trà", "Ngũ Hành Sơn", "Liên Chiểu"],
+            "Hồ Chí Minh": ["Quận 1", "Quận 3", "Quận 5", "Bình Thạnh", "Tân Bình", "Gò Vấp"]
+        };
+
+        const citySelect = document.getElementById('city-select');
+        const districtSelect = document.getElementById('district-select');
+
+        function populateDistricts(cityName, selectedDistrict) {
+            const districts = districtData[cityName] || [];
+
+            districtSelect.innerHTML = '';
+
+            if (districts.length === 0) {
+                districtSelect.innerHTML = '<option value="">-- Chọn tỉnh/thành trước --</option>';
+                districtSelect.disabled = true;
+                return;
+            }
+
+            districtSelect.disabled = false;
+            districtSelect.innerHTML = '<option value="">-- Quận / Huyện --</option>';
+
+            districts.forEach(function (d) {
+                const opt = document.createElement('option');
+                opt.value = d;
+                opt.textContent = d;
+                if (d === selectedDistrict) {
+                    opt.selected = true;
+                }
+                districtSelect.appendChild(opt);
+            });
+        }
+
+        citySelect.addEventListener('change', function () {
+            populateDistricts(this.value, '');
+        });
+
+        // Khôi phục lựa chọn cũ nếu form bị submit lại do lỗi validate
+        document.addEventListener('DOMContentLoaded', function () {
+            const preselectedCity = <?= json_encode($_POST['city'] ?? '') ?>;
+            const preselectedDistrict = <?= json_encode($_POST['district'] ?? '') ?>;
+
+            if (preselectedCity) {
+                citySelect.value = preselectedCity;
+                populateDistricts(preselectedCity, preselectedDistrict);
+            }
+        });
+
+        // Validate phía client trước khi submit
+        document.getElementById('checkoutForm').addEventListener('submit', function (e) {
+            let valid = true;
+            this.querySelectorAll('[required]').forEach(function (field) {
+                if (!field.checkValidity()) {
+                    valid = false;
+                }
+            });
+            if (!valid) {
+                e.preventDefault();
+                alert('Vui lòng điền đầy đủ và đúng định dạng thông tin.');
+            }
+        });
+    </script>
 </body>
 </html>

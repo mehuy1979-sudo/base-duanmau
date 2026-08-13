@@ -48,7 +48,7 @@
         .cart-table {
             background: white;
             border: 1px solid #e0e0e0;
-            margin-bottom: 30px;
+            margin-bottom: 0;
         }
 
         .cart-table table {
@@ -87,11 +87,13 @@
             justify-content: center;
             border-radius: 3px;
             flex-shrink: 0;
+            overflow: hidden;
         }
 
         .product-img img {
             max-width: 100%;
             max-height: 100%;
+            object-fit: cover;
         }
 
         .product-name {
@@ -153,20 +155,32 @@
 
         .cart-bottom {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
             padding: 20px 15px;
             background: #f9f9f9;
-            border-top: 1px solid #e0e0e0;
-            gap: 15px;
-            flex-wrap: wrap;
+            border: 1px solid #e0e0e0;
+            border-top: none;
+            margin-bottom: 20px;
+        }
+
+        .coupon-box {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .coupon-box h5 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #333;
         }
 
         .coupon-form {
             display: flex;
             gap: 10px;
-            flex: 1;
-            min-width: 300px;
         }
 
         .coupon-form input {
@@ -175,27 +189,49 @@
             border: 1px solid #e0e0e0;
             border-radius: 3px;
             font-size: 13px;
+            text-transform: uppercase;
         }
 
         .coupon-form input::placeholder {
             color: #999;
+            text-transform: none;
         }
 
         .btn-apply-coupon {
             padding: 10px 30px;
-            background: #e0e0e0;
-            border: 1px solid #e0e0e0;
+            background: #333;
+            border: 1px solid #333;
             border-radius: 3px;
             cursor: pointer;
             font-size: 13px;
             font-weight: 600;
-            color: #666;
+            color: #fff;
             transition: all 0.3s;
             white-space: nowrap;
         }
 
         .btn-apply-coupon:hover {
-            background: #d0d0d0;
+            background: #1a1a1a;
+        }
+
+        .alert-box {
+            padding: 12px 16px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 3px;
+        }
+
+        .alert-success {
+            background: #e6f7ec;
+            border: 1px solid #b7e4c7;
+            color: #1e7e34;
+        }
+
+        .alert-error {
+            background: #fdecea;
+            border: 1px solid #f5c2c0;
+            color: #b3261e;
         }
 
         .btn-update-cart {
@@ -232,6 +268,7 @@
         .totals-row {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 12px 0;
             border-bottom: 1px solid #e0e0e0;
             font-size: 14px;
@@ -247,50 +284,27 @@
             font-weight: 500;
         }
 
-        .shipping-row {
-            padding: 15px 0;
-            border-bottom: 1px solid #e0e0e0;
+        .totals-row .amount.discount {
+            color: #28a745;
         }
 
-        .shipping-row label {
-            color: #666;
-            display: block;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-
-        .shipping-row p {
-            color: #999;
+        .coupon-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #f0f7f0;
+            border: 1px solid #b7e4c7;
+            color: #1e7e34;
+            padding: 4px 10px;
+            border-radius: 20px;
             font-size: 12px;
-            margin: 0 0 10px 0;
+            font-weight: 700;
         }
 
-        .shipping-select {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #e0e0e0;
-            border-radius: 3px;
-            font-size: 13px;
-            background: white;
-            cursor: pointer;
-        }
-
-        .shipping-fields {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .shipping-fields input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #e0e0e0;
-            border-radius: 3px;
-            font-size: 13px;
-        }
-
-        .shipping-fields input::placeholder {
-            color: #999;
+        .coupon-tag a {
+            color: #d32f2f;
+            text-decoration: none;
+            font-weight: 700;
         }
 
         .totals-row.total-row {
@@ -366,19 +380,12 @@
                 height: 60px;
             }
 
-            .cart-bottom {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
             .coupon-form {
                 flex-direction: column;
-                min-width: auto;
             }
 
             .coupon-form input,
-            .btn-apply-coupon,
-            .btn-update-cart {
+            .btn-apply-coupon {
                 width: 100%;
             }
 
@@ -480,6 +487,16 @@
             <span>Giỏ Hàng</span>
         </div>
 
+        <?php if (!empty($_SESSION['cart_success'])): ?>
+            <div class="alert-box alert-success"><?= htmlspecialchars($_SESSION['cart_success']) ?></div>
+            <?php unset($_SESSION['cart_success']); ?>
+        <?php endif; ?>
+
+        <?php if (!empty($_SESSION['cart_error'])): ?>
+            <div class="alert-box alert-error"><?= htmlspecialchars($_SESSION['cart_error']) ?></div>
+            <?php unset($_SESSION['cart_error']); ?>
+        <?php endif; ?>
+
         <div class="row">
             <div class="col-lg-8">
                 <?php if (empty($cart)): ?>
@@ -488,6 +505,8 @@
                         <a href="<?= BASE_URL ?>" class="btn-continue-shopping">Tiếp Tục Mua Sắm</a>
                     </div>
                 <?php else: ?>
+                    <!-- Form cập nhật số lượng -->
+                    <form id="cart-update-form" method="POST" action="?action=/cart/update">
                     <div class="cart-table">
                         <table>
                             <thead>
@@ -505,20 +524,20 @@
                                         <td>
                                             <div class="product-item">
                                                 <div class="product-img">
-                                                    <img src="<?= BASE_URL ?>views/images/icons/product-01.jpg" alt="<?= $item['name'] ?>">
+                                                    <img src="<?= BASE_URL ?>views/images/<?= htmlspecialchars($item['image'] ?? 'icons/product-01.jpg') ?>" alt="<?= htmlspecialchars($item['name']) ?>">
                                                 </div>
                                                 <span class="product-name"><?= htmlspecialchars($item['name']) ?></span>
                                             </div>
                                         </td>
-                                        <td class="price">$<?= number_format($item['price'], 2) ?></td>
+                                        <td class="price"><?= number_format($item['price'], 0, ',', '.') ?> VNĐ</td>
                                         <td>
                                             <div class="quantity-input">
                                                 <button type="button" onclick="decreaseQuantity(this)">−</button>
-                                                <input type="number" min="1" name="quantities[<?= $item['id'] ?>]" value="<?= $item['quantity'] ?>" readonly>
+                                                <input type="number" min="1" name="quantities[<?= $item['id'] ?>]" value="<?= (int) $item['quantity'] ?>">
                                                 <button type="button" onclick="increaseQuantity(this)">+</button>
                                             </div>
                                         </td>
-                                        <td class="price">$<?= number_format($item['total'], 2) ?></td>
+                                        <td class="price"><?= number_format($item['total'], 0, ',', '.') ?> VNĐ</td>
                                         <td>
                                             <a href="?action=/cart/remove&id=<?= $item['id'] ?>" class="remove-btn" title="Xóa">
                                                 <i class="zmdi zmdi-close"></i>
@@ -531,17 +550,17 @@
                     </div>
 
                     <div class="cart-bottom">
-                        <form method="POST" action="?action=/cart/update" class="coupon-form">
-                            <input type="text" name="coupon_code" placeholder="Mã Giảm Giá" required>
+                        <button type="submit" class="btn-update-cart">CẬP NHẬT GIỎ</button>
+                    </div>
+                    </form>
+
+                    <!-- Form mã giảm giá (form riêng, không lồng vào form cập nhật giỏ) -->
+                    <div class="coupon-box">
+                        <h5>Bạn có mã giảm giá?</h5>
+                        <form method="POST" action="?action=/cart/apply-coupon" class="coupon-form">
+                            <input type="text" name="coupon_code" placeholder="Nhập mã giảm giá (VD: SALE10)" value="<?= htmlspecialchars($coupon_code ?? '') ?>">
                             <button type="submit" class="btn-apply-coupon">ÁP DỤNG MÃ</button>
                         </form>
-                        <button type="submit" form="cart-update-form" class="btn-update-cart">CẬP NHẬT GIỎ</button>
-                    </div>
-                    <form id="cart-update-form" method="POST" action="?action=/cart/update" style="display:none;">
-                        <?php foreach ($cart as $item): ?>
-                            <input type="hidden" name="quantities[<?= $item['id'] ?>]" value="<?= $item['quantity'] ?>">
-                        <?php endforeach; ?>
-                    </form>
                     </div>
                 <?php endif; ?>
             </div>
@@ -552,34 +571,31 @@
 
                     <div class="totals-row">
                         <label>Tạm Tính:</label>
-                        <span class="amount">$<?= number_format($subtotal, 2) ?></span>
+                        <span class="amount"><?= number_format($subtotal, 0, ',', '.') ?> VNĐ</span>
                     </div>
 
-                    <div class="shipping-row">
-                        <label>Vận Chuyển:</label>
-                        <p>Không có phương thức vận chuyển nào có sẵn. Vui lòng kiểm tra lại địa chỉ của bạn hoặc liên hệ với chúng tôi nếu bạn cần hỗ trợ.</p>
-                        <label>TÍNH PHÍ VẬN CHUYỂN</label>
-                        <select class="shipping-select" onchange="calculateShipping()">
-                            <option value="">Chọn quốc gia...</option>
-                            <option value="vn">Việt Nam</option>
-                            <option value="us">Hoa Kỳ</option>
-                            <option value="jp">Nhật Bản</option>
-                        </select>
-
-                        <div class="shipping-fields">
-                            <input type="text" placeholder="Tỉnh / Thành Phố" id="state">
-                            <input type="text" placeholder="Mã Bưu Chính / Zip" id="zip">
-                        </div>
+                    <?php if (!empty($coupon_code)): ?>
+                    <div class="totals-row">
+                        <label>Mã áp dụng:</label>
+                        <span class="coupon-tag">
+                            <?= htmlspecialchars($coupon_code) ?>
+                            <a href="?action=/cart/remove-coupon" title="Hủy mã">✕</a>
+                        </span>
                     </div>
+                    <div class="totals-row">
+                        <label>Giảm giá:</label>
+                        <span class="amount discount">−<?= number_format($discount, 0, ',', '.') ?> VNĐ</span>
+                    </div>
+                    <?php endif; ?>
 
                     <div class="totals-row">
                         <label>Vận Chuyển:</label>
-                        <span class="amount">$<?= number_format($shipping, 2) ?></span>
+                        <span class="amount"><?= number_format($shipping, 0, ',', '.') ?> VNĐ</span>
                     </div>
 
                     <div class="totals-row total-row">
                         <label>Tổng Cộng:</label>
-                        <span class="amount">$<?= number_format($total, 2) ?></span>
+                        <span class="amount"><?= number_format($total, 0, ',', '.') ?> VNĐ</span>
                     </div>
 
                     <button class="btn-checkout" onclick="proceedToCheckout()">THANH TOÁN</button>
@@ -760,23 +776,6 @@
             const input = btn.parentElement.querySelector('input');
             if (parseInt(input.value) > 1) {
                 input.value = parseInt(input.value) - 1;
-            }
-        }
-
-        function updateCart() {
-            // Implement update cart logic
-            alert('Giỏ hàng đã được cập nhật');
-        }
-
-        function calculateShipping() {
-            const country = document.querySelector('.shipping-select').value;
-            const state = document.getElementById('state').value;
-            const zip = document.getElementById('zip').value;
-
-            if (country && state && zip) {
-                alert(`Đã tính phí vận chuyển cho: ${country} - ${state} - ${zip}`);
-            } else {
-                alert('Vui lòng điền đầy đủ thông tin');
             }
         }
 
