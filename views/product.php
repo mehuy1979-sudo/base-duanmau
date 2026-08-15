@@ -444,39 +444,173 @@
 
 	<!-- Product -->
 	<section class="bg0 p-t-23 p-b-140">
-		<div class="container">
+		
+		<div class="container" 
+		<!-- Tìm thẻ này trong file views/product.php -->
+<section class="bg0 p-t-23 p-b-140">
+<div class="container">
+        <div class="p-b-10">
+            <h3 class="ltext-103 cl5">Product Overview</h3>
+        </div>
+
+        <!-- FORM BỘ LỌC -->
+		 <?php foreach ($products as $product): ?>
+    <div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15">
+        <!-- Hiển thị thông tin sản phẩm -->
+        <h4><?php echo $product['product_name']; ?></h4>
+        <span><?php echo number_format($product['price']); ?> VND</span>
+    </div>
+<?php endforeach; ?>
+        <div class="flex-w flex-sb-m p-b-52">
+            <form action="<?=BASE_URL.'?action=search'?> "method="GET" class="flex-w flex-l-m filter-tope-group m-tb-10" style="width: 100%;">
+                <input type="hidden" name="name" value="product">
+                <div class="m-r-20 m-tb-5">
+                    <input type="text" name="keyword" value="<?= htmlspecialchars($_GET['keyword'] ?? '') ?>" 
+                           placeholder="Tên sản phẩm..." class="form-control">
+                </div>
+
+                <div class="m-r-20 m-tb-5">
+                    <select name="sort_price" class="form-control">
+                        <option value="">-- Giá --</option>
+                        <option value="asc" <?= (($_GET['sort_price'] ?? '') == 'asc') ? 'selected' : '' ?>>Tăng dần</option>
+                        <option value="desc" <?= (($_GET['sort_price'] ?? '') == 'desc') ? 'selected' : '' ?>>Giảm dần</option>
+                    </select>
+                </div>
+                 <button type="submit" class="flex-c-m stext-106 cl6 hov1 bor3 trans-04 m-r-10 m-tb-5">Lọc<</button>
+                <a href="?action=product" class="flex-c-m stext-106 cl6 hov1 bor3 trans-04 m-tb-5">Xóa</a>
+            </form>
+        </div>
+
+        <!-- DANH SÁCH SẢN PHẨM ĐỘNG -->
+        <div class="row isotope-grid">
+            <?php if (!empty($products)): ?>
+                <?php foreach ($products as $product): ?>
+                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item">
+                    <div class="block2">
+                        <div class="block2-pic hov-img0">
+                            <!-- Lưu ý: Thay đường dẫn ảnh của bạn vào đây -->
+                            <img src="<?= BASE_URL . 'assets/uploads/' . $product['image'] ?>" alt="IMG-PRODUCT">
+
+                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+                                Quick View
+                            </a>
+                        </div>
+
+                        <div class="block2-txt flex-w flex-t p-t-14">
+                            <div class="block2-txt-child1 flex-col-l ">
+                                <a href="?action=product-detail&id=<?= $product['id'] ?>" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                    <?= htmlspecialchars($product['name']) ?>
+                                </a>
+
+                                <span class="stext-105 cl3">
+                                    <?= number_format($product['price']) ?> đ
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="col-12 text-center p-b-50">
+                    <p>Không tìm thấy sản phẩm nào.</p>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Load more (Tùy chọn) -->
+        <div class="flex-c-m flex-w w-full p-t-45">
+            <a href="#" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
+                Load More
+            </a>
+        </div>
+    </div>
+</section>>
 			<div class="p-b-10">
 				<h3 class="ltext-103 cl5">
 					Product Overview
 				</h3>
 			</div>
 
-			<div class="flex-w flex-sb-m p-b-52">
-				<div class="flex-w flex-l-m filter-tope-group m-tb-10">
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
-						All Products
-					</button>
+	<div class="flex-w flex-l-m filter-tope-group m-tb-10">
+    <!-- Lọc Tất cả (Dấu * nghĩa là show hết<section class="bg0 p-t-23 p-b-140">
+		
+		<div class="container" 
+		<!-- Tìm thẻ này trong file views/product.php -->
+<!-- Product -->
+<section class="bg0 p-t-23 p-b-140">
+    <div class="container">
+        <div class="p-b-10">
+            <h3 class="ltext-103 cl5">Product Overview</h3>
+        </div>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".women">
-						Women
-					</button>
+        <!-- FORM BỘ LỌC -->
+        <div class="flex-w flex-sb-m p-b-52">
+            <form action="" method="GET" class="flex-w flex-l-m filter-tope-group m-tb-10" style="width: 100%;">
+                <!-- Đảm bảo action/act khớp với định tuyến router của bạn (thường là act=product hoặc action=product) -->
+                <input type="hidden" name="action" value="product">
+                
+                <div class="m-r-20 m-tb-5">
+                    <input type="text" name="keyword" value="<?= htmlspecialchars($_GET['keyword'] ?? '') ?>" 
+                           placeholder="Tên sản phẩm..." class="form-control">
+                </div>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".men">
-						Men
-					</button>
+                <div class="m-r-20 m-tb-5">
+                    <select name="sort_price" class="form-control">
+                        <option value="">-- Giá --</option>
+                        <option value="asc" <?= (($_GET['sort_price'] ?? '') == 'asc') ? 'selected' : '' ?>>Tăng dần</option>
+                        <option value="desc" <?= (($_GET['sort_price'] ?? '') == 'desc') ? 'selected' : '' ?>>Giảm dần</option>
+                    </select>
+                </div>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".bag">
-						Bag
-					</button>
+                <button type="submit" class="flex-c-m stext-106 cl6 hov1 bor3 trans-04 m-r-10 m-tb-5 px-3">Lọc</button>
+                <a href="?action=product" class="flex-c-m stext-106 cl6 hov1 bor3 trans-04 m-tb-5 px-3" style="text-decoration: none;">Xóa</a>
+            </form>
+        </div>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".shoes">
-						Shoes
-					</button>
+        <!-- DANH SÁCH SẢN PHẨM ĐỘNG TỪ DATABASE -->
+        <div class="row isotope-grid">
+            <?php if (!empty($products)): ?>
+                <?php foreach ($products as $product): ?>
+                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item">
+                    <div class="block2">
+                        <div class="block2-pic hov-img0">
+                            <!-- Đường dẫn ảnh sản phẩm -->
+                            <img src="<?= BASE_URL . 'assets/uploads/' . $product['image'] ?>" alt="IMG-PRODUCT">
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
-						Watches
-					</button>
-				</div>
+                            <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+                                Quick View
+                            </a>
+                        </div>
+
+                        <div class="block2-txt flex-w flex-t p-t-14">
+                            <div class="block2-txt-child1 flex-col-l ">
+                                <a href="?action=product-detail&id=<?= $product['id'] ?>" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                    <?= htmlspecialchars($product['name']) ?>
+                                </a>
+
+                                <span class="stext-105 cl3">
+                                    <?= number_format($product['price']) ?> đ
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="col-12 text-center p-b-50">
+                    <p>Không tìm thấy sản phẩm nào.</p>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Load more -->
+        <div class="flex-c-m flex-w w-full p-t-45">
+            <a href="#" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
+                Load More
+            </a>
+        </div>
+    </div>
+</section>
 
 				<div class="flex-w flex-c-m m-tb-10">
 					<div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
@@ -517,25 +651,21 @@
 										Default
 									</a>
 								</li>
-
 								<li class="p-b-6">
 									<a href="#" class="filter-link stext-106 trans-04">
 										Popularity
 									</a>
 								</li>
-
 								<li class="p-b-6">
 									<a href="#" class="filter-link stext-106 trans-04">
 										Average rating
 									</a>
 								</li>
-
 								<li class="p-b-6">
 									<a href="#" class="filter-link stext-106 trans-04 filter-link-active">
 										Newness
 									</a>
 								</li>
-
 								<li class="p-b-6">
 									<a href="#" class="filter-link stext-106 trans-04">
 										Price: Low to High
@@ -629,7 +759,6 @@
 										Grey
 									</a>
 								</li>
-
 								<li class="p-b-6">
 									<span class="fs-15 lh-12 m-r-6" style="color: #00ad5f;">
 										<i class="zmdi zmdi-circle"></i>
@@ -639,7 +768,6 @@
 										Green
 									</a>
 								</li>
-
 								<li class="p-b-6">
 									<span class="fs-15 lh-12 m-r-6" style="color: #fa4251;">
 										<i class="zmdi zmdi-circle"></i>
@@ -679,11 +807,9 @@
 								<a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
 									Denim
 								</a>
-
 								<a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
 									Streetstyle
 								</a>
-
 								<a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
 									Crafts
 								</a>
@@ -692,30 +818,25 @@
 					</div>
 				</div>
 			</div>
-
 			<div class="row isotope-grid">
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
 					<!-- Block2 -->
 					<div class="block2">
 						<div class="block2-pic hov-img0">
 							<img src="views/images/product-01.jpg" alt="IMG-PRODUCT">
-
 							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
 								Quick View
 							</a>
 						</div>
-
 						<div class="block2-txt flex-w flex-t p-t-14">
 							<div class="block2-txt-child1 flex-col-l ">
 								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
 									Esprit Ruffle Shirt
 								</a>
-
 								<span class="stext-105 cl3">
 									$16.64
 								</span>
 							</div>
-
 							<div class="block2-txt-child2 flex-r p-t-3">
 								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
 									<img class="icon-heart1 dis-block trans-04" src="views/images/icons/icon-heart-01.png" alt="ICON">
@@ -757,7 +878,6 @@
 						</div>
 					</div>
 				</div>
-
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item men">
 					<!-- Block2 -->
 					<div class="block2">
@@ -768,18 +888,15 @@
 								Quick View
 							</a>
 						</div>
-
 						<div class="block2-txt flex-w flex-t p-t-14">
 							<div class="block2-txt-child1 flex-col-l ">
 								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
 									Only Check Trouser
 								</a>
-
 								<span class="stext-105 cl3">
 									$25.50
 								</span>
 							</div>
-
 							<div class="block2-txt-child2 flex-r p-t-3">
 								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
 									<img class="icon-heart1 dis-block trans-04" src="views/images/icons/icon-heart-01.png" alt="ICON">
@@ -789,7 +906,6 @@
 						</div>
 					</div>
 				</div>
-
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
 					<!-- Block2 -->
 					<div class="block2">
@@ -821,18 +937,15 @@
 						</div>
 					</div>
 				</div>
-
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
 					<!-- Block2 -->
 					<div class="block2">
 						<div class="block2-pic hov-img0">
 							<img src="views/images/product-05.jpg" alt="IMG-PRODUCT">
-
 							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
 								Quick View
 							</a>
 						</div>
-
 						<div class="block2-txt flex-w flex-t p-t-14">
 							<div class="block2-txt-child1 flex-col-l ">
 								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
@@ -853,29 +966,24 @@
 						</div>
 					</div>
 				</div>
-
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item watches">
 					<!-- Block2 -->
 					<div class="block2">
 						<div class="block2-pic hov-img0">
 							<img src="views/images/product-06.jpg" alt="IMG-PRODUCT">
-
 							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
 								Quick View
 							</a>
 						</div>
-
 						<div class="block2-txt flex-w flex-t p-t-14">
 							<div class="block2-txt-child1 flex-col-l ">
 								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
 									Vintage Inspired Classic 
 								</a>
-
 								<span class="stext-105 cl3">
 									$93.20
 								</span>
 							</div>
-
 							<div class="block2-txt-child2 flex-r p-t-3">
 								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
 									<img class="icon-heart1 dis-block trans-04" src="views/images/icons/icon-heart-01.png" alt="ICON">
@@ -896,7 +1004,6 @@
 								Quick View
 							</a>
 						</div>
-
 						<div class="block2-txt flex-w flex-t p-t-14">
 							<div class="block2-txt-child1 flex-col-l ">
 								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
@@ -939,7 +1046,6 @@
 									$18.96
 								</span>
 							</div>
-
 							<div class="block2-txt-child2 flex-r p-t-3">
 								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
 									<img class="icon-heart1 dis-block trans-04" src="views/images/icons/icon-heart-01.png" alt="ICON">
@@ -949,7 +1055,6 @@
 						</div>
 					</div>
 				</div>
-
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item shoes">
 					<!-- Block2 -->
 					<div class="block2">
@@ -960,7 +1065,6 @@
 								Quick View
 							</a>
 						</div>
-
 						<div class="block2-txt flex-w flex-t p-t-14">
 							<div class="block2-txt-child1 flex-col-l ">
 								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
@@ -971,7 +1075,6 @@
 									$75.00
 								</span>
 							</div>
-
 							<div class="block2-txt-child2 flex-r p-t-3">
 								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
 									<img class="icon-heart1 dis-block trans-04" src="views/images/icons/icon-heart-01.png" alt="ICON">
@@ -987,12 +1090,10 @@
 					<div class="block2">
 						<div class="block2-pic hov-img0">
 							<img src="views/images/product-10.jpg" alt="IMG-PRODUCT">
-
 							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
 								Quick View
 							</a>
 						</div>
-
 						<div class="block2-txt flex-w flex-t p-t-14">
 							<div class="block2-txt-child1 flex-col-l ">
 								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
@@ -1003,7 +1104,6 @@
 									$25.85
 								</span>
 							</div>
-
 							<div class="block2-txt-child2 flex-r p-t-3">
 								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
 									<img class="icon-heart1 dis-block trans-04" src="views/images/icons/icon-heart-01.png" alt="ICON">
@@ -1013,7 +1113,6 @@
 						</div>
 					</div>
 				</div>
-
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item men">
 					<!-- Block2 -->
 					<div class="block2">

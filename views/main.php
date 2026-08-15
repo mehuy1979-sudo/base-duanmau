@@ -107,7 +107,7 @@
 							</li>
 
 							<li>
-								<a href="<?= BASE_URL .'?action=product'?>" >Sản Phẩm</a>
+								<a href="<?= BASE_URL .'?action=search'?>" >Sản Phẩm</a>
 							</li>
 
 							<li class="label1" data-label1="hot">
@@ -444,39 +444,66 @@
 
 	<!-- Product -->
 	<section class="bg0 p-t-23 p-b-140">
-		<div class="container">
+		<div class="container" 
+		<!-- Tìm thẻ này trong file views/product.php -->
+<section class="bg0 p-t-23 p-b-140">
+    <div class="container">
+        <div class="p-b-10">
+            <h3 class="ltext-103 cl5">Product Overview</h3>
+        </div>
+
+        <!-- 1. CHÈN ĐOẠN CODE BỘ LỌC CỦA BẠN VÀO ĐÂY -->
+        <div class="flex-w flex-sb-m p-b-52">
+            <div class="flex-w flex-l-m filter-tope-group m-tb-10">
+                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">Tất cả</button>
+                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".cat-1">Women</button>
+                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".cat-2">Men</button>
+                <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".cat-3">Bag</button>
+            </div>
+        </div>
+        <!-- 2. VÙNG HIỂN THỊ SẢN PHẨM -->
+        <div class="row isotope-grid">
+            <?php 
+            if (isset($products) && is_array($products)): 
+                foreach ($products as $item): 
+            ?>
+                <!-- Chú ý class cat-<?= $item['category_id'] ?> ở đây là "chìa khóa" để bộ lọc hoạt động -->
+                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item cat-<?= $item['category_id'] ?>"> 
+                    <div class="block2">
+                        <!-- Nội dung ảnh, tên, giá của bạn... -->
+                    </div>
+                </div>
+            <?php endforeach; endif; ?>
+        </div>
+    </div>
+</section>>
 			<div class="p-b-10">
 				<h3 class="ltext-103 cl5">
 					Product Overview
 				</h3>
 			</div>
 
-			<div class="flex-w flex-sb-m p-b-52">
-				<div class="flex-w flex-l-m filter-tope-group m-tb-10">
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
-						All Products
-					</button>
+	<div class="flex-w flex-l-m filter-tope-group m-tb-10">
+    <!-- Lọc Tất cả (Dấu * nghĩa là show hết) -->
+    <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
+        Tất cả
+    </button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".women">
-						Women
-					</button>
+    <!-- Lọc Đồ Nữ (Giả sử ID category của Nữ trong DB là 1) -->
+    <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".cat-1">
+        Women
+    </button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".men">
-						Men
-					</button>
+    <!-- Lọc Đồ Nam (Giả sử ID là 2) -->
+    <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".cat-2">
+        Men
+    </button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".bag">
-						Bag
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".shoes">
-						Shoes
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
-						Watches
-					</button>
-				</div>
+    <!-- Lọc Túi (Giả sử ID là 3) -->
+    <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".cat-3">
+        Bag
+    </button>
+</div>
 
 				<div class="flex-w flex-c-m m-tb-10">
 					<div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
