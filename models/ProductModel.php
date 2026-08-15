@@ -1,29 +1,16 @@
-class ProductModel extends BaseModel
+<?php
+
+class ProductController
 {
-    protected $table = "products";
-
-    public function getAll()
+    public function index()
     {
-        return $this->all();
-    }
+        // Khởi tạo ProductModel
+        $productModel = new ProductModel();
 
-    public function getOne($id)
-    {
-        return $this->find($id);
-    }
+        // Lấy toàn bộ sản phẩm
+        $products = $productModel->getAll();
 
-    public function insert($data)
-    {
-        return $this->create($data);
-    }
-
-    public function updateProduct($id, $data)
-    {
-        return $this->update($id, $data);
-    }
-
-    public function deleteProduct($id)
-    {
-        return $this->delete($id);
+        // Gọi giao diện
+        require_once PATH_VIEW . 'product.php';
     }
 }

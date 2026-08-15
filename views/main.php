@@ -107,7 +107,7 @@
 							</li>
 
 							<li>
-								<a href="product.html">Sản Phẩm</a>
+								<a href="<?= BASE_URL .'?action=product'?>" >Sản Phẩm</a>
 							</li>
 
 							<li class="label1" data-label1="hot">

@@ -12,6 +12,6 @@ class ProductController
     public function index()
     {
         $view = 'product';
-        require_once PATH_VIEW . 'main.php';
+        require_once PATH_VIEW . 'product.php';
     }
 }
