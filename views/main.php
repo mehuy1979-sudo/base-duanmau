@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Home</title>
+    <title><?= $title ?? 'Trang chủ - Bunny Wear' ?></title>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,35 +26,6 @@
 
     <link rel="stylesheet" href="<?= BASE_URL ?>views/css/util.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>views/css/main.css">
-	<link rel="icon" type="image/png" href="/base-duanmau/views/images/icons/favicon.png"/>
-
-<link rel="stylesheet" type="text/css" href="/base-duanmau/views/vendor/bootstrap/css/bootstrap.min.css">
-
-<link rel="stylesheet" type="text/css" href="/base-duanmau/views/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-
-<link rel="stylesheet" type="text/css" href="/base-duanmau/views/fonts/iconic/css/material-design-iconic-font.min.css">
-
-<link rel="stylesheet" type="text/css" href="/base-duanmau/views/fonts/linearicons-v1.0.0/icon-font.min.css">
-
-<link rel="stylesheet" type="text/css" href="/base-duanmau/views/vendor/animate/animate.css">
-
-<link rel="stylesheet" type="text/css" href="/base-duanmau/views/vendor/css-hamburgers/hamburgers.min.css">
-
-<link rel="stylesheet" type="text/css" href="/base-duanmau/views/vendor/animsition/css/animsition.min.css">
-
-<link rel="stylesheet" type="text/css" href="/base-duanmau/views/vendor/select2/select2.min.css">
-
-<link rel="stylesheet" type="text/css" href="/base-duanmau/views/vendor/daterangepicker/daterangepicker.css">
-
-<link rel="stylesheet" type="text/css" href="/base-duanmau/views/vendor/slick/slick.css">
-
-<link rel="stylesheet" type="text/css" href="/base-duanmau/views/vendor/MagnificPopup/magnific-popup.css">
-
-<link rel="stylesheet" type="text/css" href="/base-duanmau/views/vendor/perfect-scrollbar/perfect-scrollbar.css">
-
-<link rel="stylesheet" type="text/css" href="/base-duanmau/views/css/util.css">
-
-<link rel="stylesheet" type="text/css" href="/base-duanmau/views/css/main.css">
 </head>
 
 <body>
@@ -72,7 +43,7 @@
 
 					<div class="right-top-bar flex-w h-full">
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
-							Help & FAQs
+							Trợ giúp & Câu hỏi thường gặp
 						</a>
 
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
@@ -102,12 +73,11 @@
 					<div class="menu-desktop">
 						<ul class="main-menu">
 							<li class="active-menu">
-								<a href="index.html">Trang chủ</a>
-
+								<a href="<?= BASE_URL ?>">Trang chủ</a>
 							</li>
 
 							<li>
-								<a href="product.html">Sản Phẩm</a>
+								<a href="<?= BASE_URL ?>?action=/product">Cửa hàng</a>
 							</li>
 
 							<li class="label1" data-label1="hot">
@@ -119,11 +89,11 @@
 							</li>
 
 							<li>
-								<a href="about.html"></a>
+								<a href="<?= BASE_URL ?>?action=/admin/products">Admin</a>
 							</li>
 
 							<li>
-								<a href="contact.html">Liên Hệ</a>
+								<a href="<?= BASE_URL ?>?action=/compare">So sánh</a>
 							</li>
 						</ul>
 					</div>	
@@ -191,7 +161,7 @@
 				<li>
 					<div class="right-top-bar flex-w h-full">
 						<a href="#" class="flex-c-m p-lr-10 trans-04">
-							Help & FAQs
+							Trợ giúp & Câu hỏi thường gặp
 						</a>
 
 						<a href="#" class="flex-c-m p-lr-10 trans-04">
@@ -211,35 +181,27 @@
 
 			<ul class="main-menu-m">
 				<li>
-					<a href="index.html">Home</a>
-					<ul class="sub-menu-m">
-						<li><a href="index.html">Homepage 1</a></li>
-						<li><a href="home-02.html">Homepage 2</a></li>
-						<li><a href="home-03.html">Homepage 3</a></li>
-					</ul>
-					<span class="arrow-main-menu-m">
-						<i class="fa fa-angle-right" aria-hidden="true"></i>
-					</span>
+					<a href="<?= BASE_URL ?>">Trang chủ</a>
 				</li>
 
 				<li>
-					<a href="product.html">Shop</a>
+					<a href="<?= BASE_URL ?>?action=/product">Cửa hàng</a>
 				</li>
 
 				<li>
-					<a href="shoping-cart.html" class="label1 rs1" data-label1="hot">Features</a>
+					<a href="shoping-cart.html" class="label1 rs1" data-label1="hot">Giỏ hàng</a>
 				</li>
 
 				<li>
-					<a href="blog.html">Blog</a>
+					<a href="blog.html">Danh Mục Yêu Thích</a>
 				</li>
 
 				<li>
-					<a href="about.html">About</a>
+					<a href="<?= BASE_URL ?>?action=/admin/products">Admin</a>
 				</li>
 
 				<li>
-					<a href="contact.html">Contact</a>
+					<a href="<?= BASE_URL ?>?action=/compare">So sánh</a>
 				</li>
 			</ul>
 		</div>
@@ -255,7 +217,7 @@
 					<button class="flex-c-m trans-04">
 						<i class="zmdi zmdi-search"></i>
 					</button>
-					<input class="plh3" type="text" name="search" placeholder="Search...">
+					<input class="plh3" type="text" name="search" placeholder="Tìm kiếm…">
 				</form>
 			</div>
 		</div>
@@ -300,7 +262,7 @@
 								
 							<div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
 								<a href="product.html" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-									Shop Now
+									Mua ngay
 								</a>
 							</div>
 						</div>
@@ -381,7 +343,7 @@
 
 							<div class="block1-txt-child2 p-b-4 trans-05">
 								<div class="block1-link stext-101 cl0 trans-09">
-									Shop Now
+									Mua ngay
 								</div>
 							</div>
 						</a>
@@ -447,48 +409,36 @@
 		<div class="container">
 			<div class="p-b-10">
 				<h3 class="ltext-103 cl5">
-					Product Overview
+					Sản Phẩm Nổi Bật
 				</h3>
 			</div>
 
 			<div class="flex-w flex-sb-m p-b-52">
 				<div class="flex-w flex-l-m filter-tope-group m-tb-10">
 					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
-						All Products
+						Tất cả sản phẩm
 					</button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".women">
-						Women
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".men">
-						Men
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".bag">
-						Bag
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".shoes">
-						Shoes
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
-						Watches
-					</button>
+					<?php if (!empty($categories)): ?>
+						<?php foreach ($categories as $cat): ?>
+							<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".<?= str_slug($cat['category_name']) ?>">
+								<?= htmlspecialchars($cat['category_name']) ?>
+							</button>
+						<?php endforeach; ?>
+					<?php endif; ?>
 				</div>
 
 				<div class="flex-w flex-c-m m-tb-10">
 					<div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
 						<i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
 						<i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
-						 Filter
+						 Lọc
 					</div>
 
 					<div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search">
 						<i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
 						<i class="icon-close-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
-						Search
+						 Tìm kiếm
 					</div>
 				</div>
 				
@@ -664,7 +614,7 @@
 
 						<div class="filter-col4 p-b-27">
 							<div class="mtext-102 cl2 p-b-15">
-								Tags
+								Túis
 							</div>
 
 							<div class="flex-w p-t-4 m-r--5">
@@ -694,14 +644,49 @@
 			</div>
 
 			<div class="row isotope-grid">
+				<?php if (!empty($products)): ?>
+					<?php foreach ($products as $item): ?>
+						<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item <?= str_slug($item['category_name'] ?? '') ?>">
+							<!-- Block2 -->
+							<div class="block2">
+								<div class="block2-pic hov-img0">
+									<img src="<?= BASE_ASSETS_UPLOADS . htmlspecialchars($item['image'] ?? 'product-01.jpg') ?>" alt="IMG-PRODUCT">
+
+									<a href="<?= BASE_URL ?>?action=/product-detail&id=<?= $item['id'] ?? '' ?>" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04">
+										Xem chi tiết
+									</a>
+								</div>
+
+								<div class="block2-txt flex-w flex-t p-t-14">
+									<div class="block2-txt-child1 flex-col-l ">
+										<a href="<?= BASE_URL ?>?action=/product-detail&id=<?= $item['id'] ?? '' ?>" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+											<?= htmlspecialchars($item['product_name'] ?? $item['name'] ?? 'Sản phẩm') ?>
+										</a>
+
+										<span class="stext-105 cl3">
+											<?= number_format($item['price'] ?? 0, 0, ',', '.') ?>đ
+										</span>
+									</div>
+
+									<div class="block2-txt-child2 flex-r p-t-3">
+										<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+											<img class="icon-heart1 dis-block trans-04" src="<?= BASE_URL ?>views/images/icons/icon-heart-01.png" alt="ICON">
+											<img class="icon-heart2 dis-block trans-04 ab-t-l" src="<?= BASE_URL ?>views/images/icons/icon-heart-02.png" alt="ICON">
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					<?php endforeach; ?>
+				<?php else: ?>
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
 					<!-- Block2 -->
 					<div class="block2">
 						<div class="block2-pic hov-img0">
-							<img src="views/images/product-01.jpg" alt="IMG-PRODUCT">
+							<img src="<?= BASE_URL ?>views/images/product-01.jpg" alt="IMG-PRODUCT">
 
 							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
+								Xem nhanh
 							</a>
 						</div>
 
@@ -733,7 +718,7 @@
 							<img src="views/images/product-02.jpg" alt="IMG-PRODUCT">
 
 							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
+								Xem nhanh
 							</a>
 						</div>
 
@@ -797,7 +782,7 @@
 							<img src="views/images/product-04.jpg" alt="IMG-PRODUCT">
 
 							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
+								Xem nhanh
 							</a>
 						</div>
 
@@ -1205,6 +1190,7 @@
 						</div>
 					</div>
 				</div>
+				<?php endif; ?>
 			</div>
 
 			<!-- Load more -->
@@ -1239,13 +1225,13 @@
 
 						<li class="p-b-10">
 							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-								Shoes
+								Giày
 							</a>
 						</li>
 
 						<li class="p-b-10">
 							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-								Watches
+								Đồng hồ
 							</a>
 						</li>
 					</ul>
@@ -1542,7 +1528,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
 <!--===============================================================================================-->
 <script src="<?= BASE_URL ?>views/vendor/slick/slick.min.js"></script>
-<script src="<?= BASE_URL ?>js/slick-custom.js"></script>
+<script src="<?= BASE_URL ?>views/js/slick-custom.js"></script>
 
 <!--===============================================================================================-->
 <script src="<?= BASE_URL ?>views/vendor/parallax100/parallax100.js"></script>
@@ -1570,5 +1556,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
 <!--===============================================================================================-->
 <script src="<?= BASE_URL ?>views/vendor/sweetalert/sweetalert.min.js"></script>
+<!--===============================================================================================-->
+<script src="<?= BASE_URL ?>views/js/main.js"></script>
 </body>
 </html>
