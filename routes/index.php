@@ -20,6 +20,16 @@ match ($action) {
 
     '/order-success' => (new CartController)->orderSuccess(),
 
+    '/login' => (new AuthController)->showLogin(),
+
+    '/login/submit' => (new AuthController)->login(),
+
+    '/register' => (new AuthController)->showRegister(),
+
+    '/register/submit' => (new AuthController)->register(),
+
+    '/logout' => (new AuthController)->logout(),
+
     default => (new HomeController)->index(),
     '/checkout' => (new CartController)->checkout(),
 
