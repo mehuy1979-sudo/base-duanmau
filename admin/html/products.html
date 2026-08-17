@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    // Tự động chuyển hướng sang trang quản lý động kết nối MySQL Database
+    window.location.replace("../../?action=/admin/products");
+  </script>
+  <meta name="description" content="Quản lý sản phẩm quần áo - adminHMD Seller Dashboard">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Sản Phẩm | adminHMD</title>
+
+
+  <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/vendors/bootstrap-icons/bootstrap-icons.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    /* ── Product-specific extras ────────────────────────────── */
+    .product-img-placeholder {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      flex: 0 0 auto;
+      border: 1px solid var(--admin-border);
+      background: var(--admin-surface-soft);
+      display: inline-grid;
+      place-items: center;
+      color: var(--admin-muted);
+      font-size: 1.2rem;
+    }
+
+    .size-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.18rem 0.5rem;
+      border: 1px solid var(--admin-border);
+      border-radius: 6px;
+      background: var(--admin-surface-soft);
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--admin-text);
+    }
+
+    .color-dot {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0,0,0,0.14);
+      vertical-align: middle;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-tab {
+      padding: 0.3rem 0.85rem;
+      border: 1px solid var(--admin-border);
+      border-radius: 20px;
+      background: var(--admin-surface);
+      color: var(--admin-muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      white-space: nowrap;
+    }
+
+    .filter-tab:hover {
+      border-color: var(--admin-primary);
+      color: var(--admin-primary);
+    }
+
+    .filter-tab.active {
+      border-color: var(--admin-primary);
+      background: var(--admin-primary);
+      color: #ffffff;
+    }
+
+    .stock-bar {
+      height: 6px;
+      border-radius: 999px;
+      background: var(--admin-border);
+      overflow: hidden;
+      min-width: 64px;
+    }
+
+    .stock-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .action-btn-group {
+      display: flex;
+      gap: 0.35rem;
+      justify-content: flex-end;
+    }
+
+    .btn-icon-sm {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+
+    .upload-zone {
+      border: 2px dashed var(--admin-border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.16s ease, background 0.16s ease;
+    }
+
+    .upload-zone:hover {
+      border-color: var(--admin-primary);
+      background: #eaf2ff;
+    }
+
+    html[data-theme="dark"] .upload-zone:hover {
+      background: #1e3a5f;
+    }
+
+    .upload-zone .upload-icon {
+      font-size: 2rem;
+      color: var(--admin-muted);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Color checkbox group */
+    .color-option {
+      position: relative;
+    }
+
+    .color-option input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .color-option label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.25rem 0.6rem;
+      border: 1.5px solid var(--admin-border);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.14s ease;
+      white-space: nowrap;
+    }
+
+    .color-option input:checked + label {
+      border-color: var(--admin-primary);
+      background: #eaf2ff;
+      color: var(--admin-primary-dark);
+    }
+
+    html[data-theme="dark"] .color-option input:checked + label {
+      background: #1e3a5f;
+      color: #bfdbfe;
+    }
+
+    /* Size checkbox group */
+    .size-option {
+      position: relative;
+    }
+
+    .size-option input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .size-option label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+      padding: 0.3rem 0.5rem;
+      border: 1.5px solid var(--admin-border);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 700;
+      transition: all 0.14s ease;
+    }
+
+    .size-option input:checked + label {
+      border-color: var(--admin-primary);
+      background: var(--admin-primary);
+      color: #ffffff;
+    }
+
+    /* Delete confirm modal */
+    .delete-confirm-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #ffecec;
+      display: inline-grid;
+      place-items: center;
+      font-size: 1.8rem;
+      color: var(--admin-danger);
+      margin-bottom: 1rem;
+    }
+
+    html[data-theme="dark"] .delete-confirm-icon {
+      background: rgba(220,38,38,0.16);
+    }
+
+    /* Toast stack */
+    .toast-stack {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      z-index: 9999;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    /* Panel header flex fix */
+    .panel-header-col {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+    }
+
+    .panel-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="admin-shell">
+    <div class="sidebar-backdrop" data-sidebar-close></div>
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
+      <div class="sidebar-header">
+        <a class="brand-mark" href="index.html" aria-label="adminHMD dashboard">
+          <span class="brand-icon"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i></span>
+          <span class="brand-copy">
+            <span class="brand-title">adminHMD</span>
+            <span class="brand-subtitle">Seller Dashboard</span>
+          </span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-link" href="index.html">
+          <span class="nav-icon"><i class="bi bi-speedometer2" aria-hidden="true"></i></span>
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a class="nav-link active" href="products.html" aria-current="page">
+          <span class="nav-icon"><i class="bi bi-bag-heart" aria-hidden="true"></i></span>
+          <span class="nav-text">Sản Phẩm</span>
+        </a>
+        <a class="nav-link" href="users.html">
+          <span class="nav-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
+          <span class="nav-text">Users</span>
+        </a>
+        <a class="nav-link" href="add-user.html">
+          <span class="nav-icon"><i class="bi bi-person-plus" aria-hidden="true"></i></span>
+          <span class="nav-text">Add User</span>
+        </a>
+        <a class="nav-link" href="profile.html">
+          <span class="nav-icon"><i class="bi bi-person-badge" aria-hidden="true"></i></span>
+          <span class="nav-text">Profile</span>
+        </a>
+        <a class="nav-link" href="charts.html">
+          <span class="nav-icon"><i class="bi bi-bar-chart-line" aria-hidden="true"></i></span>
+          <span class="nav-text">Charts</span>
+        </a>
+        <a class="nav-link" href="tables.html">
+          <span class="nav-icon"><i class="bi bi-table" aria-hidden="true"></i></span>
+          <span class="nav-text">Tables</span>
+        </a>
+        <a class="nav-link" href="settings.html">
+          <span class="nav-icon"><i class="bi bi-gear" aria-hidden="true"></i></span>
+          <span class="nav-text">Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-user">
+        <img class="avatar-img avatar-md sidebar-user-avatar" src="../assets/images/avatar/avatar.jpg" alt="Admin Hasan">
+        <strong>Admin Hasan</strong>
+        <small>Active Workspace</small>
+      </div>
+
+      <div class="sidebar-footer">
+        <span class="status-dot"></span>
+        <span class="sidebar-footer-text">System running smoothly</span>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="admin-main">
+
+      <!-- Navbar -->
+      <nav class="navbar admin-navbar navbar-expand bg-white">
+        <div class="container-fluid px-3 px-lg-4">
+          <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-controls="adminSidebar" aria-expanded="true" aria-label="Toggle sidebar">
+            <span></span><span></span><span></span>
+          </button>
+
+          <form class="d-none d-md-flex ms-3 flex-grow-1" role="search">
+            <input class="form-control search-input" type="search" placeholder="Tìm sản phẩm, SKU, thương hiệu..." aria-label="Search">
+          </form>
+
+          <div class="navbar-actions ms-auto">
+            <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme" title="Switch color theme">
+              <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i>
+            </button>
+
+            <div class="dropdown">
+              <button class="icon-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+                <span class="notification-dot"></span>
+                <i class="bi bi-bell" aria-hidden="true"></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-end notification-menu">
+                <div class="dropdown-header fw-bold text-body">Thông báo</div>
+                <a class="dropdown-item" href="#">
+                  <span class="notification-title">Sản phẩm hết hàng: Áo thun basic trắng</span>
+                  <span class="notification-time">5 phút trước</span>
+                </a>
+                <a class="dropdown-item" href="#">
+                  <span class="notification-title">Đơn hàng mới #DH-4521</span>
+                  <span class="notification-time">22 phút trước</span>
+                </a>
+                <a class="dropdown-item" href="#">
+                  <span class="notification-title">Doanh thu tháng vượt mục tiêu</span>
+                  <span class="notification-time">2 giờ trước</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="dropdown">
+              <button class="profile-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="avatar-img avatar-sm" src="../assets/images/avatar/avatar.jpg" alt="Admin Hasan">
+                <span class="profile-name d-none d-sm-inline">Admin Hasan</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="profile.html">Hồ sơ</a></li>
+                <li><a class="dropdown-item" href="settings.html">Cài đặt tài khoản</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="login.html">Đăng xuất</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Content -->
+      <main class="dashboard-content">
+        <div class="container-fluid px-3 px-lg-4 py-4">
+
+          <!-- Page heading -->
+          <div class="page-heading">
+            <div class="page-heading-copy">
+              <span class="page-icon"><i class="bi bi-bag-heart" aria-hidden="true"></i></span>
+              <div>
+                <p class="eyebrow mb-1">Seller</p>
+                <h1 class="h3 mb-1">Quản Lý Sản Phẩm</h1>
+                <p class="text-muted mb-0">Thêm, chỉnh sửa và quản lý toàn bộ danh mục quần áo của bạn.</p>
+              </div>
+            </div>
+            <div class="heading-actions">
+              <button class="btn btn-outline-secondary btn-sm" type="button" id="btnExport">
+                <i class="bi bi-download" aria-hidden="true"></i> Xuất Excel
+              </button>
+              <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#modalAddProduct" id="btnAddProduct">
+                <i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm Sản Phẩm
+              </button>
+            </div>
+          </div>
+
+          <!-- Metric Cards -->
+          <section class="row g-3 mt-1" aria-label="Product metrics">
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="metric-card metric-primary">
+                <div class="metric-top">
+                  <span class="metric-label">Tổng Sản Phẩm</span>
+                  <span class="metric-icon"><i class="bi bi-bag-heart" aria-hidden="true"></i></span>
+                </div>
+                <div class="metric-value">248</div>
+                <div class="metric-meta">
+                  <span class="text-success">+14</span>
+                  <span>tháng này</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="metric-card metric-success">
+                <div class="metric-top">
+                  <span class="metric-label">Đang Bán</span>
+                  <span class="metric-icon"><i class="bi bi-check2-circle" aria-hidden="true"></i></span>
+                </div>
+                <div class="metric-value">196</div>
+                <div class="metric-meta">
+                  <span class="text-success">79%</span>
+                  <span>đang hoạt động</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="metric-card metric-danger">
+                <div class="metric-top">
+                  <span class="metric-label">Hết Hàng</span>
+                  <span class="metric-icon"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i></span>
+                </div>
+                <div class="metric-value">18</div>
+                <div class="metric-meta">
+                  <span class="text-danger">5 khẩn</span>
+                  <span>cần nhập thêm</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="metric-card metric-warning">
+                <div class="metric-top">
+                  <span class="metric-label">Doanh Thu</span>
+                  <span class="metric-icon"><i class="bi bi-currency-dollar" aria-hidden="true"></i></span>
+                </div>
+                <div class="metric-value">128tr</div>
+                <div class="metric-meta">
+                  <span class="text-success">+18.4%</span>
+                  <span>so với tháng trước</span>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <!-- Product Table Panel -->
+          <section class="panel mt-3">
+            <div class="panel-header panel-header-col">
+              <div class="panel-header-top">
+                <div>
+                  <h2 class="h5 mb-1 section-title"><i class="bi bi-bag-heart" aria-hidden="true"></i><span>Danh Sách Sản Phẩm</span></h2>
+                  <p class="text-muted mb-0">Tìm kiếm, lọc và quản lý tất cả sản phẩm quần áo.</p>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                  <input class="form-control form-control-sm" type="search"
+                    placeholder="Tìm sản phẩm..." id="productSearchInput"
+                    aria-label="Search products" style="min-width:180px;">
+                  <select class="form-select form-select-sm" id="stockFilter" style="min-width:145px;">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="active">Đang bán</option>
+                    <option value="out">Hết hàng</option>
+                    <option value="hidden">Ẩn</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Category filter tabs -->
+              <div class="filter-tabs" id="categoryTabs" role="tablist" aria-label="Lọc theo danh mục">
+                <button class="filter-tab active" data-category="all" role="tab" aria-selected="true">Tất cả</button>
+                <button class="filter-tab" data-category="ao" role="tab" aria-selected="false">Áo</button>
+                <button class="filter-tab" data-category="quan" role="tab" aria-selected="false">Quần</button>
+                <button class="filter-tab" data-category="vay" role="tab" aria-selected="false">Váy / Đầm</button>
+                <button class="filter-tab" data-category="phukien" role="tab" aria-selected="false">Phụ Kiện</button>
+                <button class="filter-tab" data-category="giay" role="tab" aria-selected="false">Giày / Dép</button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table align-middle mb-0" id="productsTable">
+                <thead>
+                  <tr>
+                    <th scope="col" style="width:36px;">
+                      <input class="form-check-input" type="checkbox" id="selectAllProducts" title="Chọn tất cả">
+                    </th>
+                    <th scope="col">Sản Phẩm</th>
+                    <th scope="col">Danh Mục</th>
+                    <th scope="col">Size</th>
+                    <th scope="col">Màu</th>
+                    <th scope="col">Giá Bán</th>
+                    <th scope="col">Tồn Kho</th>
+                    <th scope="col">Trạng Thái</th>
+                    <th scope="col" class="text-end">Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="productsTableBody">
+
+                  <!-- Product 1 -->
+                  <tr data-category="ao" data-status="active">
+                    <td><input class="form-check-input row-check" type="checkbox"></td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="product-img-placeholder"><i class="bi bi-image"></i></span>
+                        <div>
+                          <p class="fw-semibold mb-0" style="white-space:nowrap;">Áo Thun Basic Unisex</p>
+                          <p class="text-muted small mb-0">SKU: AT-001 &middot; GEN Z</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="badge text-bg-primary">Áo</span></td>
+                    <td>
+                      <span class="size-tag">S</span> <span class="size-tag">M</span> <span class="size-tag">L</span> <span class="size-tag">XL</span>
+                    </td>
+                    <td>
+                      <span class="color-dot" style="background:#fff;border-color:#ccc;" title="Trắng"></span>
+                      <span class="color-dot" style="background:#1a1a1a;" title="Đen"></span>
+                      <span class="color-dot" style="background:#c0392b;" title="Đỏ"></span>
+                    </td>
+                    <td>
+                      <span class="fw-bold">150.000₫</span>
+                      <small class="text-muted d-block text-decoration-line-through">200.000₫</small>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="stock-bar"><div class="stock-bar-fill bg-success" style="width:72%"></div></div>
+                        <span class="small fw-semibold">144</span>
+                      </div>
+                    </td>
+                    <td><span class="badge text-bg-success">Đang bán</span></td>
+                    <td>
+                      <div class="action-btn-group">
+                        <button class="btn btn-light btn-sm btn-icon-sm" type="button" title="Xem"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-primary btn-sm btn-icon-sm btn-edit-product" type="button" title="Sửa"
+                          data-name="Áo Thun Basic Unisex" data-sku="AT-001" data-brand="GEN Z"
+                          data-category="ao" data-gender="unisex" data-price="150000" data-original-price="200000"
+                          data-stock="144" data-status="active"
+                          data-description="Áo thun basic form rộng, chất liệu cotton 100%, thoáng mát."
+                          data-sizes="S,M,L,XL" data-colors="Trắng,Đen,Đỏ"
+                          data-bs-toggle="modal" data-bs-target="#modalEditProduct">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm btn-icon-sm btn-delete-product" type="button" title="Xóa"
+                          data-name="Áo Thun Basic Unisex" data-sku="AT-001"
+                          data-bs-toggle="modal" data-bs-target="#modalDeleteProduct">
+                          <i class="bi bi-trash3"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Product 2 -->
+                  <tr data-category="quan" data-status="active">
+                    <td><input class="form-check-input row-check" type="checkbox"></td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="product-img-placeholder"><i class="bi bi-image"></i></span>
+                        <div>
+                          <p class="fw-semibold mb-0" style="white-space:nowrap;">Quần Jean Slim Fit Nam</p>
+                          <p class="text-muted small mb-0">SKU: QJ-012 &middot; DENIM CO.</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="badge text-bg-info">Quần</span></td>
+                    <td>
+                      <span class="size-tag">29</span> <span class="size-tag">30</span> <span class="size-tag">31</span> <span class="size-tag">32</span>
+                    </td>
+                    <td>
+                      <span class="color-dot" style="background:#1a3a6e;" title="Xanh đậm"></span>
+                      <span class="color-dot" style="background:#7f8c8d;" title="Xám"></span>
+                    </td>
+                    <td>
+                      <span class="fw-bold">380.000₫</span>
+                      <small class="text-muted d-block">Giá gốc</small>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="stock-bar"><div class="stock-bar-fill bg-success" style="width:55%"></div></div>
+                        <span class="small fw-semibold">87</span>
+                      </div>
+                    </td>
+                    <td><span class="badge text-bg-success">Đang bán</span></td>
+                    <td>
+                      <div class="action-btn-group">
+                        <button class="btn btn-light btn-sm btn-icon-sm" type="button" title="Xem"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-primary btn-sm btn-icon-sm btn-edit-product" type="button" title="Sửa"
+                          data-name="Quần Jean Slim Fit Nam" data-sku="QJ-012" data-brand="DENIM CO."
+                          data-category="quan" data-gender="nam" data-price="380000" data-original-price="380000"
+                          data-stock="87" data-status="active"
+                          data-description="Quần jean slim fit form chuẩn, chất liệu denim co giãn."
+                          data-sizes="29,30,31,32" data-colors="Xanh đậm,Xám"
+                          data-bs-toggle="modal" data-bs-target="#modalEditProduct">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm btn-icon-sm btn-delete-product" type="button" title="Xóa"
+                          data-name="Quần Jean Slim Fit Nam" data-sku="QJ-012"
+                          data-bs-toggle="modal" data-bs-target="#modalDeleteProduct">
+                          <i class="bi bi-trash3"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Product 3 -->
+                  <tr data-category="vay" data-status="active">
+                    <td><input class="form-check-input row-check" type="checkbox"></td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="product-img-placeholder"><i class="bi bi-image"></i></span>
+                        <div>
+                          <p class="fw-semibold mb-0" style="white-space:nowrap;">Đầm Maxi Hoa Nữ</p>
+                          <p class="text-muted small mb-0">SKU: DM-088 &middot; BLOOM</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="badge text-bg-warning">Váy / Đầm</span></td>
+                    <td>
+                      <span class="size-tag">S</span> <span class="size-tag">M</span> <span class="size-tag">L</span>
+                    </td>
+                    <td>
+                      <span class="color-dot" style="background:#f39c12;" title="Vàng"></span>
+                      <span class="color-dot" style="background:#e91e63;" title="Hồng"></span>
+                      <span class="color-dot" style="background:#8e44ad;" title="Tím"></span>
+                    </td>
+                    <td>
+                      <span class="fw-bold">520.000₫</span>
+                      <small class="text-muted d-block text-decoration-line-through">680.000₫</small>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="stock-bar"><div class="stock-bar-fill bg-warning" style="width:22%"></div></div>
+                        <span class="small fw-semibold">18</span>
+                      </div>
+                    </td>
+                    <td><span class="badge text-bg-success">Đang bán</span></td>
+                    <td>
+                      <div class="action-btn-group">
+                        <button class="btn btn-light btn-sm btn-icon-sm" type="button" title="Xem"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-primary btn-sm btn-icon-sm btn-edit-product" type="button" title="Sửa"
+                          data-name="Đầm Maxi Hoa Nữ" data-sku="DM-088" data-brand="BLOOM"
+                          data-category="vay" data-gender="nu" data-price="520000" data-original-price="680000"
+                          data-stock="18" data-status="active"
+                          data-description="Đầm maxi họa tiết hoa tươi, chất vải lụa mềm mại."
+                          data-sizes="S,M,L" data-colors="Vàng,Hồng,Tím"
+                          data-bs-toggle="modal" data-bs-target="#modalEditProduct">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm btn-icon-sm btn-delete-product" type="button" title="Xóa"
+                          data-name="Đầm Maxi Hoa Nữ" data-sku="DM-088"
+                          data-bs-toggle="modal" data-bs-target="#modalDeleteProduct">
+                          <i class="bi bi-trash3"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Product 4 - Out of stock -->
+                  <tr data-category="ao" data-status="out">
+                    <td><input class="form-check-input row-check" type="checkbox"></td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="product-img-placeholder"><i class="bi bi-image"></i></span>
+                        <div>
+                          <p class="fw-semibold mb-0" style="white-space:nowrap;">Áo Khoác Bomber Unisex</p>
+                          <p class="text-muted small mb-0">SKU: AK-034 &middot; STREET</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="badge text-bg-primary">Áo</span></td>
+                    <td>
+                      <span class="size-tag">M</span> <span class="size-tag">L</span> <span class="size-tag">XL</span>
+                    </td>
+                    <td>
+                      <span class="color-dot" style="background:#2d3436;" title="Xanh rêu"></span>
+                      <span class="color-dot" style="background:#e17055;" title="Cam đất"></span>
+                    </td>
+                    <td>
+                      <span class="fw-bold">750.000₫</span>
+                      <small class="text-muted d-block">Giá gốc</small>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="stock-bar"><div class="stock-bar-fill bg-danger" style="width:0%"></div></div>
+                        <span class="small fw-semibold text-danger">0</span>
+                      </div>
+                    </td>
+                    <td><span class="badge text-bg-danger">Hết hàng</span></td>
+                    <td>
+                      <div class="action-btn-group">
+                        <button class="btn btn-light btn-sm btn-icon-sm" type="button" title="Xem"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-primary btn-sm btn-icon-sm btn-edit-product" type="button" title="Sửa"
+                          data-name="Áo Khoác Bomber Unisex" data-sku="AK-034" data-brand="STREET"
+                          data-category="ao" data-gender="unisex" data-price="750000" data-original-price="750000"
+                          data-stock="0" data-status="out"
+                          data-description="Áo khoác bomber form rộng streetwear."
+                          data-sizes="M,L,XL" data-colors="Cam"
+                          data-bs-toggle="modal" data-bs-target="#modalEditProduct">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm btn-icon-sm btn-delete-product" type="button" title="Xóa"
+                          data-name="Áo Khoác Bomber Unisex" data-sku="AK-034"
+                          data-bs-toggle="modal" data-bs-target="#modalDeleteProduct">
+                          <i class="bi bi-trash3"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Product 5 - Hidden -->
+                  <tr data-category="phukien" data-status="hidden">
+                    <td><input class="form-check-input row-check" type="checkbox"></td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="product-img-placeholder"><i class="bi bi-image"></i></span>
+                        <div>
+                          <p class="fw-semibold mb-0" style="white-space:nowrap;">Túi Tote Vải Canvas</p>
+                          <p class="text-muted small mb-0">SKU: TT-056 &middot; ECO BAG</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="badge text-bg-secondary">Phụ Kiện</span></td>
+                    <td>
+                      <span class="size-tag">Free</span>
+                    </td>
+                    <td>
+                      <span class="color-dot" style="background:#ecf0f1;border-color:#ccc;" title="Kem"></span>
+                      <span class="color-dot" style="background:#1a1a1a;" title="Đen"></span>
+                    </td>
+                    <td>
+                      <span class="fw-bold">95.000₫</span>
+                      <small class="text-muted d-block">Giá gốc</small>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="stock-bar"><div class="stock-bar-fill bg-success" style="width:90%"></div></div>
+                        <span class="small fw-semibold">213</span>
+                      </div>
+                    </td>
+                    <td><span class="badge text-bg-secondary">Ẩn</span></td>
+                    <td>
+                      <div class="action-btn-group">
+                        <button class="btn btn-light btn-sm btn-icon-sm" type="button" title="Xem"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-primary btn-sm btn-icon-sm btn-edit-product" type="button" title="Sửa"
+                          data-name="Túi Tote Vải Canvas" data-sku="TT-056" data-brand="ECO BAG"
+                          data-category="phukien" data-gender="unisex" data-price="95000" data-original-price="95000"
+                          data-stock="213" data-status="hidden"
+                          data-description="Túi tote canvas thân thiện môi trường."
+                          data-sizes="Free" data-colors="Kem,Đen"
+                          data-bs-toggle="modal" data-bs-target="#modalEditProduct">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm btn-icon-sm btn-delete-product" type="button" title="Xóa"
+                          data-name="Túi Tote Vải Canvas" data-sku="TT-056"
+                          data-bs-toggle="modal" data-bs-target="#modalDeleteProduct">
+                          <i class="bi bi-trash3"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Product 6 -->
+                  <tr data-category="giay" data-status="active">
+                    <td><input class="form-check-input row-check" type="checkbox"></td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="product-img-placeholder"><i class="bi bi-image"></i></span>
+                        <div>
+                          <p class="fw-semibold mb-0" style="white-space:nowrap;">Giày Sneaker Low Top</p>
+                          <p class="text-muted small mb-0">SKU: GS-099 &middot; KICKS</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="badge" style="background:#6f42c1;color:#fff;">Giày / Dép</span></td>
+                    <td>
+                      <span class="size-tag">38</span> <span class="size-tag">39</span> <span class="size-tag">40</span> <span class="size-tag">41</span> <span class="size-tag">42</span>
+                    </td>
+                    <td>
+                      <span class="color-dot" style="background:#fff;border-color:#ccc;" title="Trắng"></span>
+                      <span class="color-dot" style="background:#1a1a1a;" title="Đen"></span>
+                    </td>
+                    <td>
+                      <span class="fw-bold">890.000₫</span>
+                      <small class="text-muted d-block text-decoration-line-through">1.100.000₫</small>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="stock-bar"><div class="stock-bar-fill bg-success" style="width:45%"></div></div>
+                        <span class="small fw-semibold">63</span>
+                      </div>
+                    </td>
+                    <td><span class="badge text-bg-success">Đang bán</span></td>
+                    <td>
+                      <div class="action-btn-group">
+                        <button class="btn btn-light btn-sm btn-icon-sm" type="button" title="Xem"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-primary btn-sm btn-icon-sm btn-edit-product" type="button" title="Sửa"
+                          data-name="Giày Sneaker Low Top" data-sku="GS-099" data-brand="KICKS"
+                          data-category="giay" data-gender="unisex" data-price="890000" data-original-price="1100000"
+                          data-stock="63" data-status="active"
+                          data-description="Giày sneaker low top classic, đế cao su bền bỉ."
+                          data-sizes="38,39,40,41,42" data-colors="Trắng,Đen"
+                          data-bs-toggle="modal" data-bs-target="#modalEditProduct">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm btn-icon-sm btn-delete-product" type="button" title="Xóa"
+                          data-name="Giày Sneaker Low Top" data-sku="GS-099"
+                          data-bs-toggle="modal" data-bs-target="#modalDeleteProduct">
+                          <i class="bi bi-trash3"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 mt-3">
+              <p class="text-muted small mb-0" id="paginationInfo">Hiển thị 1–6 trong số 248 sản phẩm</p>
+              <nav aria-label="Phân trang sản phẩm">
+                <ul class="pagination pagination-sm mb-0">
+                  <li class="page-item disabled"><a class="page-link" href="#">Trước</a></li>
+                  <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item"><a class="page-link" href="#">Sau</a></li>
+                </ul>
+              </nav>
+            </div>
+          </section>
+
+        </div>
+      </main>
+
+      <footer class="admin-footer">
+        <div class="container-fluid px-3 px-lg-4">
+          <span>Copyright 2026 adminHMD &mdash; Seller Dashboard</span>
+          <span>Quản lý sản phẩm quần áo.</span>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════
+       MODAL: THÊM SẢN PHẨM
+  ═══════════════════════════ -->
+  <div class="modal fade" id="modalAddProduct" tabindex="-1" aria-labelledby="lblAddProduct" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="lblAddProduct">
+            <i class="bi bi-plus-circle me-2 text-primary" aria-hidden="true"></i>Thêm Sản Phẩm Mới
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formAddProduct" class="needs-validation" novalidate>
+            <div class="row g-3">
+
+              <div class="col-12"><p class="eyebrow mb-0">Thông Tin Cơ Bản</p></div>
+
+              <div class="col-12 col-md-8">
+                <label class="form-label" for="addProductName">Tên sản phẩm <span class="text-danger">*</span></label>
+                <input class="form-control" id="addProductName" type="text" placeholder="VD: Áo thun basic unisex" required>
+                <div class="invalid-feedback">Vui lòng nhập tên sản phẩm.</div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label" for="addProductSKU">Mã SKU <span class="text-danger">*</span></label>
+                <input class="form-control" id="addProductSKU" type="text" placeholder="VD: AT-001" required>
+                <div class="invalid-feedback">Vui lòng nhập mã SKU.</div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label" for="addProductCategory">Danh mục <span class="text-danger">*</span></label>
+                <select class="form-select" id="addProductCategory" required>
+                  <option value="">-- Chọn danh mục --</option>
+                  <option value="ao">Áo</option>
+                  <option value="quan">Quần</option>
+                  <option value="vay">Váy / Đầm</option>
+                  <option value="phukien">Phụ Kiện</option>
+                  <option value="giay">Giày / Dép</option>
+                </select>
+                <div class="invalid-feedback">Vui lòng chọn danh mục.</div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label" for="addProductBrand">Thương hiệu</label>
+                <input class="form-control" id="addProductBrand" type="text" placeholder="VD: GEN Z, BLOOM...">
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label" for="addProductGender">Giới tính</label>
+                <select class="form-select" id="addProductGender">
+                  <option value="unisex">Unisex</option>
+                  <option value="nam">Nam</option>
+                  <option value="nu">Nữ</option>
+                  <option value="tre_em">Trẻ em</option>
+                </select>
+              </div>
+
+              <div class="col-12 mt-1"><p class="eyebrow mb-0">Giá &amp; Tồn Kho</p></div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label" for="addProductPrice">Giá bán (₫) <span class="text-danger">*</span></label>
+                <input class="form-control" id="addProductPrice" type="number" min="0" step="1000" placeholder="150000" required>
+                <div class="invalid-feedback">Vui lòng nhập giá bán.</div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label" for="addProductOriginalPrice">Giá gốc (₫)</label>
+                <input class="form-control" id="addProductOriginalPrice" type="number" min="0" step="1000" placeholder="200000">
+                <div class="form-text">Để trống nếu không giảm giá.</div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label" for="addProductStock">Tồn kho <span class="text-danger">*</span></label>
+                <input class="form-control" id="addProductStock" type="number" min="0" placeholder="100" required>
+                <div class="invalid-feedback">Vui lòng nhập số lượng.</div>
+              </div>
+
+              <!-- Size checkboxes -->
+              <div class="col-12 mt-1">
+                <p class="eyebrow mb-2">Size</p>
+                <div class="d-flex flex-wrap gap-2">
+                  <div class="size-option"><input type="checkbox" id="addSizeXS" value="XS"><label for="addSizeXS">XS</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSizeS"  value="S"><label for="addSizeS">S</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSizeM"  value="M"><label for="addSizeM">M</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSizeL"  value="L"><label for="addSizeL">L</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSizeXL" value="XL"><label for="addSizeXL">XL</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSizeXXL" value="XXL"><label for="addSizeXXL">XXL</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSizeFree" value="Free"><label for="addSizeFree">Free</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSize28" value="28"><label for="addSize28">28</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSize29" value="29"><label for="addSize29">29</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSize30" value="30"><label for="addSize30">30</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSize31" value="31"><label for="addSize31">31</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSize32" value="32"><label for="addSize32">32</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSize38" value="38"><label for="addSize38">38</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSize39" value="39"><label for="addSize39">39</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSize40" value="40"><label for="addSize40">40</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSize41" value="41"><label for="addSize41">41</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSize42" value="42"><label for="addSize42">42</label></div>
+                  <div class="size-option"><input type="checkbox" id="addSize43" value="43"><label for="addSize43">43</label></div>
+                </div>
+              </div>
+
+              <!-- Color checkboxes -->
+              <div class="col-12 mt-1">
+                <p class="eyebrow mb-2">Màu Sắc</p>
+                <div class="d-flex flex-wrap gap-2">
+                  <div class="color-option"><input type="checkbox" id="addColW" value="Trắng"><label for="addColW"><span class="color-dot" style="background:#fff;border-color:#ccc;"></span> Trắng</label></div>
+                  <div class="color-option"><input type="checkbox" id="addColB" value="Đen"><label for="addColB"><span class="color-dot" style="background:#1a1a1a;"></span> Đen</label></div>
+                  <div class="color-option"><input type="checkbox" id="addColR" value="Đỏ"><label for="addColR"><span class="color-dot" style="background:#c0392b;"></span> Đỏ</label></div>
+                  <div class="color-option"><input type="checkbox" id="addColBl" value="Xanh dương"><label for="addColBl"><span class="color-dot" style="background:#2980b9;"></span> Xanh dương</label></div>
+                  <div class="color-option"><input type="checkbox" id="addColNv" value="Xanh đậm"><label for="addColNv"><span class="color-dot" style="background:#1a3a6e;"></span> Xanh đậm</label></div>
+                  <div class="color-option"><input type="checkbox" id="addColGr" value="Xanh lá"><label for="addColGr"><span class="color-dot" style="background:#27ae60;"></span> Xanh lá</label></div>
+                  <div class="color-option"><input type="checkbox" id="addColY" value="Vàng"><label for="addColY"><span class="color-dot" style="background:#f39c12;"></span> Vàng</label></div>
+                  <div class="color-option"><input type="checkbox" id="addColPk" value="Hồng"><label for="addColPk"><span class="color-dot" style="background:#e91e63;"></span> Hồng</label></div>
+                  <div class="color-option"><input type="checkbox" id="addColPp" value="Tím"><label for="addColPp"><span class="color-dot" style="background:#8e44ad;"></span> Tím</label></div>
+                  <div class="color-option"><input type="checkbox" id="addColGy" value="Xám"><label for="addColGy"><span class="color-dot" style="background:#7f8c8d;"></span> Xám</label></div>
+                  <div class="color-option"><input type="checkbox" id="addColBr" value="Nâu"><label for="addColBr"><span class="color-dot" style="background:#795548;"></span> Nâu</label></div>
+                  <div class="color-option"><input type="checkbox" id="addColOr" value="Cam"><label for="addColOr"><span class="color-dot" style="background:#e17055;"></span> Cam</label></div>
+                  <div class="color-option"><input type="checkbox" id="addColBg" value="Kem"><label for="addColBg"><span class="color-dot" style="background:#ecf0f1;border-color:#ccc;"></span> Kem</label></div>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="col-12 mt-1">
+                <label class="form-label" for="addProductDesc">Mô tả sản phẩm</label>
+                <textarea class="form-control" id="addProductDesc" rows="3" placeholder="Chất liệu, công dụng, hướng dẫn sử dụng..."></textarea>
+              </div>
+
+              <!-- Image upload -->
+              <div class="col-12 mt-1">
+                <p class="eyebrow mb-2">Hình Ảnh</p>
+                <label class="upload-zone d-block" for="addProductImages">
+                  <span class="upload-icon"><i class="bi bi-cloud-upload" aria-hidden="true"></i></span>
+                  <p class="mb-1 fw-semibold">Kéo thả hoặc click để tải ảnh</p>
+                  <p class="text-muted small mb-0">PNG, JPG, WEBP &mdash; Tối đa 5MB mỗi ảnh</p>
+                  <input type="file" id="addProductImages" multiple accept="image/*" style="display:none;">
+                </label>
+                <div id="addImagePreview" class="d-flex flex-wrap gap-2 mt-2"></div>
+              </div>
+
+              <!-- Status -->
+              <div class="col-12 col-md-6 mt-1">
+                <label class="form-label" for="addProductStatus">Trạng thái</label>
+                <select class="form-select" id="addProductStatus">
+                  <option value="active">Đang bán</option>
+                  <option value="hidden">Ẩn</option>
+                  <option value="out">Hết hàng</option>
+                </select>
+              </div>
+
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Huỷ</button>
+          <button type="button" class="btn btn-primary" id="btnSubmitAdd">
+            <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Thêm Sản Phẩm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════
+       MODAL: SỬA SẢN PHẨM
+  ═══════════════════════════ -->
+  <div class="modal fade" id="modalEditProduct" tabindex="-1" aria-labelledby="lblEditProduct" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="lblEditProduct">
+            <i class="bi bi-pencil-square me-2 text-primary" aria-hidden="true"></i>Chỉnh Sửa Sản Phẩm
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formEditProduct" class="needs-validation" novalidate>
+            <div class="row g-3">
+
+              <div class="col-12"><p class="eyebrow mb-0">Thông Tin Cơ Bản</p></div>
+
+              <div class="col-12 col-md-8">
+                <label class="form-label" for="editProductName">Tên sản phẩm <span class="text-danger">*</span></label>
+                <input class="form-control" id="editProductName" type="text" required>
+                <div class="invalid-feedback">Vui lòng nhập tên sản phẩm.</div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label" for="editProductSKU">Mã SKU <span class="text-danger">*</span></label>
+                <input class="form-control" id="editProductSKU" type="text" required>
+                <div class="invalid-feedback">Vui lòng nhập mã SKU.</div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label" for="editProductCategory">Danh mục <span class="text-danger">*</span></label>
+                <select class="form-select" id="editProductCategory" required>
+                  <option value="">-- Chọn danh mục --</option>
+                  <option value="ao">Áo</option>
+                  <option value="quan">Quần</option>
+                  <option value="vay">Váy / Đầm</option>
+                  <option value="phukien">Phụ Kiện</option>
+                  <option value="giay">Giày / Dép</option>
+                </select>
+                <div class="invalid-feedback">Vui lòng chọn danh mục.</div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label" for="editProductBrand">Thương hiệu</label>
+                <input class="form-control" id="editProductBrand" type="text">
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label" for="editProductGender">Giới tính</label>
+                <select class="form-select" id="editProductGender">
+                  <option value="unisex">Unisex</option>
+                  <option value="nam">Nam</option>
+                  <option value="nu">Nữ</option>
+                  <option value="tre_em">Trẻ em</option>
+                </select>
+              </div>
+
+              <div class="col-12 mt-1"><p class="eyebrow mb-0">Giá &amp; Tồn Kho</p></div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label" for="editProductPrice">Giá bán (₫) <span class="text-danger">*</span></label>
+                <input class="form-control" id="editProductPrice" type="number" min="0" step="1000" required>
+                <div class="invalid-feedback">Vui lòng nhập giá bán.</div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label" for="editProductOriginalPrice">Giá gốc (₫)</label>
+                <input class="form-control" id="editProductOriginalPrice" type="number" min="0" step="1000">
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label" for="editProductStock">Tồn kho <span class="text-danger">*</span></label>
+                <input class="form-control" id="editProductStock" type="number" min="0" required>
+                <div class="invalid-feedback">Vui lòng nhập số lượng.</div>
+              </div>
+
+              <!-- Edit Size -->
+              <div class="col-12 mt-1">
+                <p class="eyebrow mb-2">Size</p>
+                <div class="d-flex flex-wrap gap-2" id="editSizeGroup">
+                  <div class="size-option"><input type="checkbox" id="eSzXS" value="XS"><label for="eSzXS">XS</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSzS"  value="S"><label for="eSzS">S</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSzM"  value="M"><label for="eSzM">M</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSzL"  value="L"><label for="eSzL">L</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSzXL" value="XL"><label for="eSzXL">XL</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSzXXL" value="XXL"><label for="eSzXXL">XXL</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSzFr" value="Free"><label for="eSzFr">Free</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSz28" value="28"><label for="eSz28">28</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSz29" value="29"><label for="eSz29">29</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSz30" value="30"><label for="eSz30">30</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSz31" value="31"><label for="eSz31">31</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSz32" value="32"><label for="eSz32">32</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSz38" value="38"><label for="eSz38">38</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSz39" value="39"><label for="eSz39">39</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSz40" value="40"><label for="eSz40">40</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSz41" value="41"><label for="eSz41">41</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSz42" value="42"><label for="eSz42">42</label></div>
+                  <div class="size-option"><input type="checkbox" id="eSz43" value="43"><label for="eSz43">43</label></div>
+                </div>
+              </div>
+
+              <!-- Edit Color -->
+              <div class="col-12 mt-1">
+                <p class="eyebrow mb-2">Màu Sắc</p>
+                <div class="d-flex flex-wrap gap-2" id="editColorGroup">
+                  <div class="color-option"><input type="checkbox" id="eColW"  value="Trắng"><label for="eColW"><span class="color-dot" style="background:#fff;border-color:#ccc;"></span> Trắng</label></div>
+                  <div class="color-option"><input type="checkbox" id="eColB"  value="Đen"><label for="eColB"><span class="color-dot" style="background:#1a1a1a;"></span> Đen</label></div>
+                  <div class="color-option"><input type="checkbox" id="eColR"  value="Đỏ"><label for="eColR"><span class="color-dot" style="background:#c0392b;"></span> Đỏ</label></div>
+                  <div class="color-option"><input type="checkbox" id="eColBl" value="Xanh dương"><label for="eColBl"><span class="color-dot" style="background:#2980b9;"></span> Xanh dương</label></div>
+                  <div class="color-option"><input type="checkbox" id="eColNv" value="Xanh đậm"><label for="eColNv"><span class="color-dot" style="background:#1a3a6e;"></span> Xanh đậm</label></div>
+                  <div class="color-option"><input type="checkbox" id="eColGr" value="Xanh lá"><label for="eColGr"><span class="color-dot" style="background:#27ae60;"></span> Xanh lá</label></div>
+                  <div class="color-option"><input type="checkbox" id="eColY"  value="Vàng"><label for="eColY"><span class="color-dot" style="background:#f39c12;"></span> Vàng</label></div>
+                  <div class="color-option"><input type="checkbox" id="eColPk" value="Hồng"><label for="eColPk"><span class="color-dot" style="background:#e91e63;"></span> Hồng</label></div>
+                  <div class="color-option"><input type="checkbox" id="eColPp" value="Tím"><label for="eColPp"><span class="color-dot" style="background:#8e44ad;"></span> Tím</label></div>
+                  <div class="color-option"><input type="checkbox" id="eColGy" value="Xám"><label for="eColGy"><span class="color-dot" style="background:#7f8c8d;"></span> Xám</label></div>
+                  <div class="color-option"><input type="checkbox" id="eColBr" value="Nâu"><label for="eColBr"><span class="color-dot" style="background:#795548;"></span> Nâu</label></div>
+                  <div class="color-option"><input type="checkbox" id="eColOr" value="Cam"><label for="eColOr"><span class="color-dot" style="background:#e17055;"></span> Cam</label></div>
+                  <div class="color-option"><input type="checkbox" id="eColBg" value="Kem"><label for="eColBg"><span class="color-dot" style="background:#ecf0f1;border-color:#ccc;"></span> Kem</label></div>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="col-12 mt-1">
+                <label class="form-label" for="editProductDesc">Mô tả sản phẩm</label>
+                <textarea class="form-control" id="editProductDesc" rows="3"></textarea>
+              </div>
+
+              <!-- Status -->
+              <div class="col-12 col-md-6 mt-1">
+                <label class="form-label" for="editProductStatus">Trạng thái</label>
+                <select class="form-select" id="editProductStatus">
+                  <option value="active">Đang bán</option>
+                  <option value="hidden">Ẩn</option>
+                  <option value="out">Hết hàng</option>
+                </select>
+              </div>
+
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Huỷ</button>
+          <button type="button" class="btn btn-primary" id="btnSubmitEdit">
+            <i class="bi bi-check-lg me-1" aria-hidden="true"></i>Lưu Thay Đổi
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════
+       MODAL: XÁC NHẬN XÓA
+  ═══════════════════════════ -->
+  <div class="modal fade" id="modalDeleteProduct" tabindex="-1" aria-labelledby="lblDeleteProduct" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+      <div class="modal-content text-center">
+        <div class="modal-body py-4 px-4">
+          <div class="delete-confirm-icon mx-auto">
+            <i class="bi bi-trash3" aria-hidden="true"></i>
+          </div>
+          <h2 class="h5 mb-2" id="lblDeleteProduct">Xoá Sản Phẩm?</h2>
+          <p class="text-muted mb-1">Bạn chắc chắn muốn xóa sản phẩm:</p>
+          <p class="fw-bold mb-1" id="deleteProductName"></p>
+          <p class="text-muted small mb-0" id="deleteProductSKU"></p>
+          <p class="text-danger small mt-2 mb-0">
+            <i class="bi bi-exclamation-triangle me-1" aria-hidden="true"></i>Hành động này không thể hoàn tác.
+          </p>
+        </div>
+        <div class="modal-footer justify-content-center gap-2 border-0 pt-0 pb-4">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="min-width:110px;">Huỷ</button>
+          <button type="button" class="btn btn-danger" id="btnConfirmDelete" style="min-width:110px;">
+            <i class="bi bi-trash3 me-1" aria-hidden="true"></i>Xoá
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast stack -->
+  <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="../assets/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+  (function () {
+    "use strict";
+
+    /* ── Toast helper ─────────────────────────────────────── */
+    function showToast(message, type) {
+      type = type || "success";
+      var stack = document.getElementById("toastStack");
+      var colorMap = { success: "text-bg-success", danger: "text-bg-danger", warning: "text-bg-warning" };
+      var iconMap  = { success: "bi-check2-circle", danger: "bi-x-circle", warning: "bi-exclamation-triangle" };
+      var wrap = document.createElement("div");
+      wrap.className = "toast show align-items-center border-0 " + (colorMap[type] || "text-bg-success");
+      wrap.setAttribute("role", "alert");
+      wrap.innerHTML =
+        '<div class="d-flex">' +
+          '<div class="toast-body d-flex align-items-center gap-2">' +
+            '<i class="bi ' + (iconMap[type] || "bi-check2-circle") + '" aria-hidden="true"></i>' +
+            message +
+          '</div>' +
+          '<button type="button" class="btn-close btn-close-white me-2 m-auto" aria-label="Close"></button>' +
+        '</div>';
+      wrap.querySelector("button").addEventListener("click", function () { wrap.remove(); });
+      stack.appendChild(wrap);
+      setTimeout(function () {
+        wrap.classList.remove("show");
+        setTimeout(function () { wrap.remove(); }, 300);
+      }, 3500);
+    }
+
+    /* ── Category filter ──────────────────────────────────── */
+    var categoryTabs   = document.querySelectorAll("#categoryTabs .filter-tab");
+    var tableRows      = document.querySelectorAll("#productsTableBody tr");
+    var activeCategory = "all";
+
+    function applyFilters() {
+      var statusVal = document.getElementById("stockFilter").value;
+      var searchVal = (document.getElementById("productSearchInput").value || "").trim().toLowerCase();
+      var visible   = 0;
+      tableRows.forEach(function (row) {
+        var catOk    = activeCategory === "all" || row.getAttribute("data-category") === activeCategory;
+        var statusOk = statusVal === "" || row.getAttribute("data-status") === statusVal;
+        var searchOk = searchVal === "" || row.textContent.toLowerCase().indexOf(searchVal) !== -1;
+        row.hidden   = !(catOk && statusOk && searchOk);
+        if (!row.hidden) visible++;
+      });
+      document.getElementById("paginationInfo").textContent =
+        "Hiển thị " + visible + " trong số 248 sản phẩm";
+    }
+
+    categoryTabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        categoryTabs.forEach(function (t) { t.classList.remove("active"); t.setAttribute("aria-selected","false"); });
+        tab.classList.add("active"); tab.setAttribute("aria-selected","true");
+        activeCategory = tab.getAttribute("data-category");
+        applyFilters();
+      });
+    });
+
+    document.getElementById("stockFilter").addEventListener("change", applyFilters);
+    document.getElementById("productSearchInput").addEventListener("input", applyFilters);
+
+    /* ── Select-all checkbox ──────────────────────────────── */
+    document.getElementById("selectAllProducts").addEventListener("change", function () {
+      document.querySelectorAll(".row-check").forEach(function (cb) { cb.checked = this.checked; }, this);
+    });
+
+    /* ── Image upload preview ─────────────────────────────── */
+    document.getElementById("addProductImages").addEventListener("change", function () {
+      var preview = document.getElementById("addImagePreview");
+      preview.innerHTML = "";
+      Array.prototype.forEach.call(this.files, function (file) {
+        if (!file.type.startsWith("image/")) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var img = document.createElement("img");
+          img.src = e.target.result;
+          img.style.cssText = "width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--admin-border);";
+          preview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    /* ── Edit modal: populate fields ──────────────────────── */
+    var ALL_SIZES  = ["XS","S","M","L","XL","XXL","Free","28","29","30","31","32","38","39","40","41","42","43"];
+    var ALL_COLORS = ["Trắng","Đen","Đỏ","Xanh dương","Xanh đậm","Xanh lá","Vàng","Hồng","Tím","Xám","Nâu","Cam","Kem"];
+
+    function resetCheckboxes(groupId, allValues, selected) {
+      allValues.forEach(function (val) {
+        var cb = document.querySelector("#" + groupId + " input[value='" + val + "']");
+        if (cb) cb.checked = selected.indexOf(val) !== -1;
+      });
+    }
+
+    document.querySelectorAll(".btn-edit-product").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var d = btn.dataset;
+        document.getElementById("editProductName").value          = d.name          || "";
+        document.getElementById("editProductSKU").value           = d.sku           || "";
+        document.getElementById("editProductBrand").value         = d.brand         || "";
+        document.getElementById("editProductPrice").value         = d.price         || "";
+        document.getElementById("editProductOriginalPrice").value = d.originalPrice || "";
+        document.getElementById("editProductStock").value         = d.stock         || "";
+        document.getElementById("editProductDesc").value          = d.description   || "";
+        document.getElementById("editProductCategory").value      = d.category      || "";
+        document.getElementById("editProductGender").value        = d.gender        || "unisex";
+        document.getElementById("editProductStatus").value        = d.status        || "active";
+        resetCheckboxes("editSizeGroup",  ALL_SIZES,  d.sizes  ? d.sizes.split(",")  : []);
+        resetCheckboxes("editColorGroup", ALL_COLORS, d.colors ? d.colors.split(",") : []);
+      });
+    });
+
+    /* ── Submit: Add ──────────────────────────────────────── */
+    document.getElementById("btnSubmitAdd").addEventListener("click", function () {
+      var form = document.getElementById("formAddProduct");
+      form.classList.add("was-validated");
+      if (!form.checkValidity()) return;
+      var name = document.getElementById("addProductName").value;
+      bootstrap.Modal.getInstance(document.getElementById("modalAddProduct")).hide();
+      form.reset();
+      form.classList.remove("was-validated");
+      document.getElementById("addImagePreview").innerHTML = "";
+      showToast("Đã thêm <strong>" + name + "</strong> thành công!", "success");
+    });
+
+    /* ── Submit: Edit ─────────────────────────────────────── */
+    document.getElementById("btnSubmitEdit").addEventListener("click", function () {
+      var form = document.getElementById("formEditProduct");
+      form.classList.add("was-validated");
+      if (!form.checkValidity()) return;
+      var name = document.getElementById("editProductName").value;
+      bootstrap.Modal.getInstance(document.getElementById("modalEditProduct")).hide();
+      showToast("Đã cập nhật <strong>" + name + "</strong>!", "success");
+    });
+
+    /* ── Delete: fill confirm ─────────────────────────────── */
+    document.querySelectorAll(".btn-delete-product").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        document.getElementById("deleteProductName").textContent = btn.dataset.name || "—";
+        document.getElementById("deleteProductSKU").textContent  = "SKU: " + (btn.dataset.sku || "—");
+      });
+    });
+
+    document.getElementById("btnConfirmDelete").addEventListener("click", function () {
+      var name = document.getElementById("deleteProductName").textContent;
+      bootstrap.Modal.getInstance(document.getElementById("modalDeleteProduct")).hide();
+      showToast("Đã xóa <strong>" + name + "</strong>.", "danger");
+    });
+
+    /* ── Export demo ──────────────────────────────────────── */
+    document.getElementById("btnExport").addEventListener("click", function () {
+      showToast("Đang xuất danh sách sản phẩm ra Excel...", "warning");
+    });
+
+  })();
+  </script>
+</body>
+</html>
