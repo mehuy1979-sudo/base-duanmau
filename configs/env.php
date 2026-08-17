@@ -2,6 +2,7 @@
 
 define('BASE_URL',          'http://localhost/base-duanmau-master/');
 
+
 define('PATH_ROOT',         __DIR__ . '/../');
 
 define('PATH_VIEW',         PATH_ROOT . 'views/');

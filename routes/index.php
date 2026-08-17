@@ -36,5 +36,11 @@ match ($action) {
 '/place-order' => (new CartController)->placeOrder(),
 
 '/order-success' => (new CartController)->orderSuccess(),
-};
+
+    '/'         => (new HomeController)->index(),
+     '/product'         => (new HomeController)->index(),
+    '/product' => (new ProductController)->index(),
+     }; 
+
+
 

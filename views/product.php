@@ -84,7 +84,9 @@
 							</li>
 
 							<li class="label1" data-label1="hot">
+
 									<a href="?action=/cart">Giỏ hàng</a>
+
 
 							<li>
 								<a href="blog.html">Giỏ hàng</a>

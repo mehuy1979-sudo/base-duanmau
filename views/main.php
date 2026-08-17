@@ -75,6 +75,7 @@
 							Help & FAQs
 						</a>
 
+
 						<?php if (!empty($_SESSION['user'])): ?>
 							<a href="#" class="flex-c-m trans-04 p-lr-25">
 								Xin chào, <?= htmlspecialchars($_SESSION['user']['fullname']) ?>
@@ -98,6 +99,7 @@
 								Đăng ký
 							</a>
 						<?php endif; ?>
+
 
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							VI
@@ -132,6 +134,7 @@
 
 							<li class="label1" data-label1="hot">
 									<a href="?action=/cart">Giỏ hàng</a>
+
 
 							<li>
 								<a href="blog.html">Danh Mục Yêu Thích</a>
@@ -226,6 +229,7 @@
 								Đăng ký
 							</a>
 						<?php endif; ?>
+
 
 						<a href="#" class="flex-c-m p-lr-10 trans-04">
 							EN
@@ -1313,7 +1317,9 @@
 				</div>
 
 				<div class="col-sm-6 col-lg-3 p-b-50">
+
 					<a href="<?= BASE_URL ?>admin/index.php">
+
 						<h4 class="stext-301 cl0 p-b-30">
 							Admin
 						</h4>

@@ -5,11 +5,13 @@ class BaseModel
     protected $table;
     protected $pdo;
 
+ 
     // Kết nối CSDL (dùng chung 1 kết nối PDO của toàn hệ thống)
     public function __construct()
     {
         try {
             $this->pdo = Database::getConnection();
+
         } catch (PDOException $e) {
             // Xử lý lỗi kết nối
             die("Kết nối cơ sở dữ liệu thất bại: {$e->getMessage()}. Vui lòng thử lại sau.");

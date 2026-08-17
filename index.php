@@ -1,3 +1,4 @@
+
 <?php 
 
 session_start();
@@ -22,3 +23,4 @@ require_once __DIR__ . '/configs/helper.php';
 // Điều hướng
 require_once __DIR__ . '/configs/database.php';
 require_once __DIR__ . '/routes/index.php';
+
