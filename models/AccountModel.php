@@ -133,4 +133,39 @@ class AccountModel extends BaseModel
         $row = $stmt->fetch();
         return $row ?: null;
     }
+
+    /**
+     * Đăng ký tài khoản mới (dùng cho form Đăng ký ngoài trang chủ)
+     * Tài khoản đầu tiên của hệ thống sẽ tự động là admin, các tài khoản
+     * sau đó mặc định là customer.
+     */
+    public function register(array $data): int
+    {
+        $role = $this->count() === 0 ? 'admin' : 'customer';
+
+        return $this->create([
+            'fullname'   => $data['fullname'],
+            'email'      => $data['email'],
+            'password'   => password_hash($data['password'], PASSWORD_DEFAULT),
+            'phone'      => $data['phone'] ?? null,
+            'role'       => $role,
+            'status'     => 'active',
+            'created_at' => date('Y-m-d H:i:s'),
+        ]);
+    }
+
+    /**
+     * Kiểm tra đăng nhập: trả về thông tin tài khoản nếu email/mật khẩu đúng
+     * và tài khoản chưa bị khóa, ngược lại trả về null.
+     */
+    public function attemptLogin(string $email, string $password): ?array
+    {
+        $account = $this->findByEmail($email);
+
+        if (!$account || !password_verify($password, $account['password'])) {
+            return null;
+        }
+
+        return $account;
+    }
 }

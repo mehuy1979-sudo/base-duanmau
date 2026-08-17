@@ -39,13 +39,12 @@
             <div class="dropdown">
               <button class="profile-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <img class="avatar-img avatar-sm" src="assets/images/avatar/avatar.jpg" alt="Admin">
-                <span class="profile-name d-none d-sm-inline">Admin</span>
+                <span class="profile-name d-none d-sm-inline"><?= htmlspecialchars($_SESSION['user']['fullname'] ?? 'Admin') ?></span>
               </button>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="html/profile.html">Profile</a></li>
-                <li><a class="dropdown-item" href="html/settings.html">Account settings</a></li>
+                <li><a class="dropdown-item" href="<?= BASE_URL ?>?action=/">Về trang chủ</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="html/login.html">Sign out</a></li>
+                <li><a class="dropdown-item" href="<?= BASE_URL ?>?action=/logout">Đăng xuất</a></li>
               </ul>
             </div>
           </div>
