@@ -134,6 +134,7 @@ class AccountModel extends BaseModel
         return $row ?: null;
     }
 
+
     /**
      * Đăng ký tài khoản mới (dùng cho form Đăng ký ngoài trang chủ)
      * Tài khoản đầu tiên của hệ thống sẽ tự động là admin, các tài khoản
@@ -168,4 +169,5 @@ class AccountModel extends BaseModel
 
         return $account;
     }
+
 }

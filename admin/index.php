@@ -18,17 +18,15 @@ if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
     exit;
 }
 
-$action = $_GET['action'] ?? 'dashboard';
+
+
+$action = $_GET['action'] ?? 'account/list';
 
 match ($action) {
-    'dashboard' => (new PageController)->dashboard(),
-    'stats'     => (new PageController)->stats(),
-    'settings'  => (new PageController)->settings(),
-
     'account/list'        => (new AccountController)->index(),
     'account/detail'      => (new AccountController)->detail(),
     'account/toggle-lock' => (new AccountController)->toggleLock(),
     'account/change-role' => (new AccountController)->changeRole(),
 
-    default => (new PageController)->dashboard(),
+    default => (new AccountController)->index(),
 };
