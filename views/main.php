@@ -74,10 +74,29 @@
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							Help & FAQs
 						</a>
+						<?php if (!empty($_SESSION['user'])): ?>
+							<a href="#" class="flex-c-m trans-04 p-lr-25">
+								Xin chào, <?= htmlspecialchars($_SESSION['user']['fullname']) ?>
+							</a>
 
-						<a href="#" class="flex-c-m trans-04 p-lr-25">
-							Tài khoản của tôi
-						</a>
+							<?php if ($_SESSION['user']['role'] === 'admin'): ?>
+								<a href="<?= BASE_URL ?>admin/index.php" class="flex-c-m trans-04 p-lr-25">
+									Trang quản trị
+								</a>
+							<?php endif; ?>
+
+							<a href="?action=/logout" class="flex-c-m trans-04 p-lr-25">
+								Đăng xuất
+							</a>
+						<?php else: ?>
+							<a href="?action=/login" class="flex-c-m trans-04 p-lr-25">
+								Đăng nhập
+							</a>
+
+							<a href="?action=/register" class="flex-c-m trans-04 p-lr-25">
+								Đăng ký
+							</a>
+						<?php endif; ?>
 
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							VI
@@ -103,9 +122,7 @@
 						<ul class="main-menu">
 							<li class="active-menu">
 								<a href="index.html">Trang chủ</a>
-
 							</li>
-
 							<li>
 								<a href="<?= BASE_URL .'?action=search'?>" >Sản Phẩm</a>
 							</li>
@@ -113,6 +130,11 @@
 							<li class="label1" data-label1="hot">
 								<a href="shoping-cart.html">Giỏ hàng</a>
 							</li>
+								<a href="product.html">Sản Phẩm</a>
+							</li>
+
+							<li class="label1" data-label1="hot">
+									<a href="?action=/cart">Giỏ hàng</a>
 
 							<li>
 								<a href="blog.html">Danh Mục Yêu Thích</a>
@@ -127,7 +149,6 @@
 							</li>
 						</ul>
 					</div>	
-
 					<!-- Icon header -->
 					<div class="wrap-icon-header flex-w flex-r-m">
 						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
@@ -193,10 +214,22 @@
 						<a href="#" class="flex-c-m p-lr-10 trans-04">
 							Help & FAQs
 						</a>
-
 						<a href="#" class="flex-c-m p-lr-10 trans-04">
 							My Account
 						</a>
+						<?php if (!empty($_SESSION['user'])): ?>
+							<a href="?action=/logout" class="flex-c-m p-lr-10 trans-04">
+								Đăng xuất (<?= htmlspecialchars($_SESSION['user']['fullname']) ?>)
+							</a>
+						<?php else: ?>
+							<a href="?action=/login" class="flex-c-m p-lr-10 trans-04">
+								Đăng nhập
+							</a>
+
+							<a href="?action=/register" class="flex-c-m p-lr-10 trans-04">
+								Đăng ký
+							</a>
+						<?php endif; ?>
 
 						<a href="#" class="flex-c-m p-lr-10 trans-04">
 							EN
@@ -477,33 +510,32 @@
         </div>
     </div>
 </section>>
-			<div class="p-b-10">
-				<h3 class="ltext-103 cl5">
-					Product Overview
-				</h3>
-			</div>
+			<div class="flex-w flex-sb-m p-b-52">
+				<div class="flex-w flex-l-m filter-tope-group m-tb-10">
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
+						All Products
+					</button>
 
-	<div class="flex-w flex-l-m filter-tope-group m-tb-10">
-    <!-- Lọc Tất cả (Dấu * nghĩa là show hết) -->
-    <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
-        Tất cả
-    </button>
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".women">
+						Women
+					</button>
 
-    <!-- Lọc Đồ Nữ (Giả sử ID category của Nữ trong DB là 1) -->
-    <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".cat-1">
-        Women
-    </button>
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".men">
+						Men
+					</button>
 
-    <!-- Lọc Đồ Nam (Giả sử ID là 2) -->
-    <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".cat-2">
-        Men
-    </button>
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".bag">
+						Bag
+					</button>
 
-    <!-- Lọc Túi (Giả sử ID là 3) -->
-    <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".cat-3">
-        Bag
-    </button>
-</div>
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".shoes">
+						Shoes
+					</button>
+
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
+						Watches
+					</button>
+				</div>
 
 				<div class="flex-w flex-c-m m-tb-10">
 					<div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
@@ -1311,14 +1343,11 @@
 				</div>
 
 				<div class="col-sm-6 col-lg-3 p-b-50">
-					<h4 class="stext-301 cl0 p-b-30">
-						GET IN TOUCH
-					</h4>
-
-					<p class="stext-107 cl7 size-201">
-						Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us on (+1) 96 716 6879
-					</p>
-
+					<a href="<?= BASE_URL ?>admin/index.php">
+						<h4 class="stext-301 cl0 p-b-30">
+							Admin
+						</h4>
+					</a>
 					<div class="p-t-27">
 						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
 							<i class="fa fa-facebook"></i>
@@ -1327,7 +1356,6 @@
 						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
 							<i class="fa fa-instagram"></i>
 						</a>
-
 						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
 							<i class="fa fa-pinterest-p"></i>
 						</a>

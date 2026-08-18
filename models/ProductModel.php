@@ -1,12 +1,20 @@
 <?php
+
 class ProductModel extends BaseModel 
 {
-    public function getproductByKey($keyword, $orderBy){
-        $sql = "SELECT * From products WHERE product_name LIKE '%$keyword%' ORDER BY price $orderBy";
+    protected $table = "products";
+
+    public function getproductByKey($keyword, $orderBy = 'ASC')
+    {
+        // Chống SQL Injection bằng cách validate chiều sắp xếp
+        $direction = strtoupper($orderBy) === 'DESC' ? 'DESC' : 'ASC';
+        $sql = "SELECT * FROM products WHERE product_name LIKE :keyword ORDER BY price {$direction}";
+        
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute();
+        $stmt->execute([':keyword' => '%' . $keyword . '%']);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
     public function getFilteredProducts($filters = []) 
     {
         $sql = "SELECT * FROM products WHERE 1=1";
@@ -37,17 +45,39 @@ class ProductModel extends BaseModel
                     $sql .= " ORDER BY price DESC";
                     break;
                 case 'newest':
-                    $sql .= " ORDER BY id DESC";
-                    break;
                 default:
                     $sql .= " ORDER BY id DESC";
                     break;
             }
         }
         
-        // Thực thi câu lệnh với BaseModel hoặc PDO sẵn có của bạn
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAll()
+    {
+        return $this->all();
+    }
+
+    public function getOne($id)
+    {
+        return $this->find($id);
+    }
+
+    public function insert($data)
+    {
+        return $this->create($data);
+    }
+
+    public function updateProduct($id, $data)
+    {
+        return $this->update($id, $data);
+    }
+
+    public function deleteProduct($id)
+    {
+        return $this->delete($id);
     }
 }

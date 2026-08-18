@@ -1,10 +1,12 @@
 <?php
+
 class ProductController 
 {
     private $productModel;
     
-    public function __construct(){
-        $this->productModel=new ProductModel();
+    public function __construct()
+    {
+        $this->productModel = new ProductModel();
     }
 
     public function index()
@@ -16,27 +18,25 @@ class ProductController
             'keyword'  => trim($_GET['keyword'] ?? ($_GET['search-product'] ?? ''))
         ];
         
-        // $productModel = new ProductModel();
         $products = $this->productModel->getFilteredProducts($filters);
         
         // Gọi View hiển thị
         require_once PATH_VIEW . 'product.php';
     }
-    public function search (){
-        // var_dump($_GET);
-        // die;
+
+    public function search()
+    {
         $view = 'search';
         $orderBy = 'asc';
+
         if (isset($_POST['sort_price'])) {
             $orderBy = $_POST['sort_price'];
         }
-        if(isset($_POST['keyword'])){
-            $listproduct = $this->productModel->getproductByKey($_POST['keyword'], $orderBy);
-            // var_dump($listproduct);
-            // die;
-        } 
-        require_once PATH_VIEW . 'search.php';
-        
-    }
 
+        if (isset($_POST['keyword'])) {
+            $listproduct = $this->productModel->getproductByKey($_POST['keyword'], $orderBy);
+        }
+
+        require_once PATH_VIEW . 'search.php';
     }
+}

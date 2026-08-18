@@ -60,7 +60,6 @@
 <body>
 
  <header>
-
 		<!-- Header desktop -->
 		<div class="container-menu-desktop">
 			<!-- Topbar -->
@@ -68,23 +67,36 @@
 				<div class="content-topbar flex-sb-m h-full container">
 					<div class="left-top-bar">
 						Khuyến mại hè giảm 20%
+						Free shipping for standard order over $100
 					</div>
 
 					<div class="right-top-bar flex-w h-full">
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							Help & FAQs
 						</a>
-
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							Tài khoản của tôi
 						</a>
-
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							VI
 						</a>
 
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							VND
+							Hỗ trợ
+						</a>
+
+						<a href="#" class="flex-c-m trans-04 p-lr-25">
+							Tài khoản của bạn
+						</a>
+
+						<a href="#" class="flex-c-m trans-04 p-lr-25">
+							
+						</a>
+
+						<a href="#" class="flex-c-m trans-04 p-lr-25">
+							Số liệu
+
 						</a>
 					</div>
 				</div>
@@ -95,7 +107,9 @@
 					
 					<!-- Logo desktop -->
                     <a href="<?= BASE_URL ?>" class="logo">
+
                         <img src="<?= BASE_URL ?>views/images/icons/Bunnywear.jpg" alt="IMG-LOGO">
+
                     </a>
 
 					<!-- Menu desktop -->
@@ -124,6 +138,27 @@
 
 							<li>
 								<a href="contact.html">Liên Hệ</a>
+								<ul class="sub-menu">
+									<li><a href="index.html">Homepage 1</a></li>
+									<li><a href="home-02.html">Homepage 2</a></li>
+									<li><a href="home-03.html">Homepage 3</a></li>
+								</ul>
+							</li>
+
+							<li>
+								<a href="product.html">Cửa hàng</a>
+							</li>
+
+							<li class="label1" data-label1="hot">
+									<a href="?action=/cart">Giỏ hàng</a>
+                            </li>
+
+							<li>
+								<a href="about.html">Chi tiết</a>
+							</li>
+
+							<li>
+								<a href="contact.html">Liên hệ</a>
 							</li>
 						</ul>
 					</div>	
@@ -160,16 +195,13 @@
 				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
 					<i class="zmdi zmdi-search"></i>
 				</div>
-
 				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart" data-notify="2">
 					<i class="zmdi zmdi-shopping-cart"></i>
 				</div>
-
 				<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="0">
 					<i class="zmdi zmdi-favorite-outline"></i>
 				</a>
 			</div>
-
 			<!-- Button show menu -->
 			<div class="btn-show-menu-mobile hamburger hamburger--squeeze">
 				<span class="hamburger-box">
@@ -177,14 +209,13 @@
 				</span>
 			</div>
 		</div>
-
-
 		<!-- Menu Mobile -->
 		<div class="menu-mobile">
 			<ul class="topbar-mobile">
 				<li>
 					<div class="left-top-bar">
 						sale hè giảm 20%
+						Free shipping for standard order over $100
 					</div>
 				</li>
 
@@ -193,22 +224,28 @@
 						<a href="#" class="flex-c-m p-lr-10 trans-04">
 							Help & FAQs
 						</a>
-
 						<a href="#" class="flex-c-m p-lr-10 trans-04">
 							My Account
 						</a>
-
 						<a href="#" class="flex-c-m p-lr-10 trans-04">
 							EN
 						</a>
-
 						<a href="#" class="flex-c-m p-lr-10 trans-04">
 							USD
+							Trợ giúp
+						</a>
+						<a href="#" class="flex-c-m p-lr-10 trans-04">
+							Tài khoản của bạn
+						</a>
+						<a href="#" class="flex-c-m p-lr-10 trans-04">
+							Viet
+						</a>
+						<a href="#" class="flex-c-m p-lr-10 trans-04">
+							Eng
 						</a>
 					</div>
 				</li>
 			</ul>
-
 			<ul class="main-menu-m">
 				<li>
 					<a href="index.html">Home</a>
@@ -221,9 +258,8 @@
 						<i class="fa fa-angle-right" aria-hidden="true"></i>
 					</span>
 				</li>
-
 				<li>
-					<a href="product.html">Shop</a>
+					<a href="product.html">Cửa hàng</a>
 				</li>
 
 				<li>
@@ -248,9 +284,8 @@
 		<div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
 			<div class="container-search-header">
 				<button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
-					<img src="views/images/icons/icon-close2.png" alt="CLOSE">
+					<img src="images/icons/icon-close2.png" alt="CLOSE">
 				</button>
-
 				<form class="wrap-search-header flex-w p-l-15">
 					<button class="flex-c-m trans-04">
 						<i class="zmdi zmdi-search"></i>
@@ -273,12 +308,6 @@
             ?>
         </div>
     </div>
-
-
-
-
-
-
 <!-- Slider -->
 	<section class="section-slide">
 		<div class="wrap-slick1">
@@ -291,13 +320,11 @@
 									Women Collection 2018
 								</span>
 							</div>
-								
 							<div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
 								<h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
 									NEW SEASON
 								</h2>
 							</div>
-								
 							<div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
 								<a href="product.html" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
 									Shop Now
@@ -306,7 +333,6 @@
 						</div>
 					</div>
 				</div>
-
 				<div class="item-slick1" style="background-image: url(views/images/slide-02.jpg);">
 					<div class="container h-full">
 						<div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
@@ -1176,7 +1202,6 @@
 						</div>
 					</div>
 				</div>
-
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
 					<!-- Block2 -->
 					<div class="block2">
@@ -1187,7 +1212,6 @@
 								Quick View
 							</a>
 						</div>
-
 						<div class="block2-txt flex-w flex-t p-t-14">
 							<div class="block2-txt-child1 flex-col-l ">
 								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
@@ -1208,7 +1232,6 @@
 						</div>
 					</div>
 				</div>
-
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
 					<!-- Block2 -->
 					<div class="block2">
@@ -1272,29 +1295,24 @@
 						</div>
 					</div>
 				</div>
-
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
 					<!-- Block2 -->
 					<div class="block2">
 						<div class="block2-pic hov-img0">
 							<img src="views/images/product-16.jpg" alt="IMG-PRODUCT">
-
 							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
 								Quick View
 							</a>
 						</div>
-
 						<div class="block2-txt flex-w flex-t p-t-14">
 							<div class="block2-txt-child1 flex-col-l ">
 								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
 									Square Neck Back
 								</a>
-
 								<span class="stext-105 cl3">
 									$29.64
 								</span>
 							</div>
-
 							<div class="block2-txt-child2 flex-r p-t-3">
 								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
 									<img class="icon-heart1 dis-block trans-04" src="views/images/icons/icon-heart-01.png" alt="ICON">
@@ -1305,7 +1323,6 @@
 					</div>
 				</div>
 			</div>
-
 			<!-- Load more -->
 			<div class="flex-c-m flex-w w-full p-t-45">
 				<a href="#" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
@@ -1322,7 +1339,6 @@
 					<h4 class="stext-301 cl0 p-b-30">
 						Categories
 					</h4>
-
 					<ul>
 						<li class="p-b-10">
 							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
@@ -1335,13 +1351,11 @@
 								Men
 							</a>
 						</li>
-
 						<li class="p-b-10">
 							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
 								Shoes
 							</a>
 						</li>
-
 						<li class="p-b-10">
 							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
 								Watches
@@ -1453,7 +1467,6 @@
 					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a> &amp; distributed by <a href="https://themes.hoavn.com/" target="_blank">ThemeHoadv</a>
 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-
 				</p>
 			</div>
 		</div>
