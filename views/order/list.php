@@ -1,13 +1,12 @@
 <?php
-// Ánh xạ trạng thái đơn hàng sang tên tiếng Việt và thẻ màu
 $statusMap = [
-    1 => ['name' => 'Chờ xác nhận', 'color' => '#ffc107'], // Vàng
-    2 => ['name' => 'Đã xác nhận', 'color' => '#17a2b8'],  // Xanh nhạt
-    3 => ['name' => 'Đang giao', 'color' => '#007bff'],     // Xanh dương
-    4 => ['name' => 'Giao hàng thành công', 'color' => '#28a745'], // Xanh lá
-    5 => ['name' => 'Giao hàng thất bại', 'color' => '#dc3545'],   // Đỏ
-    6 => ['name' => 'Hoàn thành', 'color' => '#6c757d'],   // Xám đậm
-    7 => ['name' => 'Đã hủy', 'color' => '#343a40']        // Đen
+    1 => ['name' => 'Chờ xác nhận', 'color' => '#ffc107'],
+    2 => ['name' => 'Đã xác nhận', 'color' => '#17a2b8'],
+    3 => ['name' => 'Đang giao', 'color' => '#007bff'],
+    4 => ['name' => 'Giao hàng thành công', 'color' => '#28a745'],
+    5 => ['name' => 'Giao hàng thất bại', 'color' => '#dc3545'],
+    6 => ['name' => 'Hoàn thành', 'color' => '#6c757d'],
+    7 => ['name' => 'Đã hủy', 'color' => '#343a40']
 ];
 
 $paymentMap = [
@@ -18,7 +17,7 @@ $paymentMap = [
 
 <h2>Quản Lý Đơn Hàng</h2>
 
-<table border="1" cellpadding="10" cellspacing="0" style="width: 100%; text-align: left; border-collapse: collapse;">
+<table border="1" cellpadding="10" cellspacing="0" style="width: 100%; text-align: left; border-collapse: collapse; font-family: sans-serif;">
     <thead>
         <tr style="background-color: #f2f2f2;">
             <th>Mã đơn</th>
@@ -34,24 +33,35 @@ $paymentMap = [
     <tbody>
         <?php if (!empty($orders)): ?>
             <?php foreach ($orders as $order): ?>
+                <?php
+                    $id            = $order['id'] ?? 0;
+                    $customerName  = $order['user_name'] ?? $order['customer_name'] ?? $order['name'] ?? 'Khách lẻ';
+                    $customerPhone = $order['user_phone'] ?? $order['customer_phone'] ?? $order['phone'] ?? 'N/A';
+                    $totalAmount   = (float)($order['total_amount'] ?? $order['total_price'] ?? $order['total'] ?? 0);
+                    $orderStatus   = (int)($order['order_status'] ?? $order['status'] ?? 1);
+                    $paymentStatus = (int)($order['payment_status'] ?? $order['payment'] ?? 0);
+                    $createdAt     = $order['created_at'] ?? $order['order_date'] ?? null;
+                ?>
                 <tr>
-                    <td>#<?= $order['id'] ?></td>
-                    <td><?= htmlspecialchars($order['customer_name']) ?></td>
-                    <td><?= htmlspecialchars($order['customer_phone']) ?></td>
-                    <td><?= number_format($order['total_amount'], 0, ',', '.') ?> VNĐ</td>
+                    <td>#<?= htmlspecialchars((string)$id) ?></td>
+                    <td><?= htmlspecialchars((string)$customerName) ?></td>
+                    <td><?= htmlspecialchars((string)$customerPhone) ?></td>
+                    <td><?= number_format($totalAmount, 0, ',', '.') ?> VNĐ</td>
                     <td>
-                        <span style="background-color: <?= $statusMap[$order['order_status']]['color'] ?? '#ccc' ?>; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 12px;">
-                            <?= $statusMap[$order['order_status']]['name'] ?? 'Không xác định' ?>
+                        <span style="background-color: <?= $statusMap[$orderStatus]['color'] ?? '#ccc' ?>; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">
+                            <?= $statusMap[$orderStatus]['name'] ?? 'Không xác định' ?>
                         </span>
                     </td>
                     <td>
-                        <span style="background-color: <?= $paymentMap[$order['payment_status']]['color'] ?? '#ccc' ?>; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 12px;">
-                            <?= $paymentMap[$order['payment_status']]['name'] ?? 'Chưa xác định' ?>
+                        <span style="background-color: <?= $paymentMap[$paymentStatus]['color'] ?? '#ccc' ?>; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">
+                            <?= $paymentMap[$paymentStatus]['name'] ?? 'Chưa xác định' ?>
                         </span>
                     </td>
-                    <td><?= date('d/m/Y H:i', strtotime($order['created_at'])) ?></td>
                     <td>
-                        <a href="?action=order_detail&id=<?= $order['id'] ?>">Xem chi tiết</a>
+                        <?= $createdAt ? date('d/m/Y H:i', strtotime($createdAt)) : 'Chưa ghi nhận' ?>
+                    </td>
+                    <td>
+                        <a href="?action=order_detail&id=<?= $id ?>">Xem chi tiết</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

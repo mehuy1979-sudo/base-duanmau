@@ -1,39 +1,40 @@
 <?php
 
-<<<<<<< HEAD
-define('BASE_URL',          'http://localhost/base-duanmau/');
-=======
-define('BASE_URL',          'http://localhost/base-duanmau-master/');
->>>>>>> origin/hhbach305
+// Đường dẫn trang web
+if (!defined('BASE_URL')) {
+    define('BASE_URL', 'http://localhost/base-duanmau/');
+}
 
-define('PATH_ROOT',         __DIR__ . '/../');
+// Cấu hình đường dẫn thư mục
+if (!defined('PATH_MODEL')) {
+    define('PATH_MODEL', __DIR__ . '/../models/');
+}
+if (!defined('PATH_CONTROLLER')) {
+    define('PATH_CONTROLLER', __DIR__ . '/../controllers/');
+}
+if (!defined('PATH_VIEW')) {
+    define('PATH_VIEW', __DIR__ . '/../views/');
+}
 
-define('PATH_VIEW',         PATH_ROOT . 'views/');
-
-define('PATH_VIEW_MAIN',    PATH_ROOT . 'views/main.php');
-
-define('BASE_ASSETS_UPLOADS',   BASE_URL . 'assets/uploads/');
-
-define('PATH_ASSETS_UPLOADS',   PATH_ROOT . 'assets/uploads/');
-
-define('PATH_CONTROLLER',       PATH_ROOT . 'controllers/');
-
-define('PATH_MODEL',            PATH_ROOT . 'models/');
-
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/hhbach305
-define('DB_HOST',     'localhost');
-define('DB_PORT',     '3306');
-define('DB_USERNAME', 'root');
-define('DB_PASSWORD', '');
-<<<<<<< HEAD
-define('DB_NAME',     'shop_quanao');
-=======
-define('DB_NAME',     '');
->>>>>>> origin/hhbach305
-define('DB_OPTIONS', [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-]);
+// Cấu hình Kết nối CSDL (Thay 'ten_database_cua_ban' bằng tên DB thực tế trong Laragon)
+if (!defined('DB_HOST')) {
+    define('DB_HOST', '127.0.0.1');
+}
+if (!defined('DB_PORT')) {
+    define('DB_PORT', '3306');
+}
+if (!defined('DB_NAME')) {
+    define('DB_NAME', 'shop_quanao'); 
+}
+if (!defined('DB_USERNAME')) {
+    define('DB_USERNAME', 'root');
+}
+if (!defined('DB_PASSWORD')) {
+    define('DB_PASSWORD', '');
+}
+if (!defined('DB_OPTIONS')) {
+    define('DB_OPTIONS', [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
+}
