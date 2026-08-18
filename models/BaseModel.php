@@ -4,7 +4,9 @@ class BaseModel
 {
     protected $table;
     protected $pdo;
+
     protected $connected = false;
+
 
     // Kết nối CSDL
     public function __construct()
