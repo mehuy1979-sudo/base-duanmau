@@ -58,6 +58,12 @@ match ($action) {
     '/register/submit', 'register/submit'   => (new AuthController)->register(),
     '/logout', 'logout'                     => (new AuthController)->logout(),
 
+    // Lịch sử đơn hàng & Chi tiết đơn
+    '/order-history', 'order-history',
+    '/my-orders', 'my-orders'               => (new OrderController)->index(),
+    '/order-detail', 'order-detail'         => (new OrderController)->detail(),
+    '/order-cancel', 'order-cancel'         => (new OrderController)->cancel(),
+
     // Quản trị sản phẩm
     '/admin/products', 'admin/products'     => (new AdminProductController)->index(),
 

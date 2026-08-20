@@ -223,7 +223,7 @@ class CartController
         }
 
         $totals = $this->calculateTotals($cart);
-        $userId = $_SESSION['user_id'] ?? null;
+        $userId = $_SESSION['user']['id'] ?? ($_SESSION['user_id'] ?? null);
 
         $pdo = Database::getConnection();
 

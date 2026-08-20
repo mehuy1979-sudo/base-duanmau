@@ -29,9 +29,20 @@ class ProductController
         if (isset($_GET['ajax']) && $_GET['ajax'] === 'add_review') {
             header('Content-Type: application/json; charset=utf-8');
 
+            $currentUser = $_SESSION['user'] ?? null;
+            $userId      = $currentUser['id'] ?? ($_SESSION['user_id'] ?? null);
+            $userEmail   = $currentUser['email'] ?? trim($_POST['user_email'] ?? '');
+
+            if (!$currentUser && empty($userId)) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Bạn cần đăng nhập tài khoản đã mua sản phẩm này để gửi đánh giá.'
+                ]);
+                exit;
+            }
+
             $productId = intval($_POST['product_id'] ?? $id);
-            $userName  = trim($_POST['user_name'] ?? '');
-            $userEmail = trim($_POST['user_email'] ?? '');
+            $userName  = trim($_POST['user_name'] ?? ($currentUser['fullname'] ?? ''));
             $rating    = intval($_POST['rating'] ?? 5);
             $comment   = trim($_POST['comment'] ?? '');
 
@@ -51,25 +62,38 @@ class ProductController
                 exit;
             }
 
+            // Kiểm tra điều kiện: chỉ customer đã mua hàng mới được đánh giá
+            $hasPurchased = $this->reviewModel->hasPurchasedProduct($userId, $userEmail, $productId);
+            if (!$hasPurchased) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Bạn chỉ có thể đánh giá và chấm sao sau khi đã mua sản phẩm này!'
+                ]);
+                exit;
+            }
+
             $newId = $this->reviewModel->createReview([
-                'product_id' => $productId,
-                'user_name'  => $userName,
-                'user_email' => $userEmail,
-                'rating'     => $rating,
-                'comment'    => $comment
+                'product_id'           => $productId,
+                'user_id'              => $userId,
+                'user_name'            => $userName,
+                'user_email'           => $userEmail,
+                'rating'               => $rating,
+                'comment'              => $comment,
+                'is_verified_purchase' => 1
             ]);
 
             if ($newId) {
                 $summary = $this->reviewModel->getRatingSummary($productId);
                 echo json_encode([
                     'success' => true,
-                    'message' => 'Cảm ơn bạn đã gửi đánh giá sản phẩm!',
+                    'message' => 'Cảm ơn bạn đã gửi đánh giá! Đánh giá đã được xác thực mua hàng thành công.',
                     'review'  => [
-                        'id'         => $newId,
-                        'user_name'  => htmlspecialchars($userName),
-                        'rating'     => $rating,
-                        'comment'    => htmlspecialchars($comment),
-                        'created_at' => date('d/m/Y H:i')
+                        'id'                   => $newId,
+                        'user_name'            => htmlspecialchars($userName),
+                        'rating'               => $rating,
+                        'comment'              => htmlspecialchars($comment),
+                        'is_verified_purchase' => 1,
+                        'created_at'           => date('d/m/Y H:i')
                     ],
                     'summary' => $summary
                 ]);
@@ -97,7 +121,19 @@ class ProductController
         // Fetch reviews and rating breakdown
         $reviews = $this->reviewModel ? $this->reviewModel->getByProductId($id) : [];
         $ratingSummary = $this->reviewModel ? $this->reviewModel->getRatingSummary($id) : [
-            'count' => 0, 'avg' => 5.0, 'breakdown' => [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0]
+            'total' => 0, 'average' => 5.0, 'breakdown' => [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0], 'percentages' => [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0]
+        ];
+
+        // Kiểm tra quyền đánh giá của người dùng hiện tại
+        $currentUser = $_SESSION['user'] ?? null;
+        $userId      = $currentUser['id'] ?? ($_SESSION['user_id'] ?? null);
+        $userEmail   = $currentUser['email'] ?? '';
+
+        $canReview = $this->reviewModel ? $this->reviewModel->canUserReview($userId, $userEmail, $id) : [
+            'can_review'    => false,
+            'is_logged_in'  => false,
+            'has_purchased' => false,
+            'reason'        => 'Hệ thống đánh giá tạm thời gián đoạn.'
         ];
 
         require_once PATH_VIEW . 'product-detail.php';

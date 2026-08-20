@@ -48,8 +48,12 @@
 
 
 						<?php if (!empty($_SESSION['user'])): ?>
-							<a href="#" class="flex-c-m trans-04 p-lr-25">
-								Xin chào, <?= htmlspecialchars($_SESSION['user']['fullname']) ?>
+							<a href="<?= BASE_URL ?>?action=/order-history" class="flex-c-m trans-04 p-lr-25">
+								<i class="fa fa-user-circle mr-1"></i> Xin chào, <?= htmlspecialchars($_SESSION['user']['fullname']) ?>
+							</a>
+
+							<a href="<?= BASE_URL ?>?action=/order-history" class="flex-c-m trans-04 p-lr-25 font-weight-bold" style="color: #ffc107 !important;">
+								<i class="fa fa-history mr-1"></i> Lịch sử mua hàng
 							</a>
 
 							<?php if ($_SESSION['user']['role'] === 'admin'): ?>
@@ -58,7 +62,7 @@
 								</a>
 							<?php endif; ?>
 
-							<a href="?action=/logout" class="flex-c-m trans-04 p-lr-25">
+							<a href="<?= BASE_URL ?>?action=/logout" class="flex-c-m trans-04 p-lr-25">
 								Đăng xuất
 							</a>
 						<?php else: ?>
@@ -116,6 +120,10 @@
 
 							<li>
 								<a href="<?= BASE_URL ?>?action=/compare">So sánh</a>
+							</li>
+
+							<li>
+								<a href="<?= BASE_URL ?>?action=/order-history">Lịch sử đơn hàng</a>
 							</li>
 						</ul>
 					</div>	

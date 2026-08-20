@@ -451,6 +451,7 @@
                                                 <?php 
                                                     $rInitial = mb_substr($rev['user_name'] ?? 'K', 0, 1, 'UTF-8');
                                                     $rScore = intval($rev['rating'] ?? 5);
+                                                    $isVerified = !empty($rev['is_verified_purchase']);
                                                 ?>
                                                 <div class="review-item-card d-flex">
                                                     <div class="user-initial-avatar m-r-16 flex-shrink-0">
@@ -458,7 +459,14 @@
                                                     </div>
                                                     <div class="flex-grow-1">
                                                         <div class="d-flex justify-content-between align-items-center flex-wrap mb-1">
-                                                            <strong class="mtext-107 cl2"><?= htmlspecialchars($rev['user_name']) ?></strong>
+                                                            <div>
+                                                                <strong class="mtext-107 cl2"><?= htmlspecialchars($rev['user_name']) ?></strong>
+                                                                <?php if ($isVerified): ?>
+                                                                    <span class="badge badge-success text-success bg-light border border-success ml-2 py-1 px-2" style="font-size: 11px; border-radius: 20px; font-weight: 600;">
+                                                                        <i class="fa fa-check-circle text-success mr-1"></i> Đã mua hàng tại Bunny Wear
+                                                                    </span>
+                                                                <?php endif; ?>
+                                                            </div>
                                                             <span class="text-warning fs-14">
                                                                 <?php for ($j = 1; $j <= 5; $j++): ?>
                                                                     <i class="fa <?= $j <= $rScore ? 'fa-star text-warning' : 'fa-star-o text-muted' ?>"></i>
@@ -483,54 +491,94 @@
                                         </div>
                                     </div>
 
-                                    <!-- Add Review Form -->
-                                    <div class="bor10 p-all-25 bg-light" style="border-radius: 12px;">
-                                        <h5 class="mtext-108 cl2 p-b-15 font-weight-bold">
-                                            Viết đánh giá của bạn
-                                        </h5>
-
-                                        <form id="formAddReview" onsubmit="handleReviewSubmit(event)">
-                                            <input type="hidden" name="product_id" value="<?= $product['id'] ?? 0 ?>">
-                                            
-                                            <!-- Star Picker -->
-                                            <div class="flex-w flex-m p-b-15 align-items-center">
-                                                <span class="stext-102 cl3 m-r-16 font-weight-bold">Đánh giá sao:</span>
-                                                <div class="star-rating-select">
-                                                    <input type="radio" id="star5" name="rating" value="5" checked />
-                                                    <label for="star5" title="5 sao"><i class="fa fa-star"></i></label>
-                                                    <input type="radio" id="star4" name="rating" value="4" />
-                                                    <label for="star4" title="4 sao"><i class="fa fa-star"></i></label>
-                                                    <input type="radio" id="star3" name="rating" value="3" />
-                                                    <label for="star3" title="3 sao"><i class="fa fa-star"></i></label>
-                                                    <input type="radio" id="star2" name="rating" value="2" />
-                                                    <label for="star2" title="2 sao"><i class="fa fa-star"></i></label>
-                                                    <input type="radio" id="star1" name="rating" value="1" />
-                                                    <label for="star1" title="1 sao"><i class="fa fa-star"></i></label>
-                                                </div>
+                                    <!-- Add Review Section with Purchase Verification -->
+                                    <?php if (!empty($canReview['can_review'])): ?>
+                                        <div class="bor10 p-all-25 bg-light" style="border-radius: 12px;">
+                                            <div class="d-flex align-items-center justify-content-between flex-wrap p-b-15">
+                                                <h5 class="mtext-108 cl2 font-weight-bold mb-2 mb-md-0">
+                                                    Viết đánh giá của bạn
+                                                </h5>
+                                                <span class="badge badge-success text-success bg-white border border-success py-1 px-3" style="font-size: 12px; border-radius: 20px; font-weight: 600;">
+                                                    <i class="fa fa-check-circle mr-1"></i> Xác nhận: Bạn đã mua sản phẩm này
+                                                </span>
                                             </div>
 
-                                            <div class="row">
-                                                <div class="col-sm-6 p-b-15">
-                                                    <label class="stext-102 cl3 font-weight-bold" for="reviewName">Họ và tên <span class="text-danger">*</span></label>
-                                                    <input class="size-111 bor8 stext-102 cl2 p-lr-15 bg0 w-full" id="reviewName" type="text" name="user_name" placeholder="Nhập tên của bạn..." required>
+                                            <form id="formAddReview" onsubmit="handleReviewSubmit(event)">
+                                                <input type="hidden" name="product_id" value="<?= $product['id'] ?? 0 ?>">
+                                                
+                                                <!-- Star Picker -->
+                                                <div class="flex-w flex-m p-b-15 align-items-center">
+                                                    <span class="stext-102 cl3 m-r-16 font-weight-bold">Đánh giá sao:</span>
+                                                    <div class="star-rating-select">
+                                                        <input type="radio" id="star5" name="rating" value="5" checked />
+                                                        <label for="star5" title="5 sao"><i class="fa fa-star"></i></label>
+                                                        <input type="radio" id="star4" name="rating" value="4" />
+                                                        <label for="star4" title="4 sao"><i class="fa fa-star"></i></label>
+                                                        <input type="radio" id="star3" name="rating" value="3" />
+                                                        <label for="star3" title="3 sao"><i class="fa fa-star"></i></label>
+                                                        <input type="radio" id="star2" name="rating" value="2" />
+                                                        <label for="star2" title="2 sao"><i class="fa fa-star"></i></label>
+                                                        <input type="radio" id="star1" name="rating" value="1" />
+                                                        <label for="star1" title="1 sao"><i class="fa fa-star"></i></label>
+                                                    </div>
                                                 </div>
 
-                                                <div class="col-sm-6 p-b-15">
-                                                    <label class="stext-102 cl3 font-weight-bold" for="reviewEmail">Email</label>
-                                                    <input class="size-111 bor8 stext-102 cl2 p-lr-15 bg0 w-full" id="reviewEmail" type="email" name="user_email" placeholder="example@email.com">
+                                                <div class="row">
+                                                    <div class="col-sm-6 p-b-15">
+                                                        <label class="stext-102 cl3 font-weight-bold" for="reviewName">Họ và tên <span class="text-danger">*</span></label>
+                                                        <input class="size-111 bor8 stext-102 cl2 p-lr-15 bg0 w-full" id="reviewName" type="text" name="user_name" value="<?= htmlspecialchars($currentUser['fullname'] ?? '') ?>" placeholder="Nhập tên của bạn..." required>
+                                                    </div>
+
+                                                    <div class="col-sm-6 p-b-15">
+                                                        <label class="stext-102 cl3 font-weight-bold" for="reviewEmail">Email</label>
+                                                        <input class="size-111 bor8 stext-102 cl2 p-lr-15 bg0 w-full" id="reviewEmail" type="email" name="user_email" value="<?= htmlspecialchars($currentUser['email'] ?? '') ?>" placeholder="example@email.com" readonly style="background-color: #f8fafc; cursor: not-allowed;">
+                                                    </div>
+
+                                                    <div class="col-12 p-b-20">
+                                                        <label class="stext-102 cl3 font-weight-bold" for="reviewComment">Nội dung đánh giá & nhận xét <span class="text-danger">*</span></label>
+                                                        <textarea class="size-110 bor8 stext-102 cl2 p-all-15 bg0 w-full" id="reviewComment" name="comment" rows="4" placeholder="Chia sẻ cảm nhận về chất lượng sản phẩm, form dáng, dịch vụ đóng gói, giao hàng..." required></textarea>
+                                                    </div>
                                                 </div>
 
-                                                <div class="col-12 p-b-20">
-                                                    <label class="stext-102 cl3 font-weight-bold" for="reviewComment">Nội dung đánh giá <span class="text-danger">*</span></label>
-                                                    <textarea class="size-110 bor8 stext-102 cl2 p-all-15 bg0 w-full" id="reviewComment" name="comment" rows="4" placeholder="Chia sẻ cảm nhận về chất lượng sản phẩm, form dáng, dịch vụ giao hàng..." required></textarea>
-                                                </div>
+                                                <button type="submit" id="btnSubmitReview" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 font-weight-bold">
+                                                    <i class="fa fa-paper-plane m-r-8"></i> Gửi đánh giá ngay
+                                                </button>
+                                            </form>
+                                        </div>
+                                    <?php elseif (empty($canReview['is_logged_in'])): ?>
+                                        <!-- Prompt when NOT logged in -->
+                                        <div class="bor10 p-all-30 bg-light text-center" style="border-radius: 12px;">
+                                            <div class="mb-3">
+                                                <i class="fa fa-lock fa-3x text-secondary"></i>
                                             </div>
-
-                                            <button type="submit" id="btnSubmitReview" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 font-weight-bold">
-                                                <i class="fa fa-paper-plane m-r-8"></i> Gửi đánh giá ngay
+                                            <h5 class="mtext-108 cl2 p-b-10 font-weight-bold">
+                                                Chỉ khách hàng đã mua sản phẩm mới có thể đánh giá
+                                            </h5>
+                                            <p class="stext-102 cl6 p-b-20" style="max-width: 520px; margin: 0 auto; line-height: 1.6;">
+                                                Để đảm bảo tính khách quan và tin cậy, Bunny Wear quy định chỉ khách hàng đã đặt mua thành công sản phẩm này mới được chấm sao và viết nhận xét. Vui lòng đăng nhập để tiếp tục.
+                                            </p>
+                                            <a href="<?= BASE_URL ?>?action=/login" class="btn btn-primary px-4 py-2 font-weight-bold" style="border-radius: 25px;">
+                                                <i class="fa fa-sign-in mr-1"></i> Đăng nhập để đánh giá
+                                            </a>
+                                            <span class="d-block mt-3 stext-107 cl6">Chưa có tài khoản? <a href="<?= BASE_URL ?>?action=/register" class="text-primary font-weight-bold">Đăng ký tài khoản</a></span>
+                                        </div>
+                                    <?php else: ?>
+                                        <!-- Prompt when logged in but NOT purchased this product -->
+                                        <div class="bor10 p-all-30 bg-light text-center" style="border-radius: 12px;">
+                                            <div class="mb-3">
+                                                <i class="fa fa-shopping-bag fa-3x text-warning"></i>
+                                            </div>
+                                            <h5 class="mtext-108 cl2 p-b-10 font-weight-bold">
+                                                Bạn chưa mua sản phẩm này
+                                            </h5>
+                                            <p class="stext-102 cl6 p-b-20" style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
+                                                Tài khoản <strong><?= htmlspecialchars($currentUser['fullname'] ?? 'của bạn') ?></strong> chưa từng mua <strong><?= htmlspecialchars($product['product_name'] ?? 'sản phẩm này') ?></strong>. Tính năng chấm sao và bình luận chỉ mở sau khi bạn đã mua hàng.
+                                            </p>
+                                            <button type="button" class="btn btn-primary px-4 py-2 font-weight-bold" style="border-radius: 25px;" onclick="$('html, body').animate({scrollTop: $('.js-addcart-detail').offset().top - 200}, 500);">
+                                                <i class="fa fa-shopping-cart mr-1"></i> Mua ngay sản phẩm này
                                             </button>
-                                        </form>
-                                    </div>
+                                        </div>
+                                    <?php endif; ?>
 
                                 </div>
                             </div>
@@ -792,7 +840,12 @@
                                 </div>
                                 <div class="flex-grow-1">
                                     <div class="d-flex justify-content-between align-items-center flex-wrap mb-1">
-                                        <strong class="mtext-107 cl2">${r.user_name}</strong>
+                                        <div>
+                                            <strong class="mtext-107 cl2">${r.user_name}</strong>
+                                            <span class="badge badge-success text-success bg-light border border-success ml-2 py-1 px-2" style="font-size: 11px; border-radius: 20px; font-weight: 600;">
+                                                <i class="fa fa-check-circle text-success mr-1"></i> Đã mua hàng tại Bunny Wear
+                                            </span>
+                                        </div>
                                         <span class="text-warning fs-14">
                                             ${starsHtml}
                                         </span>
