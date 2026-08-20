@@ -46,7 +46,6 @@
 							Trợ giúp & Câu hỏi thường gặp
 						</a>
 
-
 						<?php if (!empty($_SESSION['user'])): ?>
 							<a href="<?= BASE_URL ?>?action=/order-history" class="flex-c-m trans-04 p-lr-25">
 								<i class="fa fa-user-circle mr-1"></i> Xin chào, <?= htmlspecialchars($_SESSION['user']['fullname']) ?>
@@ -66,15 +65,14 @@
 								Đăng xuất
 							</a>
 						<?php else: ?>
-							<a href="?action=/login" class="flex-c-m trans-04 p-lr-25">
+							<a href="<?= BASE_URL ?>?action=/login" class="flex-c-m trans-04 p-lr-25">
 								Đăng nhập
 							</a>
 
-							<a href="?action=/register" class="flex-c-m trans-04 p-lr-25">
+							<a href="<?= BASE_URL ?>?action=/register" class="flex-c-m trans-04 p-lr-25">
 								Đăng ký
 							</a>
 						<?php endif; ?>
-
 
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							VI
@@ -107,8 +105,8 @@
 							</li>
 
 							<li class="label1" data-label1="hot">
-									<a href="?action=/cart">Giỏ hàng</a>
-
+								<a href="<?= BASE_URL ?>?action=/cart">Giỏ hàng</a>
+							</li>
 
 							<li>
 								<a href="<?= BASE_URL ?>?action=/wishlist">Danh Mục Yêu Thích</a>
@@ -127,7 +125,6 @@
 							</li>
 						</ul>
 					</div>	
-
 					<!-- Icon header -->
 					<div class="wrap-icon-header flex-w flex-r-m">
 						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
@@ -193,28 +190,29 @@
 						<a href="#" class="flex-c-m p-lr-10 trans-04">
 							Trợ giúp & Câu hỏi thường gặp
 						</a>
-
 						<?php if (!empty($_SESSION['user'])): ?>
-							<a href="?action=/logout" class="flex-c-m p-lr-10 trans-04">
+							<a href="<?= BASE_URL ?>?action=/order-history" class="flex-c-m p-lr-10 trans-04">
+								Lịch sử đơn hàng
+							</a>
+							<a href="<?= BASE_URL ?>?action=/logout" class="flex-c-m p-lr-10 trans-04">
 								Đăng xuất (<?= htmlspecialchars($_SESSION['user']['fullname']) ?>)
 							</a>
 						<?php else: ?>
-							<a href="?action=/login" class="flex-c-m p-lr-10 trans-04">
+							<a href="<?= BASE_URL ?>?action=/login" class="flex-c-m p-lr-10 trans-04">
 								Đăng nhập
 							</a>
 
-							<a href="?action=/register" class="flex-c-m p-lr-10 trans-04">
+							<a href="<?= BASE_URL ?>?action=/register" class="flex-c-m p-lr-10 trans-04">
 								Đăng ký
 							</a>
 						<?php endif; ?>
 
-
 						<a href="#" class="flex-c-m p-lr-10 trans-04">
-							EN
+							VI
 						</a>
 
 						<a href="#" class="flex-c-m p-lr-10 trans-04">
-							USD
+							VND
 						</a>
 					</div>
 				</li>
@@ -230,11 +228,15 @@
 				</li>
 
 				<li>
-					<a href="shoping-cart.html" class="label1 rs1" data-label1="hot">Giỏ hàng</a>
+					<a href="<?= BASE_URL ?>?action=/cart" class="label1 rs1" data-label1="hot">Giỏ hàng</a>
 				</li>
 
 				<li>
 					<a href="<?= BASE_URL ?>?action=/wishlist">Danh Mục Yêu Thích</a>
+				</li>
+
+				<li>
+					<a href="<?= BASE_URL ?>?action=/order-history">Lịch sử đơn hàng</a>
 				</li>
 
 				<li>
@@ -453,7 +455,6 @@
 					Sản Phẩm Nổi Bật
 				</h3>
 			</div>
-
 			<div class="flex-w flex-sb-m p-b-52">
 				<div class="flex-w flex-l-m filter-tope-group m-tb-10">
 					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
@@ -1325,7 +1326,7 @@
 						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
 							<i class="fa fa-instagram"></i>
 						</a>
-`
+
 						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
 							<i class="fa fa-pinterest-p"></i>
 						</a>

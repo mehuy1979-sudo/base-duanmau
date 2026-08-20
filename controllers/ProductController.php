@@ -14,11 +14,45 @@ class ProductController
     public function index()
     {
         $title = "Cửa hàng - Bunny Wear";
-        $products = $this->productModel->getAll();
+        
+        // Tổng hợp tất cả các tham số lọc từ phương thức GET
+        $filters = [
+            'category' => $_GET['category'] ?? null,
+            'sort'     => $_GET['sort'] ?? ($_GET['sort_price'] ?? null),
+            'keyword'  => trim($_GET['keyword'] ?? ($_GET['search-product'] ?? ''))
+        ];
+        
+        if (!empty($filters['category']) || !empty($filters['sort']) || !empty($filters['keyword'])) {
+            $products = $this->productModel->getFilteredProducts($filters);
+        } else {
+            $products = $this->productModel->getAll();
+        }
+
         $categories = $this->productModel->getCategories();
         $view = 'product';
 
         require_once PATH_VIEW . 'main.php';
+    }
+
+    public function search()
+    {
+        $view = 'search';
+        $orderBy = $_POST['sort_price'] ?? ($_GET['sort_price'] ?? 'asc');
+        $keyword = $_POST['keyword'] ?? ($_GET['keyword'] ?? '');
+
+        $listproduct = [];
+        if ($keyword !== '') {
+            $listproduct = $this->productModel->getproductByKey($keyword, $orderBy);
+        } else {
+            $listproduct = $this->productModel->getAll();
+        }
+
+        require_once PATH_VIEW . 'search.php';
+    }
+
+    public function searchByKey()
+    {
+        $this->search();
     }
 
     public function detail()

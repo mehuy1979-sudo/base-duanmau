@@ -10,7 +10,9 @@
             <div class="col-sm-6 col-md-4 col-lg-3 p-b-35">
                 <div class="block2">
                     <div class="block2-pic hov-img0">
-                        <img src="<?= BASE_URL ?>assets/uploads/<?= htmlspecialchars($product['image'] ?? 'default.jpg') ?>" alt="<?= htmlspecialchars($product['product_name'] ?? $product['name'] ?? 'Sản phẩm') ?>">
+                        <img src="<?= BASE_URL ?>assets/uploads/<?= htmlspecialchars($product['image'] ?? 'default.jpg') ?>" 
+                             alt="<?= htmlspecialchars($product['product_name'] ?? $product['name'] ?? 'Sản phẩm') ?>"
+                             onerror="this.src='<?= BASE_URL ?>views/images/product-01.jpg';">
                         <a href="<?= BASE_URL ?>?action=/product-detail&id=<?= $product['id'] ?>" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04">
                             Xem chi tiết
                         </a>
@@ -26,7 +28,7 @@
                         </div>
                         <div class="block2-txt-child2 flex-r p-t-3">
                             <?php $isFav = in_array($product['id'] ?? 0, $_SESSION['wishlist'] ?? []); ?>
-                            <a href="javascript:void(0)" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2 <?= $isFav ? 'js-addedwish-b2' : '' ?>" data-product-id="<?= $product['id'] ?? 0 ?>" data-product-name="<?= htmlspecialchars($product['product_name'] ?? 'Sản phẩm') ?>">
+                            <a href="javascript:void(0)" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2 <?= $isFav ? 'js-addedwish-b2' : '' ?>" data-product-id="<?= $product['id'] ?? 0 ?>" data-product-name="<?= htmlspecialchars($product['product_name'] ?? $product['name'] ?? 'Sản phẩm') ?>">
                                 <img class="icon-heart1 dis-block trans-04" src="<?= BASE_URL ?>views/images/icons/icon-heart-01.png" alt="ICON">
                                 <img class="icon-heart2 dis-block trans-04 ab-t-l" src="<?= BASE_URL ?>views/images/icons/icon-heart-02.png" alt="ICON">
                             </a>
@@ -38,7 +40,7 @@
         </div>
     <?php else: ?>
         <div class="p-t-40 p-b-40 text-center">
-            <p class="stext-107 cl6">Chưa có sản phẩm nào.</p>
+            <p class="stext-107 cl6">Chưa có sản phẩm nào phù hợp.</p>
         </div>
     <?php endif; ?>
 </div>

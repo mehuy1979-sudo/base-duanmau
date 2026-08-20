@@ -4,6 +4,10 @@ class OrderModel extends BaseModel
 {
     protected $table = "orders";
 
+    // ==========================================
+    // CÁC PHƯƠNG THỨC DÀNH CHO KHÁCH HÀNG (FRONTEND)
+    // ==========================================
+
     /**
      * Lấy danh sách tất cả đơn hàng của một người dùng
      */
@@ -39,7 +43,7 @@ class OrderModel extends BaseModel
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
-            $orders = $stmt->fetchAll();
+            $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if (empty($orders)) {
                 return [];
@@ -57,7 +61,7 @@ class OrderModel extends BaseModel
 
             $itemStmt = $this->pdo->prepare($itemSql);
             $itemStmt->execute($orderIds);
-            $allItems = $itemStmt->fetchAll();
+            $allItems = $itemStmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Nhóm items theo order_id
             $itemsByOrder = [];
@@ -79,7 +83,7 @@ class OrderModel extends BaseModel
     }
 
     /**
-     * Lấy thông tin chi tiết một đơn hàng
+     * Lấy thông tin chi tiết một đơn hàng (Frontend)
      */
     public function getOrderDetail($orderId, $userId = null, string $userEmail = '')
     {
@@ -107,7 +111,7 @@ class OrderModel extends BaseModel
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
-            $order = $stmt->fetch();
+            $order = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$order) {
                 return null;
@@ -122,7 +126,7 @@ class OrderModel extends BaseModel
 
             $itemStmt = $this->pdo->prepare($itemSql);
             $itemStmt->execute([':oid' => (int)$orderId]);
-            $order['items'] = $itemStmt->fetchAll();
+            $order['items'] = $itemStmt->fetchAll(PDO::FETCH_ASSOC);
 
             return $order;
         } catch (\PDOException $e) {
@@ -131,9 +135,9 @@ class OrderModel extends BaseModel
     }
 
     /**
-     * Hủy đơn hàng (chỉ khi đơn hàng đang ở trạng thái 'Đang xử lý' hoặc 'Chờ xử lý')
+     * Hủy đơn hàng phía khách hàng
      */
-    public function cancelOrder($orderId, $userId = null, string $userEmail = ''): array
+    public function cancelOrderUser($orderId, $userId = null, string $userEmail = ''): array
     {
         if (!$this->pdo || empty($orderId)) {
             return ['success' => false, 'message' => 'Mã đơn hàng không hợp lệ.'];
@@ -144,8 +148,8 @@ class OrderModel extends BaseModel
             return ['success' => false, 'message' => 'Không tìm thấy đơn hàng hoặc bạn không có quyền thao tác.'];
         }
 
-        $cancellableStatuses = ['Đang xử lý', 'Chờ xử lý', 'pending', 'processing'];
-        $currentStatus = trim($order['status'] ?? '');
+        $cancellableStatuses = ['Đang xử lý', 'Chờ xử lý', 'pending', 'processing', '1'];
+        $currentStatus = trim($order['status'] ?? ($order['order_status'] ?? ''));
 
         if (!in_array(mb_strtolower($currentStatus, 'UTF-8'), array_map('mb_strtolower', $cancellableStatuses), true)) {
             return [
@@ -155,11 +159,98 @@ class OrderModel extends BaseModel
         }
 
         try {
-            $stmt = $this->pdo->prepare("UPDATE orders SET status = 'Đã hủy' WHERE id = :id");
+            $stmt = $this->pdo->prepare("UPDATE orders SET status = 'Đã hủy', order_status = 7 WHERE id = :id");
             $stmt->execute([':id' => (int)$orderId]);
             return ['success' => true, 'message' => 'Đã hủy đơn hàng thành công!'];
         } catch (\PDOException $e) {
             return ['success' => false, 'message' => 'Lỗi khi cập nhật trạng thái đơn hàng.'];
         }
+    }
+
+    // ==========================================
+    // CÁC PHƯƠNG THỨC DÀNH CHO ADMIN (BACKEND)
+    // ==========================================
+
+    // Lấy danh sách đơn hàng
+    public function getAllOrders() 
+    {
+        if (!$this->pdo) return [];
+        $sql = "SELECT * FROM orders ORDER BY id DESC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Lấy thông tin 1 đơn hàng theo ID
+    public function getOrderById($order_id) 
+    {
+        if (!$this->pdo) return null;
+        $sql = "SELECT * FROM orders WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['id' => $order_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // Lấy chi tiết các sản phẩm trong đơn hàng (Kèm thông tin ảnh từ bảng products)
+    public function getOrderDetails($order_id) 
+    {
+        if (!$this->pdo) return [];
+        $sql = "SELECT 
+                    od.*, 
+                    p.product_name, 
+                    p.image 
+                FROM order_details od
+                LEFT JOIN products p ON od.product_id = p.id
+                WHERE od.order_id = :order_id";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['order_id' => $order_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Cập nhật trạng thái đơn hàng
+    public function updateOrderStatus($order_id, $status_code) 
+    {
+        if (!$this->pdo) return false;
+        $statusLabels = [
+            1 => 'Chờ xử lý',
+            2 => 'Đã xác nhận',
+            3 => 'Đang giao',
+            4 => 'Đã giao',
+            5 => 'Giao thất bại',
+            6 => 'Hoàn thành',
+            7 => 'Đã hủy'
+        ];
+        $statusText = $statusLabels[$status_code] ?? 'Đang xử lý';
+
+        $sql = "UPDATE orders SET order_status = :status, status = :status_text WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([
+            'status'      => $status_code, 
+            'status_text' => $statusText,
+            'id'          => $order_id
+        ]);
+    }
+
+    // Cập nhật trạng thái thanh toán
+    public function updatePaymentStatus($order_id, $payment_status) 
+    {
+        if (!$this->pdo) return false;
+        $sql = "UPDATE orders SET payment_status = :status WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute(['status' => $payment_status, 'id' => $order_id]);
+    }
+
+    // Hủy đơn hàng (Admin hoặc User)
+    public function cancelOrder($order_id, $reasonOrUserId = '', $userEmail = '') 
+    {
+        if (is_numeric($reasonOrUserId) && $reasonOrUserId > 0 && !empty($userEmail)) {
+            return $this->cancelOrderUser($order_id, $reasonOrUserId, $userEmail);
+        }
+
+        if (!$this->pdo) return false;
+        $sql = "UPDATE orders SET order_status = 7, status = 'Đã hủy', cancel_reason = :reason WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute(['reason' => (string)$reasonOrUserId, 'id' => $order_id]);
     }
 }

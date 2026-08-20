@@ -33,10 +33,12 @@ match ($action) {
     // Trang chủ
     '/'                     => (new HomeController)->index(),
 
-    // Sản phẩm & Cửa hàng
-    '/product', 'product'   => (new ProductController)->index(),
+    // Sản phẩm, Cửa hàng, Tìm kiếm & So sánh
+    '/product', 'product'               => (new ProductController)->index(),
     '/product-detail', 'product-detail' => (new ProductController)->detail(),
-    '/compare', 'compare'   => (new ProductController)->compare(),
+    '/compare', 'compare'               => (new ProductController)->compare(),
+    '/search', 'search'                 => (new ProductController)->search(),
+    '/keyword', 'keyword'               => (new ProductController)->searchByKey(),
 
     // Yêu thích & Danh mục yêu thích
     '/wishlist', 'wishlist' => (new WishlistController)->index(),
@@ -58,13 +60,21 @@ match ($action) {
     '/register/submit', 'register/submit'   => (new AuthController)->register(),
     '/logout', 'logout'                     => (new AuthController)->logout(),
 
-    // Lịch sử đơn hàng & Chi tiết đơn
+    // Lịch sử đơn hàng khách hàng & Chi tiết đơn
     '/order-history', 'order-history',
     '/my-orders', 'my-orders'               => (new OrderController)->index(),
     '/order-detail', 'order-detail'         => (new OrderController)->detail(),
     '/order-cancel', 'order-cancel'         => (new OrderController)->cancel(),
 
-    // Quản trị sản phẩm
+    // Quản trị đơn hàng Admin (nguyenanhhuy)
+    '/orders', 'orders', 
+    '/admin/orders', 'admin/orders'                             => (new AdminOrderController)->list(),
+    '/order_detail', 'order_detail', 
+    '/admin/order_detail', 'admin/order_detail'                 => (new AdminOrderController)->detail(),
+    '/update_order_status', 'update_order_status', 
+    '/admin/update_order_status', 'admin/update_order_status'   => (new AdminOrderController)->updateStatus(),
+
+    // Quản trị sản phẩm Admin
     '/admin/products', 'admin/products'     => (new AdminProductController)->index(),
 
     default => (new HomeController)->index(),
