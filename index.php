@@ -23,5 +23,5 @@ spl_autoload_register(function ($class) {
     }
 });
 
-// 3. Nạp Router để xử lý điều hướng (Được gọi cuối cùng)
+// 3. Nạp Router để xử lý điều hướng
 require_once __DIR__ . '/routes/index.php';

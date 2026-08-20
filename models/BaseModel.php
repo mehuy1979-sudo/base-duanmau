@@ -4,6 +4,7 @@ class BaseModel
 {
     protected $table;
     protected $pdo;
+    protected $connected = false;
 
     // Kết nối CSDL (dùng chung 1 kết nối PDO của toàn hệ thống)
     public function __construct()
@@ -15,9 +16,16 @@ class BaseModel
                 $dsn = sprintf("mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4", DB_HOST, DB_PORT, DB_NAME);
                 $this->pdo = new PDO($dsn, DB_USERNAME, DB_PASSWORD, DB_OPTIONS);
             }
+            $this->connected = ($this->pdo !== null);
         } catch (PDOException $e) {
             $this->pdo = null;
+            $this->connected = false;
         }
+    }
+
+    protected function isConnected()
+    {
+        return $this->connected && $this->pdo !== null;
     }
 
     // Lấy toàn bộ bản ghi

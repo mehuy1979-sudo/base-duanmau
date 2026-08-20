@@ -54,11 +54,11 @@ match ($action) {
     '/order-success', 'order-success' => (new CartController)->orderSuccess(),
 
     // Xác thực người dùng (Auth)
-    '/login', 'login'                       => (new AuthController)->showLogin(),
+    '/login', 'login'                       => class_exists('UserController') ? (new UserController)->login() : (new AuthController)->showLogin(),
     '/login/submit', 'login/submit'         => (new AuthController)->login(),
-    '/register', 'register'                 => (new AuthController)->showRegister(),
+    '/register', 'register'                 => class_exists('UserController') ? (new UserController)->register() : (new AuthController)->showRegister(),
     '/register/submit', 'register/submit'   => (new AuthController)->register(),
-    '/logout', 'logout'                     => (new AuthController)->logout(),
+    '/logout', 'logout'                     => class_exists('UserController') ? (new UserController)->logout() : (new AuthController)->logout(),
 
     // Lịch sử đơn hàng khách hàng & Chi tiết đơn
     '/order-history', 'order-history',

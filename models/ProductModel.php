@@ -6,7 +6,6 @@ class ProductModel extends BaseModel
 
     public function getproductByKey($keyword, $orderBy = 'ASC')
     {
-        // Chống SQL Injection bằng cách validate chiều sắp xếp
         $direction = strtoupper($orderBy) === 'DESC' ? 'DESC' : 'ASC';
         $sql = "SELECT * FROM products WHERE product_name LIKE :keyword ORDER BY price {$direction}";
         
@@ -20,19 +19,19 @@ class ProductModel extends BaseModel
         $sql = "SELECT * FROM products WHERE 1=1";
         $params = [];
         
-        // 1. Lọc theo danh mục (nếu có)
+        // 1. Lọc theo danh mục
         if (!empty($filters['category'])) {
             $sql .= " AND category_id = :category";
             $params['category'] = $filters['category'];
         }
         
-        // 2. Lọc theo từ khóa tìm kiếm tên sản phẩm
+        // 2. Lọc theo từ khóa
         if (!empty($filters['keyword'])) {
             $sql .= " AND product_name LIKE :keyword";
             $params['keyword'] = '%' . $filters['keyword'] . '%';
         }
         
-        // 3. Sắp xếp (Sort By / Sort Price)
+        // 3. Sắp xếp
         $sort = $filters['sort'] ?? ($filters['sort_price'] ?? '');
         if (!empty($sort)) {
             switch ($sort) {
@@ -92,6 +91,11 @@ class ProductModel extends BaseModel
         } catch (\PDOException $e) {
             return null;
         }
+    }
+
+    public function find($id)
+    {
+        return $this->getOne($id);
     }
 
     public function getRelatedProducts($categoryId, $excludeId = 0, $limit = 4)
