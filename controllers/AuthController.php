@@ -33,7 +33,7 @@ class AuthController
     public function login(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ?action=/login');
+            header('Location: ' . BASE_URL . '?action=/login');
             exit;
         }
 
@@ -43,7 +43,7 @@ class AuthController
         if (empty($email) || empty($password)) {
             $_SESSION['login_error'] = 'Vui lòng nhập đầy đủ email và mật khẩu.';
             $_SESSION['login_old']   = ['email' => $email];
-            header('Location: ?action=/login');
+            header('Location: ' . BASE_URL . '?action=/login');
             exit;
         }
 
@@ -52,14 +52,14 @@ class AuthController
         if (!$account) {
             $_SESSION['login_error'] = 'Email hoặc mật khẩu không chính xác.';
             $_SESSION['login_old']   = ['email' => $email];
-            header('Location: ?action=/login');
+            header('Location: ' . BASE_URL . '?action=/login');
             exit;
         }
 
         if (($account['status'] ?? 'active') === 'locked') {
-            $_SESSION['login_error'] = 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.';
+            $_SESSION['login_error'] = 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ bộ phận hỗ trợ Bunny Wear.';
             $_SESSION['login_old']   = ['email' => $email];
-            header('Location: ?action=/login');
+            header('Location: ' . BASE_URL . '?action=/login');
             exit;
         }
 
@@ -68,10 +68,11 @@ class AuthController
             'id'       => $account['id'],
             'fullname' => $account['fullname'],
             'email'    => $account['email'],
+            'phone'    => $account['phone'] ?? '',
             'role'     => $account['role'],
         ];
 
-        // Giữ tương thích với các đoạn code cũ đang dùng $_SESSION['user_id'] (giỏ hàng, đặt hàng...)
+        // Tương thích với các module khác
         $_SESSION['user_id'] = $account['id'];
 
         $this->redirectByRole($account['role']);
@@ -96,7 +97,7 @@ class AuthController
     public function register(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ?action=/register');
+            header('Location: ' . BASE_URL . '?action=/register');
             exit;
         }
 
@@ -109,51 +110,58 @@ class AuthController
         $old = ['fullname' => $fullname, 'email' => $email, 'phone' => $phone];
 
         if (empty($fullname) || empty($email) || empty($password) || empty($confirmPassword)) {
-            $_SESSION['register_error'] = 'Vui lòng nhập đầy đủ thông tin bắt buộc.';
+            $_SESSION['register_error'] = 'Vui lòng nhập đầy đủ tất cả các trường bắt buộc.';
             $_SESSION['register_old']   = $old;
-            header('Location: ?action=/register');
+            header('Location: ' . BASE_URL . '?action=/register');
             exit;
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $_SESSION['register_error'] = 'Email không hợp lệ.';
+            $_SESSION['register_error'] = 'Địa chỉ email không hợp lệ.';
             $_SESSION['register_old']   = $old;
-            header('Location: ?action=/register');
+            header('Location: ' . BASE_URL . '?action=/register');
             exit;
         }
 
         if (strlen($password) < 6) {
-            $_SESSION['register_error'] = 'Mật khẩu phải có ít nhất 6 ký tự.';
+            $_SESSION['register_error'] = 'Mật khẩu phải chứa ít nhất 6 ký tự.';
             $_SESSION['register_old']   = $old;
-            header('Location: ?action=/register');
+            header('Location: ' . BASE_URL . '?action=/register');
             exit;
         }
 
         if ($password !== $confirmPassword) {
             $_SESSION['register_error'] = 'Mật khẩu xác nhận không khớp.';
             $_SESSION['register_old']   = $old;
-            header('Location: ?action=/register');
+            header('Location: ' . BASE_URL . '?action=/register');
             exit;
         }
 
         if ($this->accountModel->findByEmail($email)) {
-            $_SESSION['register_error'] = 'Email này đã được đăng ký. Vui lòng đăng nhập hoặc dùng email khác.';
+            $_SESSION['register_error'] = 'Email này đã được đăng ký trong hệ thống. Vui lòng đăng nhập hoặc dùng email khác.';
             $_SESSION['register_old']   = $old;
-            header('Location: ?action=/register');
+            header('Location: ' . BASE_URL . '?action=/register');
             exit;
         }
 
-        $this->accountModel->register([
+        $newUserId = $this->accountModel->register([
             'fullname' => $fullname,
             'email'    => $email,
             'phone'    => $phone,
             'password' => $password,
+            'role'     => 'customer',
+            'status'   => 'active',
         ]);
 
-        $_SESSION['login_success'] = 'Đăng ký tài khoản thành công! Vui lòng đăng nhập.';
-        $_SESSION['login_old']     = ['email' => $email];
-
-        header('Location: ?action=/login');
+        if ($newUserId) {
+            $_SESSION['login_success'] = 'Đăng ký tài khoản thành công! Bạn có thể đăng nhập ngay bây giờ.';
+            $_SESSION['login_old']     = ['email' => $email];
+            header('Location: ' . BASE_URL . '?action=/login');
+        } else {
+            $_SESSION['register_error'] = 'Có lỗi xảy ra khi tạo tài khoản. Vui lòng thử lại!';
+            $_SESSION['register_old']   = $old;
+            header('Location: ' . BASE_URL . '?action=/register');
+        }
         exit;
     }
 

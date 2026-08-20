@@ -9,15 +9,82 @@ class AccountModel extends BaseModel
     public const STATUSES = ['active', 'locked'];
 
     /**
+     * Xác thực đăng nhập
+     */
+    public function attemptLogin(string $email, string $password): ?array
+    {
+        $account = $this->findByEmail($email);
+        if (!$account) {
+            return null;
+        }
+
+        $storedPassword = (string)($account['password'] ?? '');
+
+        // Kiểm tra mật khẩu mã hóa bcrypt hoặc mật khẩu thuần (hỗ trợ dữ liệu mẫu cũ)
+        $isMatch = password_verify($password, $storedPassword) || ($password === $storedPassword);
+
+        if ($isMatch) {
+            // Tự động nâng cấp mật khẩu lên hash bcrypt nếu đang là plain-text
+            if ($password === $storedPassword && password_needs_rehash($storedPassword, PASSWORD_DEFAULT)) {
+                $newHash = password_hash($password, PASSWORD_DEFAULT);
+                $this->update($account['id'], ['password' => $newHash]);
+                $account['password'] = $newHash;
+            }
+            return $account;
+        }
+
+        return null;
+    }
+
+    /**
+     * Đăng ký tài khoản mới
+     */
+    public function register(array $data)
+    {
+        if (!$this->pdo || empty($data)) return false;
+
+        $hashedPassword = password_hash((string)($data['password'] ?? ''), PASSWORD_DEFAULT);
+
+        $insertData = [
+            'fullname'   => trim($data['fullname'] ?? ''),
+            'email'      => strtolower(trim($data['email'] ?? '')),
+            'phone'      => trim($data['phone'] ?? ''),
+            'password'   => $hashedPassword,
+            'role'       => $data['role'] ?? 'customer',
+            'status'     => $data['status'] ?? 'active',
+        ];
+
+        return $this->create($insertData);
+    }
+
+    /**
+     * Kiểm tra email đã tồn tại chưa (không phân biệt chữ hoa/thường)
+     */
+    public function findByEmail(string $email): ?array
+    {
+        if (!$this->pdo) return null;
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM {$this->table} WHERE LOWER(email) = LOWER(:email) LIMIT 1");
+            $stmt->execute([':email' => trim($email)]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (\PDOException $e) {
+            return null;
+        }
+    }
+
+    /**
      * Danh sách tài khoản có tìm kiếm, lọc theo quyền/trạng thái và phân trang
      */
     public function getList(string $keyword = '', string $role = '', string $status = '', int $page = 1, int $perPage = 8): array
     {
+        if (!$this->pdo) return ['items' => [], 'total' => 0, 'page' => 1, 'per_page' => $perPage, 'total_page' => 1];
+
         $where  = [];
         $params = [];
 
         if ($keyword !== '') {
-            $where[] = "(fullname LIKE :keyword OR email LIKE :keyword)";
+            $where[] = "(fullname LIKE :keyword OR email LIKE :keyword OR phone LIKE :keyword)";
             $params[':keyword'] = "%{$keyword}%";
         }
 
@@ -33,32 +100,36 @@ class AccountModel extends BaseModel
 
         $whereSql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
 
-        // Đếm tổng số bản ghi phù hợp điều kiện lọc
-        $countStmt = $this->pdo->prepare("SELECT COUNT(*) FROM {$this->table} {$whereSql}");
-        $countStmt->execute($params);
-        $total = (int) $countStmt->fetchColumn();
+        try {
+            // Đếm tổng số bản ghi phù hợp điều kiện lọc
+            $countStmt = $this->pdo->prepare("SELECT COUNT(*) FROM {$this->table} {$whereSql}");
+            $countStmt->execute($params);
+            $total = (int) $countStmt->fetchColumn();
 
-        $page    = max(1, $page);
-        $perPage = max(1, $perPage);
-        $offset  = ($page - 1) * $perPage;
+            $page    = max(1, $page);
+            $perPage = max(1, $perPage);
+            $offset  = ($page - 1) * $perPage;
 
-        $sql = "SELECT * FROM {$this->table} {$whereSql} ORDER BY id DESC LIMIT :limit OFFSET :offset";
-        $stmt = $this->pdo->prepare($sql);
+            $sql = "SELECT * FROM {$this->table} {$whereSql} ORDER BY id DESC LIMIT :limit OFFSET :offset";
+            $stmt = $this->pdo->prepare($sql);
 
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key, $value);
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key, $value);
+            }
+            $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+
+            return [
+                'items'      => $stmt->fetchAll(PDO::FETCH_ASSOC),
+                'total'      => $total,
+                'page'       => $page,
+                'per_page'   => $perPage,
+                'total_page' => (int) max(1, ceil($total / $perPage)),
+            ];
+        } catch (\PDOException $e) {
+            return ['items' => [], 'total' => 0, 'page' => 1, 'per_page' => $perPage, 'total_page' => 1];
         }
-        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-        $stmt->execute();
-
-        return [
-            'items'      => $stmt->fetchAll(),
-            'total'      => $total,
-            'page'       => $page,
-            'per_page'   => $perPage,
-            'total_page' => (int) max(1, ceil($total / $perPage)),
-        ];
     }
 
     /**
@@ -84,7 +155,12 @@ class AccountModel extends BaseModel
 
     private function countByCondition(string $condition): int
     {
-        return (int) $this->pdo->query("SELECT COUNT(*) FROM {$this->table} WHERE {$condition}")->fetchColumn();
+        if (!$this->pdo) return 0;
+        try {
+            return (int) $this->pdo->query("SELECT COUNT(*) FROM {$this->table} WHERE {$condition}")->fetchColumn();
+        } catch (\PDOException $e) {
+            return 0;
+        }
     }
 
     /**
@@ -98,7 +174,7 @@ class AccountModel extends BaseModel
             return null;
         }
 
-        $newStatus = $account['status'] === 'active' ? 'locked' : 'active';
+        $newStatus = ($account['status'] ?? 'active') === 'active' ? 'locked' : 'active';
 
         $this->update($id, ['status' => $newStatus]);
 
@@ -121,16 +197,5 @@ class AccountModel extends BaseModel
         }
 
         return (bool) $this->update($id, ['role' => $role]);
-    }
-
-    /**
-     * Kiểm tra email đã tồn tại chưa (dùng khi cần, ví dụ mở rộng thêm chức năng)
-     */
-    public function findByEmail(string $email): ?array
-    {
-        $stmt = $this->pdo->prepare("SELECT * FROM {$this->table} WHERE email = :email LIMIT 1");
-        $stmt->execute([':email' => $email]);
-        $row = $stmt->fetch();
-        return $row ?: null;
     }
 }

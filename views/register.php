@@ -1,260 +1,343 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
-    <title>Đăng Ký</title>
-
+    <title>Đăng Ký Tài Khoản - Bunny Wear</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="icon" type="image/png" href="<?= BASE_URL ?>views/images/icons/favicon.png"/>
-
     <link rel="stylesheet" href="<?= BASE_URL ?>views/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>views/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>views/fonts/iconic/css/material-design-iconic-font.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>views/fonts/linearicons-v1.0.0/icon-font.min.css">
-
     <link rel="stylesheet" href="<?= BASE_URL ?>views/vendor/animate/animate.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>views/vendor/css-hamburgers/hamburgers.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>views/vendor/animsition/css/animsition.min.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>views/vendor/select2/select2.min.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>views/vendor/daterangepicker/daterangepicker.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>views/vendor/slick/slick.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>views/vendor/MagnificPopup/magnific-popup.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>views/vendor/perfect-scrollbar/perfect-scrollbar.css">
-
     <link rel="stylesheet" href="<?= BASE_URL ?>views/css/util.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>views/css/main.css">
 
     <style>
-        .auth-container {
-            padding: 60px 0;
+        .auth-wrapper {
+            min-height: calc(100vh - 250px);
             display: flex;
+            align-items: center;
             justify-content: center;
+            padding: 50px 15px;
+            background: #f8fafc;
         }
 
-        .auth-box {
+        .auth-card {
             width: 100%;
-            max-width: 460px;
+            max-width: 480px;
             background: #fff;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+            border: 1px solid #edf2f7;
             padding: 40px 35px;
+            transition: all .3s ease;
+        }
+
+        .auth-card:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.09);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .auth-brand-icon {
+            width: 56px;
+            height: 56px;
+            background: #eff6ff;
+            color: #717fe0;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
         }
 
         .auth-title {
             font-size: 24px;
-            font-weight: 600;
-            color: #333;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-        .auth-subtitle {
-            text-align: center;
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 28px;
-        }
-
-        .auth-group {
-            margin-bottom: 18px;
-        }
-
-        .auth-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #333;
+            font-weight: 700;
+            color: #1a202c;
             margin-bottom: 6px;
         }
 
-        .auth-group input {
-            width: 100%;
-            padding: 11px 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 3px;
+        .auth-subtitle {
+            color: #718096;
             font-size: 14px;
+        }
+
+        .form-group-custom {
+            margin-bottom: 18px;
+        }
+
+        .form-group-custom label {
+            display: block;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i.input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 16px;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            height: 48px;
+            padding: 10px 42px 10px 42px;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14.5px;
+            color: #2d3748;
             outline: none;
-            transition: border-color 0.3s;
+            transition: all 0.25s ease;
         }
 
-        .auth-group input:focus {
-            border-color: #333;
+        .input-wrapper input:focus {
+            background: #fff;
+            border-color: #717fe0;
+            box-shadow: 0 0 0 3.5px rgba(113, 127, 224, 0.15);
         }
 
-        .btn-auth-submit {
+        .btn-toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #a0aec0;
+            cursor: pointer;
+            outline: none;
+            padding: 0;
+        }
+
+        .btn-toggle-password:hover {
+            color: #4a5568;
+        }
+
+        .btn-auth-primary {
             width: 100%;
-            padding: 12px;
-            background: #333;
-            border: 1px solid #333;
-            border-radius: 3px;
+            height: 48px;
+            background: #717fe0;
+            border: none;
+            border-radius: 10px;
             color: #fff;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
         }
 
-        .btn-auth-submit:hover {
-            background: #1a1a1a;
+        .btn-auth-primary:hover {
+            background: #5b69c7;
+            box-shadow: 0 4px 12px rgba(113, 127, 224, 0.35);
         }
 
-        .auth-footer-text {
+        .auth-footer-nav {
             text-align: center;
-            margin-top: 22px;
-            font-size: 13px;
-            color: #666;
+            margin-top: 24px;
+            font-size: 14px;
+            color: #718096;
         }
 
-        .auth-footer-text a {
-            color: #333;
+        .auth-footer-nav a {
+            color: #717fe0;
             font-weight: 600;
+            text-decoration: none;
+        }
+
+        .auth-footer-nav a:hover {
             text-decoration: underline;
         }
 
-        .auth-hint {
-            font-size: 12px;
-            color: #999;
-            margin-top: 4px;
-        }
-
-        .alert-box {
+        .alert-custom {
             padding: 12px 16px;
-            margin-bottom: 18px;
-            font-size: 13px;
-            font-weight: 600;
-            border-radius: 3px;
+            border-radius: 10px;
+            font-size: 13.5px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
         }
 
-        .alert-error {
-            background: #fdecea;
-            border: 1px solid #f5c2c0;
-            color: #b3261e;
+        .alert-custom-error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
         }
     </style>
 </head>
 
-<body>
+<body class="animsition bg-light">
 
-    <header>
-        <!-- Header desktop -->
+    <!-- Header -->
+    <header class="header-v4">
         <div class="container-menu-desktop">
-            <!-- Topbar -->
             <div class="top-bar">
                 <div class="content-topbar flex-sb-m h-full container">
                     <div class="left-top-bar">
-                        Miễn phí vận chuyển cho đơn hàng trên $100
+                        Khuyến mại hè giảm 20% tại Bunny Wear
                     </div>
 
                     <div class="right-top-bar flex-w h-full">
-                        <a href="#" class="flex-c-m trans-04 p-lr-25">
-                            Trợ Giúp &amp; Câu Hỏi
-                        </a>
-
-                        <a href="?action=/login" class="flex-c-m trans-04 p-lr-25">
+                        <a href="<?= BASE_URL ?>?action=/login" class="flex-c-m trans-04 p-lr-25">
                             Đăng Nhập
                         </a>
-
-                        <a href="?action=/register" class="flex-c-m trans-04 p-lr-25">
+                        <a href="<?= BASE_URL ?>?action=/register" class="flex-c-m trans-04 p-lr-25 font-weight-bold text-white">
                             Đăng Ký
                         </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Menu -->
-            <div class="wrap-menu-desktop">
-                <nav class="menu-desktop">
+            <div class="wrap-menu-desktop how-shadow1">
+                <nav class="limiter-menu-desktop container">
                     <a href="<?= BASE_URL ?>" class="logo">
                         <img src="<?= BASE_URL ?>views/images/icons/Bunnywear.jpg" alt="IMG-LOGO">
                     </a>
 
-                    <div class="menu-desktop-main">
-                        <a href="<?= BASE_URL ?>" class="menu-desktop-link">
-                            Trang Chủ
-                        </a>
-
-                        <a href="?action=/product" class="menu-desktop-link">
-                            Cửa Hàng
-                        </a>
-
-                        <a href="?action=/cart" class="menu-desktop-link">
-                            Giỏ Hàng
-                        </a>
-                    </div>
-
-                    <div class="wrap-icon-header flex-w flex-r-m">
-                        <div class="icon-header-item cl-2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
-                            <i class="zmdi zmdi-shopping-cart"></i>
-                        </div>
+                    <div class="menu-desktop">
+                        <ul class="main-menu">
+                            <li><a href="<?= BASE_URL ?>">Trang chủ</a></li>
+                            <li><a href="<?= BASE_URL ?>?action=/product">Cửa hàng</a></li>
+                            <li><a href="<?= BASE_URL ?>?action=/cart">Giỏ hàng</a></li>
+                            <li><a href="<?= BASE_URL ?>?action=/wishlist">Yêu thích</a></li>
+                        </ul>
                     </div>
                 </nav>
             </div>
         </div>
     </header>
 
-    <div class="container auth-container">
-        <div class="auth-box">
-            <div class="auth-title">Đăng Ký Tài Khoản</div>
-            <div class="auth-subtitle">Tạo tài khoản để theo dõi đơn hàng và mua sắm nhanh hơn</div>
+    <!-- Main Auth Form -->
+    <div class="auth-wrapper">
+        <div class="auth-card animate__animated animate__fadeIn">
+            
+            <div class="auth-header">
+                <div class="auth-brand-icon">
+                    <i class="fa fa-user-plus"></i>
+                </div>
+                <h3 class="auth-title">Đăng Ký Tài Khoản</h3>
+                <p class="auth-subtitle">Tạo tài khoản để theo dõi đơn hàng và nhận nhiều ưu đãi</p>
+            </div>
 
             <?php if (!empty($error)): ?>
-                <div class="alert-box alert-error"><?= htmlspecialchars($error) ?></div>
+                <div class="alert-custom alert-custom-error">
+                    <i class="fa fa-exclamation-circle mr-2 fs-16"></i>
+                    <span><?= htmlspecialchars($error) ?></span>
+                </div>
             <?php endif; ?>
 
-            <form action="?action=/register/submit" method="POST">
-                <div class="auth-group">
-                    <label for="fullname">Họ và tên</label>
-                    <input type="text" id="fullname" name="fullname" placeholder="Nguyễn Văn A"
-                           value="<?= htmlspecialchars($old['fullname'] ?? '') ?>" required>
+            <form action="<?= BASE_URL ?>?action=/register/submit" method="POST">
+                <div class="form-group-custom">
+                    <label for="fullname">Họ và tên <span class="text-danger">*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fa fa-user-o input-icon"></i>
+                        <input type="text" id="fullname" name="fullname" placeholder="Nguyễn Văn A"
+                               value="<?= htmlspecialchars($old['fullname'] ?? '') ?>" required autofocus>
+                    </div>
                 </div>
 
-                <div class="auth-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="email@example.com"
-                           value="<?= htmlspecialchars($old['email'] ?? '') ?>" required>
+                <div class="form-group-custom">
+                    <label for="email">Địa chỉ Email <span class="text-danger">*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fa fa-envelope-o input-icon"></i>
+                        <input type="email" id="email" name="email" placeholder="name@example.com"
+                               value="<?= htmlspecialchars($old['email'] ?? '') ?>" required>
+                    </div>
                 </div>
 
-                <div class="auth-group">
+                <div class="form-group-custom">
                     <label for="phone">Số điện thoại</label>
-                    <input type="text" id="phone" name="phone" placeholder="09xxxxxxxx"
-                           value="<?= htmlspecialchars($old['phone'] ?? '') ?>">
+                    <div class="input-wrapper">
+                        <i class="fa fa-phone input-icon"></i>
+                        <input type="tel" id="phone" name="phone" placeholder="09xxxxxxxx"
+                               value="<?= htmlspecialchars($old['phone'] ?? '') ?>">
+                    </div>
                 </div>
 
-                <div class="auth-group">
-                    <label for="password">Mật khẩu</label>
-                    <input type="password" id="password" name="password" placeholder="Ít nhất 6 ký tự" required>
+                <div class="form-group-custom">
+                    <label for="password">Mật khẩu <span class="text-danger">*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fa fa-lock input-icon"></i>
+                        <input type="password" id="password" name="password" placeholder="Tối thiểu 6 ký tự" required>
+                        <button type="button" class="btn-toggle-password" onclick="togglePass('password', this)">
+                            <i class="fa fa-eye-slash"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="auth-group">
-                    <label for="confirm_password">Xác nhận mật khẩu</label>
-                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Nhập lại mật khẩu" required>
+                <div class="form-group-custom">
+                    <label for="confirm_password">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fa fa-shield input-icon"></i>
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Nhập lại mật khẩu" required>
+                        <button type="button" class="btn-toggle-password" onclick="togglePass('confirm_password', this)">
+                            <i class="fa fa-eye-slash"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <button type="submit" class="btn-auth-submit">Đăng Ký</button>
+                <button type="submit" class="btn-auth-primary">
+                    <i class="fa fa-user-plus mr-2"></i> Hoàn Tất Đăng Ký
+                </button>
             </form>
 
-            <div class="auth-footer-text">
-                Bạn đã có tài khoản? <a href="?action=/login">Đăng nhập</a>
+            <div class="auth-footer-nav">
+                Bạn đã có tài khoản? <a href="<?= BASE_URL ?>?action=/login">Đăng nhập ngay</a>
             </div>
+
         </div>
     </div>
 
-    <footer class="bg3 p-t-75 p-b-32">
-        <div class="container">
-            <div class="p-t-10">
-                <p class="stext-107 cl6 txt-center">
-                    Copyright &copy; <?= date('Y') ?> Bunnywear. All rights reserved.
-                </p>
-            </div>
+    <!-- Footer -->
+    <footer class="bg3 p-t-40 p-b-25 text-white">
+        <div class="container text-center">
+            <p class="stext-107 cl6 mb-0 text-white">
+                © <?= date('Y') ?> Bunny Wear. Bản quyền thuộc về Bunny Wear Shop.
+            </p>
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="<?= BASE_URL ?>views/vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script src="<?= BASE_URL ?>views/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="<?= BASE_URL ?>views/vendor/animsition/js/animsition.min.js"></script>
-    <script src="<?= BASE_URL ?>views/vendor/bootstrap/js/popper.js"></script>
-    <script src="<?= BASE_URL ?>views/vendor/bootstrap/js/bootstrap.min.js"></script>
-</body>
+    <script src="<?= BASE_URL ?>views/js/main.js"></script>
 
+    <script>
+        function togglePass(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            }
+        }
+    </script>
+</body>
 </html>
