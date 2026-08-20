@@ -66,6 +66,28 @@ class ProductModel extends BaseModel
         }
     }
 
+    public function getByIds(array $ids)
+    {
+        if (!$this->pdo || empty($ids)) return [];
+        $ids = array_values(array_filter(array_map('intval', $ids), fn($id) => $id > 0));
+        if (empty($ids)) return [];
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        try {
+            $sql = "SELECT p.*, c.category_name 
+                    FROM products p 
+                    LEFT JOIN categories c ON p.category_id = c.id
+                    WHERE p.id IN ($placeholders)
+                    ORDER BY p.id DESC";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($ids);
+            return $stmt->fetchAll();
+        } catch (\PDOException $e) {
+            return [];
+        }
+    }
+
+
     public function insertProduct($data)
     {
         if (!$this->pdo || empty($data)) return false;

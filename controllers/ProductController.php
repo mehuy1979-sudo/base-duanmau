@@ -3,10 +3,12 @@
 class ProductController
 {
     private $productModel;
+    private $reviewModel;
 
     public function __construct()
     {
         $this->productModel = new ProductModel();
+        $this->reviewModel  = new ReviewModel();
     }
 
     public function index()
@@ -21,6 +23,56 @@ class ProductController
     public function detail()
     {
         $id = intval($_GET['id'] ?? 0);
+
+        // AJAX: Add review endpoint
+        if (isset($_GET['ajax']) && $_GET['ajax'] === 'add_review') {
+            header('Content-Type: application/json; charset=utf-8');
+
+            $productId = intval($_POST['product_id'] ?? $id);
+            $userName  = trim($_POST['user_name'] ?? '');
+            $userEmail = trim($_POST['user_email'] ?? '');
+            $rating    = intval($_POST['rating'] ?? 5);
+            $comment   = trim($_POST['comment'] ?? '');
+
+            if ($productId <= 0 || empty($userName) || empty($comment)) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Vui lòng điền đầy đủ Họ tên và Nội dung đánh giá.'
+                ]);
+                exit;
+            }
+
+            $newId = $this->reviewModel->createReview([
+                'product_id' => $productId,
+                'user_name'  => $userName,
+                'user_email' => $userEmail,
+                'rating'     => $rating,
+                'comment'    => $comment
+            ]);
+
+            if ($newId) {
+                $summary = $this->reviewModel->getRatingSummary($productId);
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Cảm ơn bạn đã gửi đánh giá sản phẩm!',
+                    'review'  => [
+                        'id'         => $newId,
+                        'user_name'  => htmlspecialchars($userName),
+                        'rating'     => $rating,
+                        'comment'    => htmlspecialchars($comment),
+                        'created_at' => date('d/m/Y H:i')
+                    ],
+                    'summary' => $summary
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Không thể lưu đánh giá. Vui lòng thử lại sau!'
+                ]);
+            }
+            exit;
+        }
+
         $product = $this->productModel->getOne($id);
 
         if (!$product) {
@@ -30,10 +82,16 @@ class ProductController
 
         $title = htmlspecialchars($product['product_name']) . " - Bunny Wear";
         $categories = $this->productModel->getCategories();
+        $variants = $this->productModel->getVariants($id);
         $relatedProducts = $this->productModel->getRelatedProducts($product['category_id'] ?? 0, $id, 4);
+
+        // Fetch reviews and rating breakdown
+        $reviews = $this->reviewModel->getByProductId($id);
+        $ratingSummary = $this->reviewModel->getRatingSummary($id);
 
         require_once PATH_VIEW . 'product-detail.php';
     }
+
 
     public function compare()
     {

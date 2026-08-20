@@ -85,7 +85,7 @@
 							</li>
 
 							<li>
-								<a href="blog.html">Danh Mục Yêu Thích</a>
+								<a href="<?= BASE_URL ?>?action=/wishlist">Danh Mục Yêu Thích</a>
 							</li>
 
 							<li>
@@ -108,7 +108,7 @@
 							<i class="zmdi zmdi-shopping-cart"></i>
 						</div>
 
-						<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
+						<a href="<?= BASE_URL ?>?action=/wishlist" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-wishlist-noti" data-notify="<?= isset($_SESSION['wishlist']) ? count($_SESSION['wishlist']) : 0 ?>" title="Danh Mục Yêu Thích">
 							<i class="zmdi zmdi-favorite-outline"></i>
 						</a>
 					</div>
@@ -135,7 +135,7 @@
 					<i class="zmdi zmdi-shopping-cart"></i>
 				</div>
 
-				<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="0">
+				<a href="<?= BASE_URL ?>?action=/wishlist" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-wishlist-noti" data-notify="<?= isset($_SESSION['wishlist']) ? count($_SESSION['wishlist']) : 0 ?>">
 					<i class="zmdi zmdi-favorite-outline"></i>
 				</a>
 			</div>
@@ -193,7 +193,7 @@
 				</li>
 
 				<li>
-					<a href="blog.html">Danh Mục Yêu Thích</a>
+					<a href="<?= BASE_URL ?>?action=/wishlist">Danh Mục Yêu Thích</a>
 				</li>
 
 				<li>
@@ -669,7 +669,8 @@
 									</div>
 
 									<div class="block2-txt-child2 flex-r p-t-3">
-										<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+										<?php $isFav = in_array($item['id'] ?? 0, $_SESSION['wishlist'] ?? []); ?>
+										<a href="javascript:void(0)" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2 <?= $isFav ? 'js-addedwish-b2' : '' ?>" data-product-id="<?= $item['id'] ?? 0 ?>" data-product-name="<?= htmlspecialchars($item['product_name'] ?? 'Sản phẩm') ?>">
 											<img class="icon-heart1 dis-block trans-04" src="<?= BASE_URL ?>views/images/icons/icon-heart-01.png" alt="ICON">
 											<img class="icon-heart2 dis-block trans-04 ab-t-l" src="<?= BASE_URL ?>views/images/icons/icon-heart-02.png" alt="ICON">
 										</a>
@@ -1558,5 +1559,40 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 <script src="<?= BASE_URL ?>views/vendor/sweetalert/sweetalert.min.js"></script>
 <!--===============================================================================================-->
 <script src="<?= BASE_URL ?>views/js/main.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.js-addwish-b2').off('click').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const $this = $(this);
+            const productId = $this.data('product-id');
+            const productName = $this.data('product-name') || 'Sản phẩm';
+
+            if (!productId) return;
+
+            $.ajax({
+                url: '<?= BASE_URL ?>?action=/wishlist&ajax=toggle',
+                type: 'POST',
+                data: { product_id: productId },
+                dataType: 'json',
+                success: function(res) {
+                    if (res.success) {
+                        if (res.action === 'added') {
+                            $this.addClass('js-addedwish-b2');
+                            swal(productName, "Đã thêm vào Danh Mục Yêu Thích!", "success");
+                        } else {
+                            $this.removeClass('js-addedwish-b2');
+                            swal(productName, "Đã bỏ khỏi Danh Mục Yêu Thích!", "info");
+                        }
+                        $('.js-wishlist-noti').attr('data-notify', res.count);
+                    }
+                },
+                error: function() {
+                    swal("Lỗi", "Không thể kết nối máy chủ.", "error");
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

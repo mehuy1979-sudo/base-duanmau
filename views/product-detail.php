@@ -76,6 +76,61 @@
             border-radius: 4px;
             font-weight: 600;
         }
+        /* Review and Rating Styles */
+        .rating-overview-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 30px;
+        }
+        .big-rating-number {
+            font-size: 48px;
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1;
+        }
+        .star-rating-select {
+            display: inline-flex;
+            flex-direction: row-reverse;
+            gap: 4px;
+        }
+        .star-rating-select input {
+            display: none;
+        }
+        .star-rating-select label {
+            font-size: 28px;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: color 0.15s ease;
+            margin-bottom: 0;
+        }
+        .star-rating-select label:hover,
+        .star-rating-select label:hover ~ label,
+        .star-rating-select input:checked ~ label {
+            color: #f59e0b;
+        }
+        .user-initial-avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #717fe0, #a855f7);
+            color: #fff;
+            font-weight: 700;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+            box-shadow: 0 2px 8px rgba(113, 127, 224, 0.3);
+        }
+        .review-item-card {
+            padding: 18px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .review-item-card:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body class="animsition">
@@ -106,18 +161,20 @@
                         <ul class="main-menu">
                             <li><a href="<?= BASE_URL ?>">Trang chủ</a></li>
                             <li class="active-menu"><a href="<?= BASE_URL ?>?action=/product">Cửa hàng</a></li>
+                            <li><a href="<?= BASE_URL ?>?action=/wishlist">Danh Mục Yêu Thích</a></li>
                             <li><a href="<?= BASE_URL ?>?action=/compare&p1=<?= $product['id'] ?? 0 ?>">So sánh</a></li>
                             <li><a href="<?= BASE_URL ?>?action=/admin/products">Admin</a></li>
                         </ul>
                     </div>
 
                     <div class="wrap-icon-header flex-w flex-r-m">
-                        <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
+                        <a href="<?= BASE_URL ?>?action=/product" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11" title="Tìm kiếm / Cửa hàng">
                             <i class="zmdi zmdi-search"></i>
-                        </div>
-                        <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
-                            <i class="zmdi zmdi-shopping-cart"></i>
-                        </div>
+                        </a>
+
+                        <a href="<?= BASE_URL ?>?action=/wishlist" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-wishlist-noti" data-notify="<?= isset($_SESSION['wishlist']) ? count($_SESSION['wishlist']) : 0 ?>" title="Danh Mục Yêu Thích">
+                            <i class="zmdi zmdi-favorite-outline"></i>
+                        </a>
                     </div>
                 </nav>
             </div>
@@ -262,9 +319,14 @@
                                     Thêm vào giỏ
                                 </button>
 
-                                <a href="<?= BASE_URL ?>?action=/compare&p1=<?= $product['id'] ?>" class="flex-c-m stext-101 cl2 size-101 bg0 bor1 hov-btn1 p-lr-15 trans-04 m-l-10" style="border: 1px solid #717fe0; color: #717fe0;">
+                                <a href="<?= BASE_URL ?>?action=/compare&p1=<?= $product['id'] ?>" class="flex-c-m stext-101 cl2 size-101 bg0 bor1 hov-btn1 p-lr-15 trans-04 m-l-10" style="border: 1px solid #717fe0; color: #717fe0;" title="So sánh sản phẩm">
                                     <i class="fa fa-columns m-r-6"></i> So sánh
                                 </a>
+
+                                <?php $isFav = in_array($product['id'] ?? 0, $_SESSION['wishlist'] ?? []); ?>
+                                <button type="button" id="btnToggleWishlistDetail" onclick="toggleWishlistDetail(<?= $product['id'] ?? 0 ?>)" class="flex-c-m stext-101 size-101 bor1 hov-btn1 p-lr-15 trans-04 m-l-10 <?= $isFav ? 'bg-danger text-white' : 'bg0 text-danger' ?>" style="border: 1px solid #e11d48;" title="Thêm vào Danh Mục Yêu Thích">
+                                    <i class="zmdi <?= $isFav ? 'zmdi-favorite' : 'zmdi-favorite-outline' ?> m-r-6"></i> <span id="wishlistDetailText"><?= $isFav ? 'Đã yêu thích' : 'Yêu thích' ?></span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -284,7 +346,7 @@
                             <a class="nav-link" data-toggle="tab" href="#information" role="tab">Bảng biến thể & Tồn kho</a>
                         </li>
                         <li class="nav-item p-b-10">
-                            <a class="nav-link" data-toggle="tab" href="#reviews" role="tab">Đánh giá (5★)</a>
+                            <a class="nav-link" data-toggle="tab" href="#reviews" role="tab">Đánh giá (<span id="totalReviewsCount"><?= $ratingSummary['total'] ?? count($reviews ?? []) ?></span>)</a>
                         </li>
                     </ul>
 
@@ -340,27 +402,136 @@
                         <!-- Reviews Tab -->
                         <div class="tab-pane fade" id="reviews" role="tabpanel">
                             <div class="row">
-                                <div class="col-sm-10 col-md-8 col-lg-7 m-lr-auto">
-                                    <div class="p-b-30">
-                                        <div class="flex-w flex-t p-b-20 border-bottom">
-                                            <div class="wrap-pic-s size-109 bor0 of-hidden m-r-18 m-t-6">
-                                                <img src="<?= BASE_URL ?>views/images/avatar-01.jpg" alt="AVATAR">
-                                            </div>
-                                            <div class="size-207">
-                                                <div class="flex-w flex-sb-m p-b-5">
-                                                    <span class="mtext-107 cl2 p-r-20">Nguyễn Văn A</span>
-                                                    <span class="fs-18 cl11">
-                                                        <i class="zmdi zmdi-star text-warning"></i>
-                                                        <i class="zmdi zmdi-star text-warning"></i>
-                                                        <i class="zmdi zmdi-star text-warning"></i>
-                                                        <i class="zmdi zmdi-star text-warning"></i>
-                                                        <i class="zmdi zmdi-star text-warning"></i>
-                                                    </span>
+                                <div class="col-sm-10 col-md-8 col-lg-8 m-lr-auto">
+                                    
+                                    <!-- Rating Overview -->
+                                    <?php 
+                                        $avgScore = $ratingSummary['average'] ?? 5.0;
+                                        $totalReviews = $ratingSummary['total'] ?? count($reviews ?? []);
+                                        $breakdown = $ratingSummary['breakdown'] ?? [5=>0, 4=>0, 3=>0, 2=>0, 1=>0];
+                                        $pcts = $ratingSummary['percentages'] ?? [5=>0, 4=>0, 3=>0, 2=>0, 1=>0];
+                                    ?>
+                                    <div class="rating-overview-box">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-5 text-center border-right-md mb-4 mb-md-0">
+                                                <div class="big-rating-number text-primary" id="avgScoreDisplay"><?= number_format($avgScore, 1) ?></div>
+                                                <div class="fs-18 text-warning m-tb-6">
+                                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                                        <i class="fa <?= $i <= round($avgScore) ? 'fa-star text-warning' : 'fa-star-o text-muted' ?>"></i>
+                                                    <?php endfor; ?>
                                                 </div>
-                                                <p class="stext-102 cl6">Sản phẩm đúng mô tả, chất vải đẹp, giao hàng siêu nhanh. Sẽ ủng hộ shop tiếp!</p>
+                                                <div class="stext-107 cl6">
+                                                    Dựa trên <strong id="totalReviewsCountText"><?= $totalReviews ?></strong> lượt đánh giá
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-7">
+                                                <?php for ($s = 5; $s >= 1; $s--): ?>
+                                                <div class="d-flex align-items-center mb-1">
+                                                    <span class="stext-108 cl6 font-weight-bold" style="width: 35px;"><?= $s ?> <i class="fa fa-star text-warning"></i></span>
+                                                    <div class="progress flex-grow-1 mx-2" style="height: 8px; border-radius: 4px; background: #e2e8f0;">
+                                                        <div class="progress-bar bg-warning" role="progressbar" style="width: <?= $pcts[$s] ?? 0 ?>%;"></div>
+                                                    </div>
+                                                    <span class="stext-108 text-muted" style="width: 35px; text-align: right;"><?= $breakdown[$s] ?? 0 ?></span>
+                                                </div>
+                                                <?php endfor; ?>
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- Reviews List -->
+                                    <div class="p-b-30">
+                                        <h4 class="mtext-109 cl2 p-b-20 font-weight-bold" style="font-size: 19px;">
+                                            Khách hàng nhận xét
+                                        </h4>
+
+                                        <div id="reviewsListContainer">
+                                            <?php if (!empty($reviews)): ?>
+                                                <?php foreach ($reviews as $rev): ?>
+                                                <?php 
+                                                    $rInitial = mb_substr($rev['user_name'] ?? 'K', 0, 1, 'UTF-8');
+                                                    $rScore = intval($rev['rating'] ?? 5);
+                                                ?>
+                                                <div class="review-item-card d-flex">
+                                                    <div class="user-initial-avatar m-r-16 flex-shrink-0">
+                                                        <?= $rInitial ?>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="d-flex justify-content-between align-items-center flex-wrap mb-1">
+                                                            <strong class="mtext-107 cl2"><?= htmlspecialchars($rev['user_name']) ?></strong>
+                                                            <span class="text-warning fs-14">
+                                                                <?php for ($j = 1; $j <= 5; $j++): ?>
+                                                                    <i class="fa <?= $j <= $rScore ? 'fa-star text-warning' : 'fa-star-o text-muted' ?>"></i>
+                                                                <?php endfor; ?>
+                                                            </span>
+                                                        </div>
+                                                        <small class="text-muted d-block mb-2">
+                                                            <i class="fa fa-clock-o m-r-4"></i> <?= date('d/m/Y H:i', strtotime($rev['created_at'])) ?>
+                                                        </small>
+                                                        <p class="stext-102 cl6 mb-0" style="font-size: 14.5px; line-height: 1.6;">
+                                                            <?= nl2br(htmlspecialchars($rev['comment'])) ?>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <?php endforeach; ?>
+                                            <?php else: ?>
+                                                <div class="text-center py-4 text-muted" id="noReviewsNotice">
+                                                    <i class="fa fa-commenting-o fa-2x mb-2 d-block text-muted"></i>
+                                                    Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên nhận xét!
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+
+                                    <!-- Add Review Form -->
+                                    <div class="bor10 p-all-25 bg-light" style="border-radius: 12px;">
+                                        <h5 class="mtext-108 cl2 p-b-15 font-weight-bold">
+                                            Viết đánh giá của bạn
+                                        </h5>
+
+                                        <form id="formAddReview" onsubmit="handleReviewSubmit(event)">
+                                            <input type="hidden" name="product_id" value="<?= $product['id'] ?? 0 ?>">
+                                            
+                                            <!-- Star Picker -->
+                                            <div class="flex-w flex-m p-b-15 align-items-center">
+                                                <span class="stext-102 cl3 m-r-16 font-weight-bold">Đánh giá sao:</span>
+                                                <div class="star-rating-select">
+                                                    <input type="radio" id="star5" name="rating" value="5" checked />
+                                                    <label for="star5" title="5 sao"><i class="fa fa-star"></i></label>
+                                                    <input type="radio" id="star4" name="rating" value="4" />
+                                                    <label for="star4" title="4 sao"><i class="fa fa-star"></i></label>
+                                                    <input type="radio" id="star3" name="rating" value="3" />
+                                                    <label for="star3" title="3 sao"><i class="fa fa-star"></i></label>
+                                                    <input type="radio" id="star2" name="rating" value="2" />
+                                                    <label for="star2" title="2 sao"><i class="fa fa-star"></i></label>
+                                                    <input type="radio" id="star1" name="rating" value="1" />
+                                                    <label for="star1" title="1 sao"><i class="fa fa-star"></i></label>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-sm-6 p-b-15">
+                                                    <label class="stext-102 cl3 font-weight-bold" for="reviewName">Họ và tên <span class="text-danger">*</span></label>
+                                                    <input class="size-111 bor8 stext-102 cl2 p-lr-15 bg0 w-full" id="reviewName" type="text" name="user_name" placeholder="Nhập tên của bạn..." required>
+                                                </div>
+
+                                                <div class="col-sm-6 p-b-15">
+                                                    <label class="stext-102 cl3 font-weight-bold" for="reviewEmail">Email</label>
+                                                    <input class="size-111 bor8 stext-102 cl2 p-lr-15 bg0 w-full" id="reviewEmail" type="email" name="user_email" placeholder="example@email.com">
+                                                </div>
+
+                                                <div class="col-12 p-b-20">
+                                                    <label class="stext-102 cl3 font-weight-bold" for="reviewComment">Nội dung đánh giá <span class="text-danger">*</span></label>
+                                                    <textarea class="size-110 bor8 stext-102 cl2 p-all-15 bg0 w-full" id="reviewComment" name="comment" rows="4" placeholder="Chia sẻ cảm nhận về chất lượng sản phẩm, form dáng, dịch vụ giao hàng..." required></textarea>
+                                                </div>
+                                            </div>
+
+                                            <button type="submit" id="btnSubmitReview" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 font-weight-bold">
+                                                <i class="fa fa-paper-plane m-r-8"></i> Gửi đánh giá ngay
+                                            </button>
+                                        </form>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -552,6 +723,111 @@
             const qty = document.getElementById('cartQuantity').value;
             const variantText = (selectedSize ? 'Size: ' + selectedSize : '') + (selectedColor ? ' - Màu: ' + selectedColor : '');
             swal(productName, "Đã thêm " + qty + " sản phẩm (" + variantText + ") vào giỏ hàng thành công!", "success");
+        }
+
+        function toggleWishlistDetail(productId) {
+            if (!productId) return;
+            const productName = <?= json_encode($product['product_name'] ?? 'Sản phẩm') ?>;
+
+            $.ajax({
+                url: '<?= BASE_URL ?>?action=/wishlist&ajax=toggle',
+                type: 'POST',
+                data: { product_id: productId },
+                dataType: 'json',
+                success: function(res) {
+                    if (res.success) {
+                        const $btn = $('#btnToggleWishlistDetail');
+                        const $icon = $btn.find('i');
+                        const $text = $('#wishlistDetailText');
+
+                        if (res.action === 'added') {
+                            $btn.removeClass('bg0 text-danger').addClass('bg-danger text-white');
+                            $icon.removeClass('zmdi-favorite-outline').addClass('zmdi-favorite');
+                            $text.text('Đã yêu thích');
+                            swal(productName, "Đã thêm vào Danh Mục Yêu Thích!", "success");
+                        } else {
+                            $btn.removeClass('bg-danger text-white').addClass('bg0 text-danger');
+                            $icon.removeClass('zmdi-favorite').addClass('zmdi-favorite-outline');
+                            $text.text('Yêu thích');
+                            swal(productName, "Đã bỏ khỏi Danh Mục Yêu Thích!", "info");
+                        }
+                        $('.js-wishlist-noti').attr('data-notify', res.count);
+                    }
+                },
+                error: function() {
+                    swal("Lỗi", "Không thể kết nối máy chủ.", "error");
+                }
+            });
+        }
+
+        function handleReviewSubmit(e) {
+            e.preventDefault();
+            const $form = $('#formAddReview');
+            const $btn = $('#btnSubmitReview');
+            const formData = $form.serialize();
+
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin m-r-8"></i> Đang gửi...');
+
+            $.ajax({
+                url: '<?= BASE_URL ?>?action=/product-detail&id=<?= $product['id'] ?? 0 ?>&ajax=add_review',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function(res) {
+                    $btn.prop('disabled', false).html('<i class="fa fa-paper-plane m-r-8"></i> Gửi đánh giá ngay');
+                    if (res.success) {
+                        $('#noReviewsNotice').remove();
+                        const r = res.review;
+                        const initial = r.user_name ? r.user_name.charAt(0).toUpperCase() : 'K';
+                        
+                        let starsHtml = '';
+                        for (let j = 1; j <= 5; j++) {
+                            starsHtml += `<i class="fa ${j <= r.rating ? 'fa-star text-warning' : 'fa-star-o text-muted'}"></i> `;
+                        }
+
+                        const newReviewHtml = `
+                            <div class="review-item-card d-flex animate__animated animate__fadeIn">
+                                <div class="user-initial-avatar m-r-16 flex-shrink-0">
+                                    ${initial}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-1">
+                                        <strong class="mtext-107 cl2">${r.user_name}</strong>
+                                        <span class="text-warning fs-14">
+                                            ${starsHtml}
+                                        </span>
+                                    </div>
+                                    <small class="text-muted d-block mb-2">
+                                        <i class="fa fa-clock-o m-r-4"></i> ${r.created_at}
+                                    </small>
+                                    <p class="stext-102 cl6 mb-0" style="font-size: 14.5px; line-height: 1.6;">
+                                        ${r.comment.replace(/\n/g, '<br>')}
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+
+                        $('#reviewsListContainer').prepend(newReviewHtml);
+
+                        if (res.summary) {
+                            $('#totalReviewsCount').text(res.summary.total);
+                            $('#totalReviewsCountText').text(res.summary.total);
+                            $('#avgScoreDisplay').text(Number(res.summary.average).toFixed(1));
+                        }
+
+                        $form[0].reset();
+                        $('#star5').prop('checked', true);
+
+                        swal("Cảm ơn bạn!", res.message, "success");
+                    } else {
+                        swal("Thông báo", res.message || "Không thể gửi đánh giá.", "warning");
+                    }
+                },
+                error: function() {
+                    $btn.prop('disabled', false).html('<i class="fa fa-paper-plane m-r-8"></i> Gửi đánh giá ngay');
+                    swal("Lỗi", "Không thể kết nối máy chủ.", "error");
+                }
+            });
         }
 
         // Initialize variant display

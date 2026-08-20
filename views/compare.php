@@ -123,6 +123,7 @@
                         <ul class="main-menu">
                             <li><a href="<?= BASE_URL ?>">Trang chủ</a></li>
                             <li><a href="<?= BASE_URL ?>?action=/product">Cửa hàng</a></li>
+                            <li><a href="<?= BASE_URL ?>?action=/wishlist">Danh Mục Yêu Thích</a></li>
                             <li class="active-menu"><a href="<?= BASE_URL ?>?action=/compare">So sánh</a></li>
                             <li><a href="<?= BASE_URL ?>?action=/admin/products">Admin</a></li>
                         </ul>
@@ -130,7 +131,11 @@
 
                     <div class="wrap-icon-header flex-w flex-r-m">
                         <a href="<?= BASE_URL ?>?action=/product" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11" title="Cửa hàng">
-                            <i class="zmdi zmdi-shopping-cart"></i>
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+
+                        <a href="<?= BASE_URL ?>?action=/wishlist" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-wishlist-noti" data-notify="<?= isset($_SESSION['wishlist']) ? count($_SESSION['wishlist']) : 0 ?>" title="Danh Mục Yêu Thích">
+                            <i class="zmdi zmdi-favorite-outline"></i>
                         </a>
                     </div>
                 </nav>

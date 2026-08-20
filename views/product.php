@@ -26,9 +26,10 @@
                             </span>
                         </div>
                         <div class="block2-txt-child2 flex-r p-t-3">
-                            <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                <img class="icon-heart1 dis-block trans-04" src="<?= BASE_URL ?>views/images/icons/icon-heart-1.png" alt="ICON">
-                                <img class="icon-heart2 dis-block trans-04 ab-t-l" src="<?= BASE_URL ?>views/images/icons/icon-heart-2.png" alt="ICON">
+                            <?php $isFav = in_array($product['id'] ?? 0, $_SESSION['wishlist'] ?? []); ?>
+                            <a href="javascript:void(0)" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2 <?= $isFav ? 'js-addedwish-b2' : '' ?>" data-product-id="<?= $product['id'] ?? 0 ?>" data-product-name="<?= htmlspecialchars($product['product_name'] ?? 'Sản phẩm') ?>">
+                                <img class="icon-heart1 dis-block trans-04" src="<?= BASE_URL ?>views/images/icons/icon-heart-01.png" alt="ICON">
+                                <img class="icon-heart2 dis-block trans-04 ab-t-l" src="<?= BASE_URL ?>views/images/icons/icon-heart-02.png" alt="ICON">
                             </a>
                         </div>
                     </div>
