@@ -4,7 +4,7 @@ $action = $_GET['action'] ?? '/';
 $ajax   = $_GET['ajax']   ?? '';
 
 // Admin product AJAX sub-routes
-if ($action === '/admin/products' && $ajax !== '') {
+if (($action === '/admin/products' || $action === 'admin/products') && $ajax !== '') {
     $ctrl = new AdminProductController();
     match ($ajax) {
         'store'  => $ctrl->store(),
@@ -30,19 +30,36 @@ if (($action === '/wishlist' || $action === 'wishlist' || $action === '/favorite
 }
 
 match ($action) {
+    // Trang chủ
     '/'                     => (new HomeController)->index(),
-    '/product'              => (new ProductController)->index(),
-    'product'               => (new ProductController)->index(),
-    '/product-detail'       => (new ProductController)->detail(),
-    'product-detail'        => (new ProductController)->detail(),
-    '/compare'              => (new ProductController)->compare(),
-    'compare'               => (new ProductController)->compare(),
-    '/wishlist'             => (new WishlistController)->index(),
-    'wishlist'              => (new WishlistController)->index(),
-    '/favorite-categories'  => (new WishlistController)->index(),
-    'favorite-categories'   => (new WishlistController)->index(),
-    '/admin/products'       => (new AdminProductController)->index(),
-    'admin/products'        => (new AdminProductController)->index(),
-    default                 => (new HomeController)->index(),
-};
 
+    // Sản phẩm & Cửa hàng
+    '/product', 'product'   => (new ProductController)->index(),
+    '/product-detail', 'product-detail' => (new ProductController)->detail(),
+    '/compare', 'compare'   => (new ProductController)->compare(),
+
+    // Yêu thích & Danh mục yêu thích
+    '/wishlist', 'wishlist' => (new WishlistController)->index(),
+    '/favorite-categories', 'favorite-categories' => (new WishlistController)->index(),
+
+    // Giỏ hàng & Thanh toán
+    '/cart', 'cart'                 => (new CartController)->index(),
+    '/cart/add', 'cart/add'         => (new CartController)->addToCart(),
+    '/cart/remove', 'cart/remove'   => (new CartController)->removeFromCart(),
+    '/cart/update', 'cart/update'   => (new CartController)->updateCart(),
+    '/checkout', 'checkout'         => (new CartController)->checkout(),
+    '/place-order', 'place-order'   => (new CartController)->placeOrder(),
+    '/order-success', 'order-success' => (new CartController)->orderSuccess(),
+
+    // Xác thực người dùng (Auth)
+    '/login', 'login'                       => (new AuthController)->showLogin(),
+    '/login/submit', 'login/submit'         => (new AuthController)->login(),
+    '/register', 'register'                 => (new AuthController)->showRegister(),
+    '/register/submit', 'register/submit'   => (new AuthController)->register(),
+    '/logout', 'logout'                     => (new AuthController)->logout(),
+
+    // Quản trị sản phẩm
+    '/admin/products', 'admin/products'     => (new AdminProductController)->index(),
+
+    default => (new HomeController)->index(),
+};

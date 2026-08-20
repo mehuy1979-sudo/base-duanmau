@@ -4,7 +4,6 @@
 ?>
 
 <div class="col-12">
-
     <?php if (!empty($products)): ?>
         <div class="row">
             <?php foreach ($products as $product): ?>

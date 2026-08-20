@@ -8,7 +8,7 @@ class ProductController
     public function __construct()
     {
         $this->productModel = new ProductModel();
-        $this->reviewModel  = new ReviewModel();
+        $this->reviewModel  = class_exists('ReviewModel') ? new ReviewModel() : null;
     }
 
     public function index()
@@ -16,6 +16,7 @@ class ProductController
         $title = "Cửa hàng - Bunny Wear";
         $products = $this->productModel->getAll();
         $categories = $this->productModel->getCategories();
+        $view = 'product';
 
         require_once PATH_VIEW . 'main.php';
     }
@@ -38,6 +39,14 @@ class ProductController
                 echo json_encode([
                     'success' => false,
                     'message' => 'Vui lòng điền đầy đủ Họ tên và Nội dung đánh giá.'
+                ]);
+                exit;
+            }
+
+            if (!$this->reviewModel) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Hệ thống đánh giá tạm thời gián đoạn.'
                 ]);
                 exit;
             }
@@ -80,18 +89,19 @@ class ProductController
             exit;
         }
 
-        $title = htmlspecialchars($product['product_name']) . " - Bunny Wear";
+        $title = htmlspecialchars($product['product_name'] ?? 'Sản phẩm') . " - Bunny Wear";
         $categories = $this->productModel->getCategories();
         $variants = $this->productModel->getVariants($id);
         $relatedProducts = $this->productModel->getRelatedProducts($product['category_id'] ?? 0, $id, 4);
 
         // Fetch reviews and rating breakdown
-        $reviews = $this->reviewModel->getByProductId($id);
-        $ratingSummary = $this->reviewModel->getRatingSummary($id);
+        $reviews = $this->reviewModel ? $this->reviewModel->getByProductId($id) : [];
+        $ratingSummary = $this->reviewModel ? $this->reviewModel->getRatingSummary($id) : [
+            'count' => 0, 'avg' => 5.0, 'breakdown' => [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0]
+        ];
 
         require_once PATH_VIEW . 'product-detail.php';
     }
-
 
     public function compare()
     {

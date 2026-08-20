@@ -87,7 +87,6 @@ class ProductModel extends BaseModel
         }
     }
 
-
     public function insertProduct($data)
     {
         if (!$this->pdo || empty($data)) return false;

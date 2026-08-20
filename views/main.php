@@ -46,9 +46,31 @@
 							Trợ giúp & Câu hỏi thường gặp
 						</a>
 
-						<a href="#" class="flex-c-m trans-04 p-lr-25">
-							Tài khoản của tôi
-						</a>
+
+						<?php if (!empty($_SESSION['user'])): ?>
+							<a href="#" class="flex-c-m trans-04 p-lr-25">
+								Xin chào, <?= htmlspecialchars($_SESSION['user']['fullname']) ?>
+							</a>
+
+							<?php if ($_SESSION['user']['role'] === 'admin'): ?>
+								<a href="<?= BASE_URL ?>admin/index.php" class="flex-c-m trans-04 p-lr-25">
+									Trang quản trị
+								</a>
+							<?php endif; ?>
+
+							<a href="?action=/logout" class="flex-c-m trans-04 p-lr-25">
+								Đăng xuất
+							</a>
+						<?php else: ?>
+							<a href="?action=/login" class="flex-c-m trans-04 p-lr-25">
+								Đăng nhập
+							</a>
+
+							<a href="?action=/register" class="flex-c-m trans-04 p-lr-25">
+								Đăng ký
+							</a>
+						<?php endif; ?>
+
 
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							VI
@@ -81,8 +103,8 @@
 							</li>
 
 							<li class="label1" data-label1="hot">
-								<a href="shoping-cart.html">Giỏ hàng</a>
-							</li>
+									<a href="?action=/cart">Giỏ hàng</a>
+
 
 							<li>
 								<a href="<?= BASE_URL ?>?action=/wishlist">Danh Mục Yêu Thích</a>
@@ -164,9 +186,20 @@
 							Trợ giúp & Câu hỏi thường gặp
 						</a>
 
-						<a href="#" class="flex-c-m p-lr-10 trans-04">
-							My Account
-						</a>
+						<?php if (!empty($_SESSION['user'])): ?>
+							<a href="?action=/logout" class="flex-c-m p-lr-10 trans-04">
+								Đăng xuất (<?= htmlspecialchars($_SESSION['user']['fullname']) ?>)
+							</a>
+						<?php else: ?>
+							<a href="?action=/login" class="flex-c-m p-lr-10 trans-04">
+								Đăng nhập
+							</a>
+
+							<a href="?action=/register" class="flex-c-m p-lr-10 trans-04">
+								Đăng ký
+							</a>
+						<?php endif; ?>
+
 
 						<a href="#" class="flex-c-m p-lr-10 trans-04">
 							EN
@@ -1271,7 +1304,7 @@
 				</div>
 
 				<div class="col-sm-6 col-lg-3 p-b-50">
-					<a href="admin/html/index.html">
+					<a href="<?= BASE_URL ?>admin/index.php">
 						<h4 class="stext-301 cl0 p-b-30">
 							Admin
 						</h4>
