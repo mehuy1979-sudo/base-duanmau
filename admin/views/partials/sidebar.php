@@ -21,6 +21,18 @@
       <span class="nav-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
       <span class="nav-text">Quản lý tài khoản</span>
     </a>
+    <a class="nav-link" href="<?= BASE_URL ?>?action=/admin/products">
+      <span class="nav-icon"><i class="bi bi-box-seam" aria-hidden="true"></i></span>
+      <span class="nav-text">Quản lý sản phẩm</span>
+    </a>
+    <a class="nav-link <?= $activeMenu === 'orders' ? 'active' : '' ?>" href="index.php?action=orders" <?= $activeMenu === 'orders' ? 'aria-current="page"' : '' ?>>
+      <span class="nav-icon"><i class="bi bi-receipt" aria-hidden="true"></i></span>
+      <span class="nav-text">Quản lý đơn hàng</span>
+    </a>
+    <a class="nav-link" href="comments.php">
+      <span class="nav-icon"><i class="bi bi-chat-left-text" aria-hidden="true"></i></span>
+      <span class="nav-text">Bình luận sản phẩm</span>
+    </a>
     <a class="nav-link <?= $activeMenu === 'stats' ? 'active' : '' ?>" href="index.php?action=stats" <?= $activeMenu === 'stats' ? 'aria-current="page"' : '' ?>>
       <span class="nav-icon"><i class="bi bi-bar-chart-line" aria-hidden="true"></i></span>
       <span class="nav-text">Thống kê</span>

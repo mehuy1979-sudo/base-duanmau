@@ -133,4 +133,40 @@ class AccountModel extends BaseModel
         $row = $stmt->fetch();
         return $row ?: null;
     }
+
+    /**
+     * Kiểm tra đăng nhập: đúng email + mật khẩu thì trả về bản ghi tài khoản, sai thì trả về false
+     */
+    public function attemptLogin(string $email, string $password): array|false
+    {
+        $account = $this->findByEmail($email);
+
+        if (!$account) {
+            return false;
+        }
+
+        if (!password_verify($password, $account['password'])) {
+            return false;
+        }
+
+        return $account;
+    }
+
+    /**
+     * Đăng ký tài khoản mới.
+     * Tài khoản đầu tiên của hệ thống sẽ tự động là admin, các tài khoản sau là customer.
+     */
+    public function register(array $data): int
+    {
+        $role = $this->count() === 0 ? 'admin' : 'customer';
+
+        return $this->create([
+            'fullname' => $data['fullname'],
+            'email'    => $data['email'],
+            'phone'    => $data['phone'] ?? null,
+            'password' => password_hash($data['password'], PASSWORD_DEFAULT),
+            'role'     => $role,
+            'status'   => 'active',
+        ]);
+    }
 }

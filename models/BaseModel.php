@@ -18,6 +18,12 @@ class BaseModel
         }
     }
 
+    // Kiểm tra đã kết nối CSDL thành công hay chưa (dùng bởi CommentModel...)
+    protected function isConnected(): bool
+    {
+        return $this->pdo !== null;
+    }
+
     // Lấy toàn bộ bản ghi
     public function all($orderBy = 'id DESC')
     {
