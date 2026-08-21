@@ -436,8 +436,8 @@
 			<div class="wrap-menu-desktop">
 				<nav class="menu-desktop">
 					<a href="<?= BASE_URL ?>" class="logo">
-						<img src="<?= BASE_URL ?>views/images/icons/logo-01.png" alt="IMG-LOGO">
-					</a>
+                        <img src="<?= BASE_URL ?>views/images/icons/Bunnywear.jpg" alt="IMG-LOGO">
+                    </a>
 
 					<div class="menu-desktop-main">
 						<a href="<?= BASE_URL ?>" class="menu-desktop-link">
@@ -524,9 +524,23 @@
                                         <td>
                                             <div class="product-item">
                                                 <div class="product-img">
-                                                    <img src="<?= BASE_URL ?>views/images/<?= htmlspecialchars($item['image'] ?? 'icons/product-01.jpg') ?>" alt="<?= htmlspecialchars($item['name']) ?>">
+                                                    <?php
+                                                        $itemImg = $item['image'] ?? '';
+                                                        $itemImgSrc = $itemImg !== ''
+                                                            ? BASE_URL . 'assets/uploads/' . $itemImg
+                                                            : BASE_URL . 'views/images/icons/product-01.jpg';
+                                                    ?>
+                                                    <img src="<?= htmlspecialchars($itemImgSrc) ?>" alt="<?= htmlspecialchars($item['name']) ?>">
                                                 </div>
-                                                <span class="product-name"><?= htmlspecialchars($item['name']) ?></span>
+                                                <span class="product-name">
+                                                    <?= htmlspecialchars($item['name']) ?>
+                                                    <?php if (!empty($item['size']) || !empty($item['color'])): ?>
+                                                        <br><small class="text-muted">
+                                                            <?= !empty($item['size']) ? 'Size: ' . htmlspecialchars($item['size']) : '' ?>
+                                                            <?= !empty($item['color']) ? ' - Màu: ' . htmlspecialchars($item['color']) : '' ?>
+                                                        </small>
+                                                    <?php endif; ?>
+                                                </span>
                                             </div>
                                         </td>
                                         <td class="price"><?= number_format($item['price'], 0, ',', '.') ?> VNĐ</td>

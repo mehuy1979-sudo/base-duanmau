@@ -410,9 +410,13 @@
     </style>
 </head>
 <body>
+    
     <header class="header-top">
+        <a href="<?= BASE_URL ?>" class="logo">
+                        <img src="<?= BASE_URL ?>views/images/icons/Bunnywear.jpg" alt="IMG-LOGO">
+                    </a>
         <div class="header-inner">
-            <a href="<?= BASE_URL ?>" class="brand"><span>S</span>triz</a>
+            
 
             <nav class="menu-row">
                 <a href="#">Trang chủ</a>

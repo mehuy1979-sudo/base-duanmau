@@ -1,6 +1,6 @@
 # Ghi chú ghép chức năng (từ base-duanmau-fixed)
 
-Đã ghép 3 nhóm chức năng từ các base khác vào base này (giữ nguyên Auth + Cart + Quản lý tài khoản admin sẵn có).
+Đã ghép 5 nhóm chức năng từ các base khác vào base này (giữ nguyên Auth + Cart + Quản lý tài khoản admin sẵn có).
 
 ## 1. Việc đầu tiên cần làm: chạy SQL
 
@@ -33,6 +33,20 @@ File này tạo các bảng mới (`categories`, `product_variants`, `product_im
 - **Không** lấy phần `UserController`/`UserModel` của base tuananh03 vì nó là một hệ thống đăng nhập/đăng ký khác, trùng chức năng và xung đột với `AuthController`/`AccountModel` đã có sẵn (khác cách lưu session, không có khóa tài khoản/phân quyền). Bình luận vẫn dùng chung bảng `users` hiện tại của bạn qua join `user_id`.
 - Trang này hiện chưa có form để khách để lại bình luận (base tuananh03 mới chỉ làm phần quản trị) — nếu cần, đây là việc tiếp theo.
 
+## 5. Danh Mục Yêu Thích (Wishlist) + Đánh giá sản phẩm (Reviews) — từ base CongChese
+
+- **Wishlist** (lưu trong session, không cần đăng nhập):
+  - Trang danh sách: `?action=/wishlist`
+  - Nút "Yêu thích" trên trang chi tiết sản phẩm (`?action=/product-detail&id=X`) đổi màu khi đã thêm.
+  - Icon trái tim ở header (`main.php`, cả bản desktop/mobile) đã trỏ về `?action=/wishlist` và hiện số lượng đang lưu.
+  - `WishlistController.php` (mới) xử lý toggle/remove/clear/count qua AJAX (`?action=/wishlist&ajax=...`).
+  - `ProductModel::getByIds()` (mới) — lấy nhiều sản phẩm theo danh sách id, phục vụ trang wishlist.
+  - Lưu ý: các icon trái tim tĩnh trong khối "sản phẩm nổi bật" ở trang chủ (`main.php`, mục demo 12 sản phẩm) vẫn chưa nối AJAX vì khối đó vốn là HTML mẫu tĩnh của theme, chưa lấy dữ liệu từ DB — không thuộc phạm vi merge lần này.
+- **Reviews** (lưu DB, bảng `product_reviews` tự tạo khi chạy lần đầu — không cần chạy SQL thủ công):
+  - `ReviewModel.php` (mới) — tự tạo bảng `product_reviews` (INNODB) nếu chưa có, có sẵn vài đánh giá mẫu để demo.
+  - Tab "Đánh giá" ở trang chi tiết sản phẩm giờ hiển thị điểm trung bình + danh sách đánh giá thật từ DB, kèm form gửi đánh giá mới (AJAX `?action=/product-detail&id=X&ajax=add_review`).
+  - Đây là hệ thống **riêng biệt** với `CommentModel`/`admin/comments.php` đã có sẵn trong base (bảng `comments` dùng cho bình luận quản trị duyệt) — hai hệ thống không đụng nhau.
+
 ## Việc chưa ghép (theo lựa chọn của bạn)
 
 - Giỏ hàng đơn giản từ base taquan-giohang: không lấy vì base của bạn đã có giỏ hàng đầy đủ hơn (mã giảm giá, đặt hàng lưu DB...).
@@ -40,4 +54,8 @@ File này tạo các bảng mới (`categories`, `product_variants`, `product_im
 
 ## Kiểm tra nhanh sau khi merge
 
-Chưa cài được PHP CLI trong môi trường này nên chưa chạy `php -l`/test thực tế được — hãy mở thử từng trang trên XAMPP/Laragon của bạn trước khi dùng chính thức, đặc biệt là `?action=/admin/products` (phần AJAX thêm/sửa/xóa) và `admin/index.php?action=orders`.
+Chưa cài được PHP CLI trong môi trường này nên chưa chạy `php -l`/test thực tế được — hãy mở thử từng trang trên XAMPP/Laragon của bạn trước khi dùng chính thức, đặc biệt là:
+- `?action=/admin/products` (phần AJAX thêm/sửa/xóa)
+- `admin/index.php?action=orders`
+- `?action=/wishlist` và nút "Yêu thích" ở trang chi tiết sản phẩm
+- Tab "Đánh giá" + form gửi đánh giá ở trang chi tiết sản phẩm (bảng `product_reviews` sẽ tự tạo trong lần chạy đầu tiên, cần quyền `CREATE TABLE` cho user DB của bạn)

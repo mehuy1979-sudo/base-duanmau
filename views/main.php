@@ -87,6 +87,10 @@
 								</a>
 							<?php endif; ?>
 
+							<a href="?action=/order-history" class="flex-c-m trans-04 p-lr-25">
+								Lịch sử mua hàng
+							</a>
+
 							<a href="?action=/logout" class="flex-c-m trans-04 p-lr-25">
 								Đăng xuất
 							</a>
@@ -137,7 +141,7 @@
 
 
 							<li>
-								<a href="blog.html">Danh Mục Yêu Thích</a>
+								<a href="<?= BASE_URL ?>?action=/wishlist">Danh Mục Yêu Thích</a>
 							</li>
 
 							<li>
@@ -163,7 +167,7 @@
 							<i class="zmdi zmdi-shopping-cart"></i>
 						</div>
 
-						<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
+						<a href="<?= BASE_URL ?>?action=/wishlist" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-wishlist-noti" data-notify="<?= isset($_SESSION['wishlist']) ? count($_SESSION['wishlist']) : 0 ?>">
 							<i class="zmdi zmdi-favorite-outline"></i>
 						</a>
 					</div>
@@ -190,7 +194,7 @@
 					<i class="zmdi zmdi-shopping-cart"></i>
 				</div>
 
-				<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="0">
+				<a href="<?= BASE_URL ?>?action=/wishlist" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-wishlist-noti" data-notify="<?= isset($_SESSION['wishlist']) ? count($_SESSION['wishlist']) : 0 ?>">
 					<i class="zmdi zmdi-favorite-outline"></i>
 				</a>
 			</div>
@@ -220,6 +224,10 @@
 						</a>
 
 						<?php if (!empty($_SESSION['user'])): ?>
+							<a href="?action=/order-history" class="flex-c-m p-lr-10 trans-04">
+								Lịch sử mua hàng
+							</a>
+
 							<a href="?action=/logout" class="flex-c-m p-lr-10 trans-04">
 								Đăng xuất (<?= htmlspecialchars($_SESSION['user']['fullname']) ?>)
 							</a>

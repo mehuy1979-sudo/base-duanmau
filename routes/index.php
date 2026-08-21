@@ -16,10 +16,24 @@ if ($action === '/admin/products' && $ajax !== '') {
     exit;
 }
 
+// Wishlist / Danh mục yêu thích AJAX sub-routes — từ base CongChese
+if (($action === '/wishlist' || $action === '/favorite-categories') && $ajax !== '') {
+    $ctrl = new WishlistController();
+    match ($ajax) {
+        'toggle' => $ctrl->toggle(),
+        'remove' => $ctrl->remove(),
+        'clear'  => $ctrl->clear(),
+        'count'  => $ctrl->count(),
+        default  => http_response_code(404),
+    };
+    exit;
+}
+
 match ($action) {
     '/'         => (new HomeController)->index(),
 
     '/product'        => (new ProductController)->index(),
+    '/wishlist'       => (new WishlistController)->index(),
     '/product-detail' => (new ProductController)->detail(),
     '/compare'        => (new ProductController)->compare(),
 
@@ -31,6 +45,9 @@ match ($action) {
     '/checkout'      => (new CartController)->checkout(),
     '/place-order'   => (new CartController)->placeOrder(),
     '/order-success' => (new CartController)->orderSuccess(),
+
+    '/order-history' => (new CartController)->orderHistory(),
+    '/order-detail'  => (new CartController)->orderDetail(),
 
     '/login'         => (new AuthController)->showLogin(),
     '/login/submit'  => (new AuthController)->login(),

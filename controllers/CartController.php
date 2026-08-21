@@ -14,15 +14,7 @@ class CartController
             session_start();
         }
 
-        $cart = $_SESSION['cart'] ?? [[
-            'id' => 1,
-            'name' => 'Tiger Hoody',
-            'price' => 1600000,
-            'quantity' => 1,
-            'image' => 'product-01.jpg',
-            'size' => 'L',
-            'total' => 1600000,
-        ]];
+        $cart = $_SESSION['cart'] ?? [];
 
         foreach ($cart as $index => $item) {
             $cart[$index]['total'] = (float) ($item['price'] ?? 0) * (int) ($item['quantity'] ?? 1);
@@ -99,24 +91,76 @@ class CartController
         }
 
         $product_id = $_POST['product_id'] ?? null;
-        $quantity = $_POST['quantity'] ?? 1;
+        $quantity = max(1, (int) ($_POST['quantity'] ?? 1));
+        $size = trim($_POST['size'] ?? '');
+        $color = trim($_POST['color'] ?? '');
 
-        if ($product_id) {
-            if (!isset($_SESSION['cart'])) {
-                $_SESSION['cart'] = [];
-            }
-
-            $_SESSION['cart'][] = [
-                'id' => $product_id,
-                'quantity' => $quantity,
-                'name' => 'Sản phẩm mới',
-                'price' => 0,
-                'total' => 0,
-            ];
-
+        if (!$product_id) {
             header('Location: ?action=/cart');
             exit;
         }
+
+        $productModel = new ProductModel();
+        $product = $productModel->getOne($product_id);
+
+        if (!$product) {
+            $_SESSION['cart_error'] = 'Sản phẩm không tồn tại';
+            header('Location: ?action=/cart');
+            exit;
+        }
+
+        // Nếu sản phẩm có biến thể (size/color), tìm biến thể khớp để lấy đúng giá
+        $price = (float) ($product['price'] ?? 0);
+        $variants = $product['variants'] ?? [];
+
+        if (!empty($variants)) {
+            foreach ($variants as $v) {
+                $matchSize  = $size === '' || ($v['size'] ?? '') === $size;
+                $matchColor = $color === '' || ($v['color'] ?? '') === $color;
+
+                if ($matchSize && $matchColor) {
+                    $price = (float) ($v['sale_price'] ?? $v['original_price'] ?? $price);
+                    break;
+                }
+            }
+        }
+
+        if (!isset($_SESSION['cart'])) {
+            $_SESSION['cart'] = [];
+        }
+
+        // Nếu sản phẩm (cùng size/color) đã có trong giỏ thì cộng dồn số lượng
+        $found = false;
+        foreach ($_SESSION['cart'] as $index => $item) {
+            if (
+                ($item['id'] ?? null) == $product_id &&
+                ($item['size'] ?? '') === $size &&
+                ($item['color'] ?? '') === $color
+            ) {
+                $_SESSION['cart'][$index]['quantity'] += $quantity;
+                $_SESSION['cart'][$index]['total'] = $_SESSION['cart'][$index]['price'] * $_SESSION['cart'][$index]['quantity'];
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            $_SESSION['cart'][] = [
+                'id' => $product_id,
+                'name' => $product['product_name'] ?? 'Sản phẩm',
+                'price' => $price,
+                'quantity' => $quantity,
+                'image' => $product['image'] ?? '',
+                'size' => $size,
+                'color' => $color,
+                'total' => $price * $quantity,
+            ];
+        }
+
+        $_SESSION['cart_success'] = 'Đã thêm sản phẩm vào giỏ hàng';
+
+        header('Location: ?action=/cart');
+        exit;
     }
 
     public function removeFromCart()
@@ -332,6 +376,62 @@ class CartController
         $order['cart']       = $items;
 
         require_once PATH_VIEW . 'order-success.php';
+    }
+
+    // Lịch sử mua hàng của khách hàng đang đăng nhập
+    public function orderHistory()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (empty($_SESSION['user'])) {
+            $_SESSION['login_error'] = 'Vui lòng đăng nhập để xem lịch sử mua hàng';
+            header('Location: ?action=/login');
+            exit;
+        }
+
+        $userId = $_SESSION['user']['id'];
+
+        $orderModel = new OrderModel();
+        $orders = $orderModel->getOrdersByUserId($userId);
+
+        require_once PATH_VIEW . 'order-history.php';
+    }
+
+    // Chi tiết 1 đơn hàng trong lịch sử mua hàng (chỉ xem được đơn của chính mình)
+    public function orderDetail()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (empty($_SESSION['user'])) {
+            $_SESSION['login_error'] = 'Vui lòng đăng nhập để xem chi tiết đơn hàng';
+            header('Location: ?action=/login');
+            exit;
+        }
+
+        $orderId = (int) ($_GET['id'] ?? 0);
+        $userId  = $_SESSION['user']['id'];
+
+        $orderModel = new OrderModel();
+        $order = $orderModel->getOrderById($orderId);
+
+        // Không cho xem đơn hàng của người khác
+        if (!$order || (int) $order['user_id'] !== (int) $userId) {
+            header('Location: ?action=/order-history');
+            exit;
+        }
+
+        $items = $orderModel->getOrderDetails($orderId);
+
+        foreach ($items as &$it) {
+            $it['total'] = (float) $it['price'] * (int) $it['quantity'];
+        }
+        unset($it);
+
+        require_once PATH_VIEW . 'order-detail.php';
     }
 
     public function updateCart()

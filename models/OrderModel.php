@@ -22,6 +22,23 @@ class OrderModel extends BaseModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    // Lấy lịch sử mua hàng của 1 khách hàng (kèm tổng số sản phẩm mỗi đơn)
+    public function getOrdersByUserId($user_id) 
+    {
+        $sql = "SELECT 
+                    o.*,
+                    COALESCE(SUM(od.quantity), 0) AS items_count
+                FROM orders o
+                LEFT JOIN order_details od ON od.order_id = o.id
+                WHERE o.user_id = :user_id
+                GROUP BY o.id
+                ORDER BY o.id DESC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['user_id' => $user_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     // Lấy chi tiết các sản phẩm trong đơn hàng (Kèm thông tin ảnh từ bảng products)
     public function getOrderDetails($order_id) 
     {
