@@ -59,208 +59,664 @@
 
 <body>
 
- <header>
+<?php
 
-		<!-- Header desktop -->
-		<div class="container-menu-desktop">
-			<!-- Topbar -->
-			<div class="top-bar">
-				<div class="content-topbar flex-sb-m h-full container">
-					<div class="left-top-bar">
-						Khuyến mại hè giảm 20%
-					</div>
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-					<div class="right-top-bar flex-w h-full">
-						<a href="#" class="flex-c-m trans-04 p-lr-25">
-							Help & FAQs
-						</a>
+$isLoggedIn = !empty($_SESSION['user']);
 
-						<a href="#" class="flex-c-m trans-04 p-lr-25">
-							Tài khoản của tôi
-						</a>
+$userFullname = $isLoggedIn
+    ? ($_SESSION['user']['fullname'] ?? '')
+    : '';
 
-						<a href="#" class="flex-c-m trans-04 p-lr-25">
-							VI
-						</a>
+?>
 
-						<a href="#" class="flex-c-m trans-04 p-lr-25">
-							VND
-						</a>
-					</div>
-				</div>
-			</div>
+<header>
 
-			<div class="wrap-menu-desktop">
-				<nav class="limiter-menu-desktop container">
-					
-					<!-- Logo desktop -->
-                    <a href="<?= BASE_URL ?>" class="logo">
-                        <img src="<?= BASE_URL ?>views/images/icons/Bunnywear.jpg" alt="IMG-LOGO">
+    <!-- =========================================================
+         HEADER DESKTOP
+    ========================================================== -->
+
+    <div class="container-menu-desktop">
+
+
+        <!-- TOPBAR -->
+
+        <div class="top-bar">
+
+            <div class="content-topbar flex-sb-m h-full container">
+
+
+                <!-- LEFT -->
+
+                <div class="left-top-bar">
+
+                    Khuyến mại hè giảm 20%
+
+                </div>
+
+
+                <!-- RIGHT -->
+
+                <div class="right-top-bar flex-w h-full">
+
+
+                    <!-- HELP -->
+
+                    <a
+                        href="#"
+                        class="flex-c-m trans-04 p-lr-25"
+                    >
+                        Help & FAQs
                     </a>
 
-					<!-- Menu desktop -->
-					<div class="menu-desktop">
-						<ul class="main-menu">
-							<li class="active-menu">
-								<a href="index.html">Trang chủ</a>
 
-							</li>
+                    <!-- ACCOUNT -->
 
-							<li>
-								<a href="product.html">Sản Phẩm</a>
-							</li>
+                    <?php if ($isLoggedIn): ?>
 
-							<li class="label1" data-label1="hot">
-								<a href="shoping-cart.html">Giỏ hàng</a>
-							</li>
+                        <a
+                            href="<?= BASE_URL ?>?action=/account"
+                            class="flex-c-m trans-04 p-lr-25"
+                        >
 
-							<li>
-								<a href="blog.html">Danh Mục Yêu Thích</a>
-							</li>
+                            <?= htmlspecialchars($userFullname) ?>
 
-							<li>
-								<a href="about.html"></a>
-							</li>
+                        </a>
 
-							<li>
-								<a href="contact.html">Liên Hệ</a>
-							</li>
-						</ul>
-					</div>	
 
-					<!-- Icon header -->
-					<div class="wrap-icon-header flex-w flex-r-m">
-						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
-							<i class="zmdi zmdi-search"></i>
-						</div>
+                        <!-- LOGOUT -->
 
-						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
-							<i class="zmdi zmdi-shopping-cart"></i>
-						</div>
+                        <a
+                            href="<?= BASE_URL ?>?action=/logout"
+                            class="flex-c-m trans-04 p-lr-25"
+                        >
 
-						<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
-							<i class="zmdi zmdi-favorite-outline"></i>
-						</a>
-					</div>
-				</nav>
-			</div>	
-		</div>
+                            Đăng xuất
 
-		<!-- Header Mobile -->
-		<div class="wrap-header-mobile">
-			<!-- Logo mobile -->
-            <div class="logo-mobile">
-                <a href="<?= BASE_URL ?>">
-                    <img src="<?= BASE_URL ?>views/images/icons/Bunnywear.jpg" alt="IMG-LOGO">
-                </a>
+                        </a>
+
+                    <?php else: ?>
+
+                        <a
+                            href="<?= BASE_URL ?>?action=/login"
+                            class="flex-c-m trans-04 p-lr-25"
+                        >
+
+                            Đăng nhập
+
+                        </a>
+
+
+                        <a
+                            href="<?= BASE_URL ?>?action=/register"
+                            class="flex-c-m trans-04 p-lr-25"
+                        >
+
+                            Đăng ký
+
+                        </a>
+
+                    <?php endif; ?>
+
+
+                    <!-- LANGUAGE -->
+
+                    <a
+                        href="#"
+                        class="flex-c-m trans-04 p-lr-25"
+                    >
+
+                        VI
+
+                    </a>
+
+
+                    <!-- CURRENCY -->
+
+                    <a
+                        href="#"
+                        class="flex-c-m trans-04 p-lr-25"
+                    >
+
+                        VND
+
+                    </a>
+
+
+                </div>
+
             </div>
 
-			<!-- Icon header -->
-			<div class="wrap-icon-header flex-w flex-r-m m-r-15">
-				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
-					<i class="zmdi zmdi-search"></i>
-				</div>
-
-				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart" data-notify="2">
-					<i class="zmdi zmdi-shopping-cart"></i>
-				</div>
-
-				<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="0">
-					<i class="zmdi zmdi-favorite-outline"></i>
-				</a>
-			</div>
-
-			<!-- Button show menu -->
-			<div class="btn-show-menu-mobile hamburger hamburger--squeeze">
-				<span class="hamburger-box">
-					<span class="hamburger-inner"></span>
-				</span>
-			</div>
-		</div>
+        </div>
 
 
-		<!-- Menu Mobile -->
-		<div class="menu-mobile">
-			<ul class="topbar-mobile">
-				<li>
-					<div class="left-top-bar">
-						sale hè giảm 20%
-					</div>
-				</li>
+        <!-- =====================================================
+             MENU DESKTOP
+        ====================================================== -->
 
-				<li>
-					<div class="right-top-bar flex-w h-full">
-						<a href="#" class="flex-c-m p-lr-10 trans-04">
-							Help & FAQs
-						</a>
+        <div class="wrap-menu-desktop">
 
-						<a href="#" class="flex-c-m p-lr-10 trans-04">
-							My Account
-						</a>
+            <nav class="limiter-menu-desktop container">
 
-						<a href="#" class="flex-c-m p-lr-10 trans-04">
-							EN
-						</a>
 
-						<a href="#" class="flex-c-m p-lr-10 trans-04">
-							USD
-						</a>
-					</div>
-				</li>
-			</ul>
+                <!-- LOGO -->
 
-			<ul class="main-menu-m">
-				<li>
-					<a href="index.html">Home</a>
-					<ul class="sub-menu-m">
-						<li><a href="index.html">Homepage 1</a></li>
-						<li><a href="home-02.html">Homepage 2</a></li>
-						<li><a href="home-03.html">Homepage 3</a></li>
-					</ul>
-					<span class="arrow-main-menu-m">
-						<i class="fa fa-angle-right" aria-hidden="true"></i>
-					</span>
-				</li>
+                <a
+                    href="<?= BASE_URL ?>"
+                    class="logo"
+                >
 
-				<li>
-					<a href="product.html">Shop</a>
-				</li>
+                    <img
+                        src="<?= BASE_URL ?>views/images/icons/Bunnywear.jpg"
+                        alt="Bunnywear"
+                    >
 
-				<li>
-					<a href="shoping-cart.html" class="label1 rs1" data-label1="hot">Features</a>
-				</li>
+                </a>
 
-				<li>
-					<a href="blog.html">Blog</a>
-				</li>
 
-				<li>
-					<a href="about.html">About</a>
-				</li>
+                <!-- MENU -->
 
-				<li>
-					<a href="contact.html">Contact</a>
-				</li>
-			</ul>
-		</div>
+                <div class="menu-desktop">
 
-		<!-- Modal Search -->
-		<div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
-			<div class="container-search-header">
-				<button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
-					<img src="views/images/icons/icon-close2.png" alt="CLOSE">
-				</button>
+                    <ul class="main-menu">
 
-				<form class="wrap-search-header flex-w p-l-15">
-					<button class="flex-c-m trans-04">
-						<i class="zmdi zmdi-search"></i>
-					</button>
-					<input class="plh3" type="text" name="search" placeholder="Search...">
-				</form>
-			</div>
-		</div>
-	</header>
 
+                        <!-- TRANG CHỦ -->
+
+                        <li class="active-menu">
+
+                            <a href="<?= BASE_URL ?>">
+
+                                Trang chủ
+
+                            </a>
+
+                        </li>
+
+
+                        <!-- SẢN PHẨM -->
+
+                        <li>
+
+                            <a
+                                href="<?= BASE_URL ?>?action=product"
+                            >
+
+                                Sản phẩm
+
+                            </a>
+
+                        </li>
+
+
+                        <!-- GIỎ HÀNG -->
+
+                        <li
+                            class="label1"
+                            data-label1="hot"
+                        >
+
+                            <a
+                                href="<?= BASE_URL ?>?action=/cart"
+                            >
+
+                                Giỏ hàng
+
+                            </a>
+
+                        </li>
+
+
+                        <!-- YÊU THÍCH -->
+
+                        <li>
+
+                            <a href="#">
+
+                                Danh mục yêu thích
+
+                            </a>
+
+                        </li>
+
+
+                        <!-- LIÊN HỆ -->
+
+                        <li>
+
+                            <a href="#">
+
+                                Liên hệ
+
+                            </a>
+
+                        </li>
+
+
+                    </ul>
+
+                </div>
+
+
+                <!-- =================================================
+                     ICON HEADER
+                ================================================== -->
+
+                <div class="wrap-icon-header flex-w flex-r-m">
+
+
+                    <!-- SEARCH -->
+
+                    <div
+                        class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search"
+                    >
+
+                        <i class="zmdi zmdi-search"></i>
+
+                    </div>
+
+
+                    <!-- CART -->
+
+                    <a
+                        href="<?= BASE_URL ?>?action=/cart"
+                        class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti"
+                        data-notify="0"
+                    >
+
+                        <i class="zmdi zmdi-shopping-cart"></i>
+
+                    </a>
+
+
+                    <!-- FAVORITE -->
+
+                    <a
+                        href="#"
+                        class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti"
+                        data-notify="0"
+                    >
+
+                        <i class="zmdi zmdi-favorite-outline"></i>
+
+                    </a>
+
+
+                </div>
+
+
+            </nav>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================================================
+         HEADER MOBILE
+    ========================================================== -->
+
+    <div class="wrap-header-mobile">
+
+
+        <!-- LOGO -->
+
+        <div class="logo-mobile">
+
+            <a href="<?= BASE_URL ?>">
+
+                <img
+                    src="<?= BASE_URL ?>views/images/icons/Bunnywear.jpg"
+                    alt="Bunnywear"
+                >
+
+            </a>
+
+        </div>
+
+
+        <!-- ICON HEADER -->
+
+        <div class="wrap-icon-header flex-w flex-r-m m-r-15">
+
+
+            <!-- SEARCH -->
+
+            <div
+                class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search"
+            >
+
+                <i class="zmdi zmdi-search"></i>
+
+            </div>
+
+
+            <!-- CART -->
+
+            <a
+                href="<?= BASE_URL ?>?action=/cart"
+                class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
+                data-notify="0"
+            >
+
+                <i class="zmdi zmdi-shopping-cart"></i>
+
+            </a>
+
+
+            <!-- FAVORITE -->
+
+            <a
+                href="#"
+                class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
+                data-notify="0"
+            >
+
+                <i class="zmdi zmdi-favorite-outline"></i>
+
+            </a>
+
+
+        </div>
+
+
+        <!-- BUTTON MENU -->
+
+        <div
+            class="btn-show-menu-mobile hamburger hamburger--squeeze"
+        >
+
+            <span class="hamburger-box">
+
+                <span class="hamburger-inner"></span>
+
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =========================================================
+         MENU MOBILE
+    ========================================================== -->
+
+    <div class="menu-mobile">
+
+
+        <!-- TOPBAR MOBILE -->
+
+        <ul class="topbar-mobile">
+
+
+            <li>
+
+                <div class="left-top-bar">
+
+                    Sale hè giảm 20%
+
+                </div>
+
+            </li>
+
+
+            <li>
+
+                <div class="right-top-bar flex-w h-full">
+
+
+                    <!-- HELP -->
+
+                    <a
+                        href="#"
+                        class="flex-c-m p-lr-10 trans-04"
+                    >
+
+                        Help & FAQs
+
+                    </a>
+
+
+                    <!-- ACCOUNT -->
+
+                    <?php if ($isLoggedIn): ?>
+
+                        <a
+                            href="<?= BASE_URL ?>?action=/account"
+                            class="flex-c-m p-lr-10 trans-04"
+                        >
+
+                            Tài khoản
+
+                        </a>
+
+
+                        <a
+                            href="<?= BASE_URL ?>?action=/logout"
+                            class="flex-c-m p-lr-10 trans-04"
+                        >
+
+                            Đăng xuất
+
+                        </a>
+
+                    <?php else: ?>
+
+                        <a
+                            href="<?= BASE_URL ?>?action=/login"
+                            class="flex-c-m p-lr-10 trans-04"
+                        >
+
+                            Đăng nhập
+
+                        </a>
+
+                    <?php endif; ?>
+
+
+                    <!-- LANGUAGE -->
+
+                    <a
+                        href="#"
+                        class="flex-c-m p-lr-10 trans-04"
+                    >
+
+                        VI
+
+                    </a>
+
+
+                    <!-- CURRENCY -->
+
+                    <a
+                        href="#"
+                        class="flex-c-m p-lr-10 trans-04"
+                    >
+
+                        VND
+
+                    </a>
+
+
+                </div>
+
+            </li>
+
+        </ul>
+
+
+
+        <!-- MAIN MENU MOBILE -->
+
+        <ul class="main-menu-m">
+
+
+            <!-- HOME -->
+
+            <li>
+
+                <a href="<?= BASE_URL ?>">
+
+                    Trang chủ
+
+                </a>
+
+            </li>
+
+
+            <!-- PRODUCT -->
+
+            <li>
+
+                <a
+                    href="<?= BASE_URL ?>?action=product"
+                >
+
+                    Sản phẩm
+
+                </a>
+
+            </li>
+
+
+            <!-- CART -->
+
+            <li>
+
+                <a
+                    href="<?= BASE_URL ?>?action=/cart"
+                    class="label1 rs1"
+                    data-label1="hot"
+                >
+
+                    Giỏ hàng
+
+                </a>
+
+            </li>
+
+
+            <!-- FAVORITE -->
+
+            <li>
+
+                <a href="#">
+
+                    Danh mục yêu thích
+
+                </a>
+
+            </li>
+
+
+            <!-- ACCOUNT -->
+
+            <?php if ($isLoggedIn): ?>
+
+                <li>
+
+                    <a
+                        href="<?= BASE_URL ?>?action=/account"
+                    >
+
+                        Tài khoản của tôi
+
+                    </a>
+
+                </li>
+
+            <?php endif; ?>
+
+
+            <!-- CONTACT -->
+
+            <li>
+
+                <a href="#">
+
+                    Liên hệ
+
+                </a>
+
+            </li>
+
+
+        </ul>
+
+    </div>
+
+
+
+    <!-- =========================================================
+         MODAL SEARCH
+    ========================================================== -->
+
+    <div
+        class="modal-search-header flex-c-m trans-04 js-hide-modal-search"
+    >
+
+        <div class="container-search-header">
+
+
+            <!-- CLOSE -->
+
+            <button
+                class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search"
+            >
+
+                <img
+                    src="<?= BASE_URL ?>views/images/icons/icon-close2.png"
+                    alt="CLOSE"
+                >
+
+            </button>
+
+
+            <!-- SEARCH FORM -->
+
+            <form
+                class="wrap-search-header flex-w p-l-15"
+                method="GET"
+                action="<?= BASE_URL ?>"
+            >
+
+                <input
+                    type="hidden"
+                    name="action"
+                    value="search"
+                >
+
+
+                <button
+                    type="submit"
+                    class="flex-c-m trans-04"
+                >
+
+                    <i class="zmdi zmdi-search"></i>
+
+                </button>
+
+
+                <input
+                    class="plh3"
+                    type="text"
+                    name="search"
+                    placeholder="Tìm kiếm sản phẩm..."
+                >
+
+            </form>
+
+        </div>
+
+    </div>
+
+</header>
 
     <div class="container">
         <!-- <h1 class="mt-3 mb-3"><?= $title ?? 'Home' ?></h1> -->
