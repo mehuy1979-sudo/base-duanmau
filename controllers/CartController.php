@@ -233,10 +233,10 @@ class CartController
             $stmt = $pdo->prepare("
                 INSERT INTO orders
                     (user_id, customer_name, email, phone, address, city, district,
-                     note, payment_method, total_amount, discount, coupon_code, status, order_date)
+                     note, payment_method, total_amount, discount, coupon_code, status, order_status, order_date)
                 VALUES
                     (:user_id, :customer_name, :email, :phone, :address, :city, :district,
-                     :note, :payment_method, :total_amount, :discount, :coupon_code, :status, NOW())
+                     :note, :payment_method, :total_amount, :discount, :coupon_code, :status, 1, NOW())
             ");
 
             $stmt->execute([
@@ -252,7 +252,7 @@ class CartController
                 ':total_amount'   => $totals['total'],
                 ':discount'       => $totals['discount'],
                 ':coupon_code'    => $totals['coupon_code'],
-                ':status'         => 'Đang xử lý',
+                ':status'         => 'Chờ xử lý',
             ]);
 
             $orderId = (int) $pdo->lastInsertId();

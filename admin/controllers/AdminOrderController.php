@@ -1,16 +1,69 @@
 <?php
 
-// Quản lý đơn hàng (ghép từ base nguyenanhhuy)
 class AdminOrderController
 {
+    private OrderModel $orderModel;
+
+    public function __construct()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Chỉ cho phép admin truy cập
+        if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+            header('Location: ' . BASE_URL . '?action=/login');
+            exit;
+        }
+
+        $this->orderModel = new OrderModel();
+    }
+
     // Hiển thị danh sách đơn hàng
     public function list()
     {
-        $orderModel = new OrderModel();
-        $orders = $orderModel->getAllOrders();
+        $keyword = trim($_GET['q'] ?? '');
+        $statusFilter = $_GET['status'] ?? '';
+
+        $allOrders = $this->orderModel->getAllOrders();
+
+        // Lọc theo từ khóa và trạng thái nếu có
+        $orders = array_filter($allOrders, function ($order) use ($keyword, $statusFilter) {
+            $matchKey = true;
+            if ($keyword !== '') {
+                $searchable = ($order['id'] ?? '') . ' ' .
+                              ($order['customer_name'] ?? '') . ' ' .
+                              ($order['email'] ?? '') . ' ' .
+                              ($order['phone'] ?? '') . ' ' .
+                              ($order['address'] ?? '');
+                $matchKey = mb_stripos($searchable, $keyword) !== false;
+            }
+
+            $matchStatus = true;
+            if ($statusFilter !== '') {
+                $matchStatus = ((int)($order['order_status'] ?? 0) === (int)$statusFilter);
+            }
+
+            return $matchKey && $matchStatus;
+        });
+
+        // Thống kê số lượng đơn hàng theo trạng thái
+        $stats = [
+            'total'     => count($allOrders),
+            'pending'   => count(array_filter($allOrders, fn($o) => (int)($o['order_status'] ?? 1) === 1)),
+            'confirmed' => count(array_filter($allOrders, fn($o) => (int)($o['order_status'] ?? 0) === 2)),
+            'shipping'  => count(array_filter($allOrders, fn($o) => (int)($o['order_status'] ?? 0) === 3)),
+            'delivered' => count(array_filter($allOrders, fn($o) => (int)($o['order_status'] ?? 0) === 4)),
+            'completed' => count(array_filter($allOrders, fn($o) => (int)($o['order_status'] ?? 0) === 6)),
+            'cancelled' => count(array_filter($allOrders, fn($o) => (int)($o['order_status'] ?? 0) === 7)),
+        ];
 
         $pageTitle  = 'Quản lý đơn hàng';
         $activeMenu = 'orders';
+
+        $flashSuccess = $_SESSION['admin_order_success'] ?? null;
+        $flashError   = $_SESSION['admin_order_error'] ?? null;
+        unset($_SESSION['admin_order_success'], $_SESSION['admin_order_error']);
 
         require_once __DIR__ . '/../views/order/list.php';
     }
@@ -18,18 +71,27 @@ class AdminOrderController
     // Hiển thị chi tiết 1 đơn hàng
     public function detail()
     {
-        $id = $_GET['id'] ?? 0;
-        $orderModel = new OrderModel();
+        $id = (int)($_GET['id'] ?? 0);
+        if ($id <= 0) {
+            header("Location: index.php?action=orders");
+            exit;
+        }
 
-        $order = $orderModel->getOrderById($id);
-        $orderDetails = $orderModel->getOrderDetails($id);
+        $order = $this->orderModel->getOrderById($id);
+        $orderDetails = $this->orderModel->getOrderDetails($id);
 
         if (!$order) {
-            die("Không tìm thấy đơn hàng!");
+            $_SESSION['admin_order_error'] = 'Không tìm thấy đơn hàng #' . $id;
+            header("Location: index.php?action=orders");
+            exit;
         }
 
         $pageTitle  = 'Chi tiết đơn hàng #' . $id;
         $activeMenu = 'orders';
+
+        $flashSuccess = $_SESSION['admin_order_success'] ?? null;
+        $flashError   = $_SESSION['admin_order_error'] ?? null;
+        unset($_SESSION['admin_order_success'], $_SESSION['admin_order_error']);
 
         require_once __DIR__ . '/../views/order/detail.php';
     }
@@ -37,58 +99,72 @@ class AdminOrderController
     // Cập nhật trạng thái đơn hàng
     public function updateStatus()
     {
-        $order_id = $_POST['order_id'] ?? 0;
-        $new_status = (int) ($_POST['new_status'] ?? 0);
-        $cancel_reason = trim($_POST['cancel_reason'] ?? '');
-
-        $orderModel = new OrderModel();
-        $current_order = $orderModel->getOrderById($order_id);
-
-        if (!$current_order) {
-            die("Đơn hàng không tồn tại!");
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: index.php?action=orders");
+            exit;
         }
 
-        $current_status = (int) $current_order['order_status'];
+        $order_id = (int)($_POST['order_id'] ?? 0);
+        $new_status = (int)($_POST['new_status'] ?? 0);
+        $cancel_reason = trim($_POST['cancel_reason'] ?? '');
+
+        $current_order = $this->orderModel->getOrderById($order_id);
+
+        if (!$current_order) {
+            $_SESSION['admin_order_error'] = "Đơn hàng không tồn tại!";
+            header("Location: index.php?action=orders");
+            exit;
+        }
+
+        $current_status = (int)($current_order['order_status'] ?? 1);
         $is_valid_transition = false;
 
-        // BƯỚC 1: KIỂM TRA LOGIC CHUYỂN TRẠNG THÁI
+        // KIỂM TRA LOGIC CHUYỂN TRẠNG THÁI
         switch ($current_status) {
             case 1: // CHỜ XÁC NHẬN
-                if ($new_status === 2 || $new_status === 7) $is_valid_transition = true;
+                if (in_array($new_status, [2, 3, 7], true)) $is_valid_transition = true;
                 break;
 
             case 2: // ĐÃ XÁC NHẬN
-                if ($new_status === 3) $is_valid_transition = true;
+                if (in_array($new_status, [3, 7], true)) $is_valid_transition = true;
                 break;
 
             case 3: // ĐANG GIAO
-                if ($new_status === 4 || $new_status === 5) $is_valid_transition = true;
+                if (in_array($new_status, [4, 5, 6, 7], true)) $is_valid_transition = true;
                 break;
 
-            case 4: // GIAO HÀNG THÀNH CÔNG
-                if ($new_status === 6) $is_valid_transition = true;
+            case 4: // ĐÃ GIAO HÀNG
+                if (in_array($new_status, [6], true)) $is_valid_transition = true;
+                break;
+                
+            case 5: // GIAO THẤT BẠI
+                if (in_array($new_status, [3, 7], true)) $is_valid_transition = true;
                 break;
         }
 
         if (!$is_valid_transition) {
-            echo "Lỗi: Không được phép chuyển đổi trạng thái này!";
-            return;
+            $_SESSION['admin_order_error'] = "Không được phép chuyển đổi trực tiếp trạng thái này!";
+            header("Location: index.php?action=order_detail&id=" . $order_id);
+            exit;
         }
 
-        // BƯỚC 2: THỰC THI CẬP NHẬT
+        // THỰC THI CẬP NHẬT
         if ($new_status === 7) {
             if (empty($cancel_reason)) {
-                echo "Lỗi: Bắt buộc phải nhập lý do khi hủy đơn hàng!";
-                return;
+                $_SESSION['admin_order_error'] = "Bắt buộc phải nhập lý do khi hủy đơn hàng!";
+                header("Location: index.php?action=order_detail&id=" . $order_id);
+                exit;
             }
-            $orderModel->cancelOrder($order_id, $cancel_reason);
+            $this->orderModel->cancelOrder($order_id, $cancel_reason);
+            $_SESSION['admin_order_success'] = "Đã hủy đơn hàng #{$order_id} thành công.";
         } else {
-            $orderModel->updateOrderStatus($order_id, $new_status);
+            $this->orderModel->updateOrderStatus($order_id, $new_status);
+            $_SESSION['admin_order_success'] = "Đã cập nhật trạng thái đơn hàng #{$order_id} thành công!";
         }
 
-        // BƯỚC 3: CẬP NHẬT THANH TOÁN
-        if ($new_status === 4) {
-            $orderModel->updatePaymentStatus($order_id, 1);
+        // CẬP NHẬT THANH TOÁN (Tự động chuyển sang Đã thanh toán khi Giao thành công hoặc Hoàn thành)
+        if ($new_status === 4 || $new_status === 6) {
+            $this->orderModel->updatePaymentStatus($order_id, 1);
         }
 
         header("Location: index.php?action=order_detail&id=" . $order_id);

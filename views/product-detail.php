@@ -909,6 +909,14 @@
         }
         // Initialize variant display
         updateVariantInfo();
+
+        // Auto open review tab if URL has #reviews
+        if (window.location.hash === '#reviews') {
+            $('a[href="#reviews"]').tab('show');
+            $('html, body').animate({
+                scrollTop: $('#reviews').offset().top - 120
+            }, 600);
+        }
     </script>
 </body>
 </html>

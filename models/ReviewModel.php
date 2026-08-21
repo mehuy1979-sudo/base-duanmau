@@ -143,7 +143,8 @@ class ReviewModel extends BaseModel
         try {
             $sql = "SELECT COUNT(*) FROM orders o
                     INNER JOIN order_details od ON o.id = od.order_id
-                    WHERE od.product_id = :pid AND {$userCond}";
+                    WHERE od.product_id = :pid AND {$userCond} 
+                      AND (o.order_status != 7 AND o.status NOT IN ('Đã hủy', 'cancelled', 'hủy'))";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             return (int)$stmt->fetchColumn() > 0;

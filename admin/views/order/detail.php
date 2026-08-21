@@ -1,203 +1,380 @@
 <?php
 $statusMap = [
-    1 => ['name' => 'Chờ xác nhận', 'color' => '#ffc107'],
-    2 => ['name' => 'Đã xác nhận', 'color' => '#17a2b8'],
-    3 => ['name' => 'Đang giao', 'color' => '#007bff'],
-    4 => ['name' => 'Giao hàng thành công', 'color' => '#28a745'],
-    5 => ['name' => 'Giao hàng thất bại', 'color' => '#dc3545'],
-    6 => ['name' => 'Hoàn thành', 'color' => '#6c757d'],
-    7 => ['name' => 'Đã hủy', 'color' => '#343a40']
+    1 => ['name' => 'Chờ xử lý', 'color' => 'warning', 'icon' => 'bi-hourglass-split'],
+    2 => ['name' => 'Đã xác nhận', 'color' => 'info', 'icon' => 'bi-check2-square'],
+    3 => ['name' => 'Đang giao', 'color' => 'primary', 'icon' => 'bi-truck'],
+    4 => ['name' => 'Đã giao', 'color' => 'success', 'icon' => 'bi-box-seam'],
+    5 => ['name' => 'Giao thất bại', 'color' => 'danger', 'icon' => 'bi-exclamation-octagon'],
+    6 => ['name' => 'Hoàn thành', 'color' => 'success', 'icon' => 'bi-check-circle-fill'],
+    7 => ['name' => 'Đã hủy', 'color' => 'secondary', 'icon' => 'bi-x-circle']
 ];
 
 $paymentMap = [
-    0 => ['name' => 'Chưa thanh toán', 'color' => '#dc3545'],
-    1 => ['name' => 'Đã thanh toán', 'color' => '#28a745']
+    0 => ['name' => 'Chưa thanh toán', 'color' => 'danger'],
+    1 => ['name' => 'Đã thanh toán', 'color' => 'success']
 ];
 
-$orderId         = $order['id'] ?? $_GET['id'] ?? 0;
-$customerName    = $order['user_name'] ?? $order['customer_name'] ?? $order['name'] ?? 'Khách lẻ';
-$customerPhone   = $order['user_phone'] ?? $order['customer_phone'] ?? $order['phone'] ?? 'N/A';
-$customerAddress = $order['user_address'] ?? $order['customer_address'] ?? $order['address'] ?? 'N/A';
-$totalAmount     = (float)($order['total_amount'] ?? $order['total_price'] ?? $order['total'] ?? 0);
-$orderStatus     = (int)($order['order_status'] ?? $order['status'] ?? 1);
-$paymentStatus   = (int)($order['payment_status'] ?? $order['payment'] ?? 0);
+$orderId         = (int)($order['id'] ?? 0);
+$customerName    = $order['customer_name'] ?? $order['user_name'] ?? 'Khách lẻ';
+$customerEmail   = $order['email'] ?? 'Chưa cung cấp';
+$customerPhone   = $order['phone'] ?? $order['user_phone'] ?? 'N/A';
+$customerAddress = $order['address'] ?? 'N/A';
+$cityDistrict    = trim(($order['district'] ?? '') . ', ' . ($order['city'] ?? ''), ', ');
+$totalAmount     = (float)($order['total_amount'] ?? 0);
+$discount        = (float)($order['discount'] ?? 0);
+$couponCode      = $order['coupon_code'] ?? '';
+$orderStatus     = (int)($order['order_status'] ?? 1);
+$paymentStatus   = (int)($order['payment_status'] ?? 0);
+$paymentMethod   = strtoupper($order['payment_method'] ?? 'COD');
 $cancelReason    = $order['cancel_reason'] ?? '';
+$orderDate       = $order['order_date'] ?? $order['created_at'] ?? null;
 
-$currentStatus  = $statusMap[$orderStatus] ?? ['name' => 'N/A', 'color' => '#ccc'];
-$currentPayment = $paymentMap[$paymentStatus] ?? ['name' => 'N/A', 'color' => '#ccc'];
+$stInfo  = $statusMap[$orderStatus] ?? ['name' => 'Chờ xử lý', 'color' => 'warning', 'icon' => 'bi-hourglass-split'];
+$payInfo = $paymentMap[$paymentStatus] ?? ['name' => 'Chưa thanh toán', 'color' => 'danger'];
 ?>
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Chi Tiết Đơn Hàng #<?= htmlspecialchars((string)$orderId) ?></title>
-    <style>
-        body { font-family: sans-serif; margin: 20px; line-height: 1.6; }
-        .back-btn { display: inline-block; margin-bottom: 15px; text-decoration: none; color: #007bff; font-weight: bold; }
-        .card { border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background-color: #f4f4f4; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; color: #fff; font-weight: bold; display: inline-block; }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
-        .form-group select, .form-group textarea { padding: 8px; width: 320px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .btn-submit { background-color: #28a745; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-submit:hover { background-color: #218838; }
-        .product-img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; display: block; margin: 0 auto; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi Tiết Đơn Hàng #DH<?= str_pad($orderId, 5, '0', STR_PAD_LEFT) ?> | Bunny Wear Admin</title>
+
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/vendors/bootstrap-icons/bootstrap-icons.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .order-card-panel {
+      background: var(--admin-surface, #fff);
+      border: 1px solid var(--admin-border, #e5e7eb);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      margin-bottom: 1.5rem;
+    }
+    .product-thumb-sm {
+      width: 56px;
+      height: 56px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+    .step-track {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin: 1.5rem 0;
+    }
+    .step-track::before {
+      content: '';
+      position: absolute;
+      top: 18px;
+      left: 10%;
+      right: 10%;
+      height: 3px;
+      background: #e5e7eb;
+      z-index: 1;
+    }
+    .step-track-item {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      flex: 1;
+    }
+    .step-track-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      color: #6b7280;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      margin-bottom: 6px;
+      border: 3px solid #fff;
+    }
+    .step-track-item.completed .step-track-circle {
+      background: #10b981;
+      color: #fff;
+    }
+    .step-track-item.active .step-track-circle {
+      background: #6366f1;
+      color: #fff;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.25);
+    }
+    .step-track-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #4b5563;
+    }
+  </style>
 </head>
 <body>
+<div class="admin-shell">
+  <div class="sidebar-backdrop" data-sidebar-close></div>
 
-<a href="index.php?action=orders" class="back-btn">&laquo; Quay lại danh sách</a>
+  <!-- SIDEBAR -->
+  <?php require_once __DIR__ . '/../partials/sidebar.php'; ?>
 
-<h2>Chi Tiết Đơn Hàng #<?= htmlspecialchars((string)$orderId) ?></h2>
+  <!-- MAIN -->
+  <div class="admin-main">
+    <!-- Navbar -->
+    <nav class="navbar admin-navbar navbar-expand bg-white">
+      <div class="container-fluid px-3 px-lg-4">
+        <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-controls="adminSidebar" aria-label="Toggle sidebar">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="navbar-actions ms-auto d-flex align-items-center gap-2">
+          <a href="<?= BASE_URL ?>" target="_blank" class="btn btn-sm btn-outline-secondary d-none d-sm-inline-flex align-items-center gap-1">
+            <i class="bi bi-shop"></i> Xem Cửa Hàng
+          </a>
+          <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+            <i class="bi bi-moon-stars" data-theme-icon></i>
+          </button>
+        </div>
+      </div>
+    </nav>
 
-<div class="card">
-    <h3>Thông tin người nhận</h3>
-    <p><strong>Khách hàng:</strong> <?= htmlspecialchars((string)$customerName) ?></p>
-    <p><strong>Số điện thoại:</strong> <?= htmlspecialchars((string)$customerPhone) ?></p>
-    <p><strong>Địa chỉ:</strong> <?= htmlspecialchars((string)$customerAddress) ?></p>
-</div>
+    <!-- Content -->
+    <main class="dashboard-content">
+      <div class="container-fluid px-3 px-lg-4 py-4">
 
-<div class="card">
-    <h3>Danh sách sản phẩm mua</h3>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 80px; text-align: center;">Hình ảnh</th>
-                <th>Sản phẩm</th>
-                <th>Đơn giá</th>
-                <th>Số lượng</th>
-                <th>Thành tiền</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (!empty($orderDetails)): ?>
-                <?php foreach ($orderDetails as $detail): ?>
-                    <?php
-                        $productName = $detail['product_name'] ?? $detail['name'] ?? ('Sản phẩm #' . ($detail['product_id'] ?? ''));
-                        $unitPrice   = (float)($detail['unit_price'] ?? $detail['price'] ?? 0);
-                        $quantity    = (int)($detail['quantity'] ?? $detail['qty'] ?? 1);
-                        $subtotal    = (float)($detail['total_price'] ?? ($unitPrice * $quantity));
+        <!-- Heading Bar -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+          <div>
+            <a href="index.php?action=orders" class="btn btn-sm btn-outline-secondary mb-2">
+              <i class="bi bi-arrow-left me-1"></i> Danh sách đơn hàng
+            </a>
+            <h1 class="h3 mb-1 fw-bold">Chi Tiết Đơn Hàng #DH<?= str_pad($orderId, 5, '0', STR_PAD_LEFT) ?></h1>
+            <p class="text-muted mb-0">Đặt lúc: <?= $orderDate ? date('d/m/Y H:i', strtotime($orderDate)) : '—' ?></p>
+          </div>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-dark btn-sm fw-semibold" onclick="window.print()">
+              <i class="bi bi-printer me-1"></i> In Đơn Hàng
+            </button>
+          </div>
+        </div>
 
-                        // Xử lý chuẩn hóa đường dẫn ảnh
-                        $rawImage = trim($detail['image'] ?? $detail['img'] ?? '');
-                        $imgPath = '';
+        <!-- Flash Alert -->
+        <?php if (!empty($flashSuccess)): ?>
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i><?= htmlspecialchars($flashSuccess) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <?php endif; ?>
 
-                        if (!empty($rawImage)) {
-                            $cleanImage = ltrim($rawImage, '/');
+        <?php if (!empty($flashError)): ?>
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i><?= htmlspecialchars($flashError) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <?php endif; ?>
 
-                            if (strpos($cleanImage, 'assets/uploads/product/') === 0) {
-                                $imgPath = $cleanImage;
-                            } elseif (strpos($cleanImage, 'uploads/product/') === 0) {
-                                $imgPath = 'assets/' . $cleanImage;
-                            } elseif (strpos($cleanImage, 'product/') === 0) {
-                                $imgPath = 'assets/uploads/' . $cleanImage;
-                            } else {
-                                $imgPath = 'assets/uploads/product/' . $cleanImage;
-                            }
-                        }
-                    ?>
-                    <tr>
-                        <td style="text-align: center;">
-                            <?php if (!empty($imgPath)): ?>
-                                <img src="<?= htmlspecialchars($imgPath) ?>" 
-                                     alt="<?= htmlspecialchars((string)$productName) ?>" 
-                                     class="product-img">
-                            <?php else: ?>
-                                <span style="color: #999; font-size: 11px;">Không có ảnh</span>
-                            <?php endif; ?>
-                        </td>
-                        <td><?= htmlspecialchars((string)$productName) ?></td>
-                        <td><?= number_format($unitPrice, 0, ',', '.') ?> VNĐ</td>
-                        <td><?= $quantity ?></td>
-                        <td><?= number_format($subtotal, 0, ',', '.') ?> VNĐ</td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="5" style="text-align: center;">Không có dữ liệu sản phẩm trong đơn hàng.</td>
-                </tr>
+        <!-- Progress Tracker (if not cancelled) -->
+        <?php if ($orderStatus !== 7): ?>
+          <div class="order-card-panel">
+            <h5 class="fw-bold mb-3">Tiến Trình Đơn Hàng</h5>
+            <div class="step-track">
+              <div class="step-track-item completed">
+                <div class="step-track-circle"><i class="bi bi-check-lg"></i></div>
+                <div class="step-track-label">1. Chờ xử lý</div>
+              </div>
+              <div class="step-track-item <?= in_array($orderStatus, [2, 3, 4, 6]) ? 'completed' : ($orderStatus === 1 ? 'active' : '') ?>">
+                <div class="step-track-circle"><?= in_array($orderStatus, [2, 3, 4, 6]) ? '<i class="bi bi-check-lg"></i>' : '2' ?></div>
+                <div class="step-track-label">2. Đã xác nhận</div>
+              </div>
+              <div class="step-track-item <?= in_array($orderStatus, [3, 4, 6]) ? 'completed' : ($orderStatus === 2 ? 'active' : '') ?>">
+                <div class="step-track-circle"><?= in_array($orderStatus, [3, 4, 6]) ? '<i class="bi bi-check-lg"></i>' : '3' ?></div>
+                <div class="step-track-label">3. Đang giao hàng</div>
+              </div>
+              <div class="step-track-item <?= in_array($orderStatus, [4, 6]) ? 'completed active' : ($orderStatus === 3 ? 'active' : '') ?>">
+                <div class="step-track-circle"><?= in_array($orderStatus, [4, 6]) ? '<i class="bi bi-check-lg"></i>' : '4' ?></div>
+                <div class="step-track-label">4. Hoàn thành</div>
+              </div>
+            </div>
+          </div>
+        <?php else: ?>
+          <div class="alert alert-secondary mb-4">
+            <i class="bi bi-x-octagon-fill me-2 text-danger"></i>
+            <strong>Đơn hàng này đã bị hủy.</strong>
+            <?php if (!empty($cancelReason)): ?>
+              <span class="ms-2">Lý do: <em><?= htmlspecialchars($cancelReason) ?></em></span>
             <?php endif; ?>
-        </tbody>
-    </table>
-    <h4 style="text-align: right; margin-top: 15px;">
-        Tổng thanh toán: <span style="color: #dc3545; font-size: 18px;"><?= number_format($totalAmount, 0, ',', '.') ?> VNĐ</span>
-    </h4>
-</div>
+          </div>
+        <?php endif; ?>
 
-<div class="card">
-    <h3>Trạng thái đơn hàng</h3>
-    <p>
-        <strong>Trạng thái hiện tại:</strong> 
-        <span class="badge" style="background-color: <?= $currentStatus['color'] ?>;">
-            <?= htmlspecialchars((string)$currentStatus['name']) ?>
-        </span>
-    </p>
-    <p>
-        <strong>Trạng thái thanh toán:</strong> 
-        <span class="badge" style="background-color: <?= $currentPayment['color'] ?>;">
-            <?= htmlspecialchars((string)$currentPayment['name']) ?>
-        </span>
-    </p>
-
-    <?php if (!empty($cancelReason)): ?>
-        <p><strong>Lý do hủy đơn:</strong> <span style="color: #dc3545;"><?= htmlspecialchars((string)$cancelReason) ?></span></p>
-    <?php endif; ?>
-
-    <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
-
-    <?php if (in_array($orderStatus, [1, 2, 3, 4])): ?>
-        <form action="index.php?action=update_order_status" method="POST">
-            <input type="hidden" name="order_id" value="<?= $orderId ?>">
-            
-            <div class="form-group">
-                <label for="new_status">Cập nhật trạng thái:</label>
-                <select name="new_status" id="new_status" required onchange="toggleCancelReason(this.value)">
-                    <?php if ($orderStatus === 1): ?>
-                        <option value="2">Đã xác nhận</option>
-                        <option value="7">Hủy đơn hàng</option>
-                    <?php elseif ($orderStatus === 2): ?>
-                        <option value="3">Đang giao</option>
-                    <?php elseif ($orderStatus === 3): ?>
-                        <option value="4">Giao hàng thành công</option>
-                        <option value="5">Giao hàng thất bại</option>
-                    <?php elseif ($orderStatus === 4): ?>
-                        <option value="6">Hoàn thành</option>
+        <div class="row g-4">
+          <!-- Left Column: Products List -->
+          <div class="col-lg-8">
+            <div class="order-card-panel">
+              <h5 class="fw-bold mb-3 border-bottom pb-2">Danh Sách Sản Phẩm Đã Mua (<?= count($orderDetails ?? []) ?>)</h5>
+              
+              <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th style="width: 70px;">Hình ảnh</th>
+                      <th>Sản phẩm</th>
+                      <th class="text-center">Đơn giá</th>
+                      <th class="text-center">Số lượng</th>
+                      <th class="text-end">Tạm tính</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php if (!empty($orderDetails)): ?>
+                      <?php foreach ($orderDetails as $detail): ?>
+                        <?php
+                          $productName = $detail['product_name'] ?? ('Sản phẩm #' . ($detail['product_id'] ?? ''));
+                          $unitPrice   = (float)($detail['price'] ?? 0);
+                          $quantity    = (int)($detail['quantity'] ?? 1);
+                          $subtotal    = $unitPrice * $quantity;
+                          $rawImage    = trim($detail['image'] ?? '');
+                          $imgSrc      = !empty($rawImage) ? BASE_URL . 'assets/uploads/' . $rawImage : BASE_URL . 'views/images/product-01.jpg';
+                        ?>
+                        <tr>
+                          <td>
+                            <img src="<?= $imgSrc ?>" alt="<?= htmlspecialchars($productName) ?>" class="product-thumb-sm" onerror="this.src='<?= BASE_URL ?>views/images/product-01.jpg';">
+                          </td>
+                          <td>
+                            <div class="fw-semibold"><?= htmlspecialchars($productName) ?></div>
+                            <small class="text-muted">Mã SP: #<?= (int)($detail['product_id'] ?? 0) ?></small>
+                          </td>
+                          <td class="text-center"><?= number_format($unitPrice, 0, ',', '.') ?> ₫</td>
+                          <td class="text-center"><span class="badge bg-secondary"><?= $quantity ?></span></td>
+                          <td class="text-end fw-bold text-dark"><?= number_format($subtotal, 0, ',', '.') ?> ₫</td>
+                        </tr>
+                      <?php endforeach; ?>
+                    <?php else: ?>
+                      <tr><td colspan="5" class="text-center py-4 text-muted">Không có sản phẩm trong đơn.</td></tr>
                     <?php endif; ?>
-                </select>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Order Summary calculation -->
+              <div class="border-top mt-3 pt-3">
+                <div class="d-flex justify-content-between mb-2">
+                  <span class="text-muted">Tạm tính:</span>
+                  <span class="fw-semibold"><?= number_format($totalAmount + $discount, 0, ',', '.') ?> ₫</span>
+                </div>
+                <?php if ($discount > 0): ?>
+                  <div class="d-flex justify-content-between mb-2 text-success">
+                    <span>Mã giảm giá (<?= htmlspecialchars($couponCode ?: 'KM') ?>):</span>
+                    <span>-<?= number_format($discount, 0, ',', '.') ?> ₫</span>
+                  </div>
+                <?php endif; ?>
+                <div class="d-flex justify-content-between fs-5 fw-bold text-danger border-top pt-2">
+                  <span>Tổng tiền thanh toán:</span>
+                  <span><?= number_format($totalAmount, 0, ',', '.') ?> ₫</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Customer Info & Status Action Form -->
+          <div class="col-lg-4">
+            <!-- Customer Info -->
+            <div class="order-card-panel">
+              <h5 class="fw-bold mb-3 border-bottom pb-2">Thông Tin Người Nhận</h5>
+              <p class="mb-2"><strong>Họ tên:</strong> <?= htmlspecialchars($customerName) ?></p>
+              <p class="mb-2"><strong>Số điện thoại:</strong> <a href="tel:<?= htmlspecialchars($customerPhone) ?>" class="text-decoration-none fw-semibold"><?= htmlspecialchars($customerPhone) ?></a></p>
+              <p class="mb-2"><strong>Email:</strong> <?= htmlspecialchars($customerEmail) ?></p>
+              <p class="mb-2"><strong>Địa chỉ:</strong> <?= htmlspecialchars($customerAddress) ?><?= $cityDistrict ? ', ' . htmlspecialchars($cityDistrict) : '' ?></p>
+              <p class="mb-2"><strong>Phương thức:</strong> <span class="badge bg-light text-dark border"><?= htmlspecialchars($paymentMethod) ?></span></p>
+              <?php if (!empty($order['note'])): ?>
+                <p class="mb-0 text-muted small"><strong>Ghi chú:</strong> <em>"<?= htmlspecialchars($order['note']) ?>"</em></p>
+              <?php endif; ?>
             </div>
 
-            <div class="form-group" id="cancel_reason_group" style="display: none;">
-                <label for="cancel_reason">Lý do hủy đơn (Bắt buộc):</label>
-                <textarea name="cancel_reason" id="cancel_reason" rows="3" placeholder="Nhập lý do hủy đơn..."></textarea>
+            <!-- Status Manager Form -->
+            <div class="order-card-panel">
+              <h5 class="fw-bold mb-3 border-bottom pb-2">Cập Nhật Trạng Thái Đơn</h5>
+              
+              <div class="mb-3">
+                <label class="form-label text-muted small fw-bold">TRẠNG THÁI HIỆN TẠI</label>
+                <div>
+                  <span class="badge bg-<?= $stInfo['color'] ?> fs-6 py-2 px-3">
+                    <i class="bi <?= $stInfo['icon'] ?> me-1"></i> <?= $stInfo['name'] ?>
+                  </span>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label text-muted small fw-bold">THANH TOÁN</label>
+                <div>
+                  <span class="badge bg-<?= $payInfo['color'] ?> py-1 px-2">
+                    <?= $payInfo['name'] ?>
+                  </span>
+                </div>
+              </div>
+
+              <?php if (in_array($orderStatus, [1, 2, 3, 4, 5])): ?>
+                <form action="index.php?action=update_order_status" method="POST" class="mt-4 border-top pt-3">
+                  <input type="hidden" name="order_id" value="<?= $orderId ?>">
+
+                  <div class="mb-3">
+                    <label for="new_status" class="form-label fw-bold">Chuyển sang trạng thái tiếp theo:</label>
+                    <select name="new_status" id="new_status" class="form-select" required onchange="toggleCancelReason(this.value)">
+                      <?php if ($orderStatus === 1): ?>
+                        <option value="2">2. Đã xác nhận đơn hàng</option>
+                        <option value="3">3. Chuyển sang Đang giao</option>
+                        <option value="7">7. Hủy đơn hàng này</option>
+                      <?php elseif ($orderStatus === 2): ?>
+                        <option value="3">3. Bắt đầu giao hàng (Đang giao)</option>
+                        <option value="7">7. Hủy đơn hàng</option>
+                      <?php elseif ($orderStatus === 3): ?>
+                        <option value="4">4. Giao hàng thành công (Đã giao)</option>
+                        <option value="6">6. Hoàn tất đơn hàng (Hoàn thành)</option>
+                        <option value="5">5. Giao hàng thất bại</option>
+                        <option value="7">7. Hủy đơn hàng</option>
+                      <?php elseif ($orderStatus === 4): ?>
+                        <option value="6">6. Hoàn thành đơn hàng</option>
+                      <?php elseif ($orderStatus === 5): ?>
+                        <option value="3">3. Thử giao lại (Đang giao)</option>
+                        <option value="7">7. Hủy đơn hàng</option>
+                      <?php endif; ?>
+                    </select>
+                  </div>
+
+                  <div class="mb-3" id="cancel_reason_group" style="display: none;">
+                    <label for="cancel_reason" class="form-label fw-bold text-danger">Lý do hủy đơn (Bắt buộc):</label>
+                    <textarea name="cancel_reason" id="cancel_reason" class="form-control" rows="3" placeholder="Ví dụ: Khách yêu cầu hủy, hết hàng kho..."></textarea>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary w-100 fw-bold py-2">
+                    <i class="bi bi-arrow-repeat me-1"></i> Cập Nhật Trạng Thái
+                  </button>
+                </form>
+
+                <script>
+                  function toggleCancelReason(val) {
+                    const reasonGroup = document.getElementById('cancel_reason_group');
+                    const reasonInput = document.getElementById('cancel_reason');
+                    if (val == 7) {
+                      reasonGroup.style.display = 'block';
+                      reasonInput.setAttribute('required', 'required');
+                    } else {
+                      reasonGroup.style.display = 'none';
+                      reasonInput.removeAttribute('required');
+                    }
+                  }
+                  toggleCancelReason(document.getElementById('new_status').value);
+                </script>
+              <?php else: ?>
+                <div class="alert alert-light border mt-3 mb-0 small text-muted">
+                  <i class="bi bi-info-circle me-1"></i> Đơn hàng này đã kết thúc (Hoàn thành hoặc Đã hủy), không thể chuyển trạng thái nữa.
+                </div>
+              <?php endif; ?>
             </div>
+          </div>
+        </div>
 
-            <button type="submit" class="btn-submit">Cập nhật trạng thái</button>
-        </form>
-
-        <script>
-            function toggleCancelReason(val) {
-                const reasonGroup = document.getElementById('cancel_reason_group');
-                const reasonInput = document.getElementById('cancel_reason');
-                if (val == 7) {
-                    reasonGroup.style.display = 'block';
-                    reasonInput.setAttribute('required', 'required');
-                } else {
-                    reasonGroup.style.display = 'none';
-                    reasonInput.removeAttribute('required');
-                }
-            }
-            toggleCancelReason(document.getElementById('new_status').value);
-        </script>
-    <?php else: ?>
-        <p style="color: #6c757d; font-style: italic; margin-top: 10px;">
-            Đơn hàng này đã kết thúc lifecycle (Hoàn thành / Thất bại / Đã hủy), không thể chuyển trạng thái nữa.
-        </p>
-    <?php endif; ?>
+      </div>
+    </main>
+  </div>
 </div>
 
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/main.js"></script>
 </body>
 </html>

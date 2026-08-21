@@ -244,8 +244,8 @@ class OrderModel extends BaseModel
     // Hủy đơn hàng (Admin hoặc User)
     public function cancelOrder($order_id, $reasonOrUserId = '', $userEmail = '') 
     {
-        if (is_numeric($reasonOrUserId) && $reasonOrUserId > 0 && !empty($userEmail)) {
-            return $this->cancelOrderUser($order_id, $reasonOrUserId, $userEmail);
+        if (is_int($reasonOrUserId) || (is_numeric($reasonOrUserId) && (int)$reasonOrUserId > 0 && !empty($userEmail))) {
+            return $this->cancelOrderUser($order_id, (int)$reasonOrUserId, (string)$userEmail);
         }
 
         if (!$this->pdo) return false;
