@@ -63,6 +63,41 @@ class AdminProductController
             }
         }
 
+        // Xử lý danh sách biến thể
+        $variants = $this->extractVariants($_POST);
+
+        // Tính toán giá nếu chưa có từ form chính
+        if (empty($data['price']) || (float)$data['price'] <= 0) {
+            if (!empty($variants)) {
+                $minPrice = null;
+                foreach ($variants as $v) {
+                    $vp = (float)($v['sale_price'] ?? 0);
+                    if ($vp <= 0) $vp = (float)($v['original_price'] ?? 0);
+                    if ($vp > 0 && ($minPrice === null || $vp < $minPrice)) {
+                        $minPrice = $vp;
+                    }
+                }
+                if ($minPrice !== null) {
+                    $data['price'] = $minPrice;
+                }
+            }
+        }
+
+        if (empty($data['original_price']) || (float)$data['original_price'] <= 0) {
+            if (!empty($variants)) {
+                $minOrig = null;
+                foreach ($variants as $v) {
+                    $vp = (float)($v['original_price'] ?? 0);
+                    if ($vp > 0 && ($minOrig === null || $vp < $minOrig)) {
+                        $minOrig = $vp;
+                    }
+                }
+                if ($minOrig !== null) {
+                    $data['original_price'] = $minOrig;
+                }
+            }
+        }
+
         // Mặc định ban đầu nếu chưa có giá
         if (!isset($data['price'])) $data['price'] = 0;
         if (!isset($data['quantity'])) $data['quantity'] = 0;
@@ -86,8 +121,6 @@ class AdminProductController
             }
         }
 
-        // Xử lý danh sách biến thể
-        $variants = $this->extractVariants($_POST);
         if (!empty($variants)) {
             $this->model->saveVariants($productId, $variants);
         }
@@ -141,6 +174,41 @@ class AdminProductController
             } catch (Exception $e) {
                 echo json_encode(['success' => false, 'message' => $e->getMessage()]);
                 exit;
+            }
+        }
+
+        // Xử lý danh sách biến thể
+        $variants = $this->extractVariants($_POST);
+
+        // Tính toán giá nếu chưa có từ form chính
+        if (empty($data['price']) || (float)$data['price'] <= 0) {
+            if (!empty($variants)) {
+                $minPrice = null;
+                foreach ($variants as $v) {
+                    $vp = (float)($v['sale_price'] ?? 0);
+                    if ($vp <= 0) $vp = (float)($v['original_price'] ?? 0);
+                    if ($vp > 0 && ($minPrice === null || $vp < $minPrice)) {
+                        $minPrice = $vp;
+                    }
+                }
+                if ($minPrice !== null) {
+                    $data['price'] = $minPrice;
+                }
+            }
+        }
+
+        if (empty($data['original_price']) || (float)$data['original_price'] <= 0) {
+            if (!empty($variants)) {
+                $minOrig = null;
+                foreach ($variants as $v) {
+                    $vp = (float)($v['original_price'] ?? 0);
+                    if ($vp > 0 && ($minOrig === null || $vp < $minOrig)) {
+                        $minOrig = $vp;
+                    }
+                }
+                if ($minOrig !== null) {
+                    $data['original_price'] = $minOrig;
+                }
             }
         }
 

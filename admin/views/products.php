@@ -598,16 +598,34 @@ $BASE = BASE_URL;
             <input type="hidden" id="formProductId" name="id" value="">
 
             <div class="row g-4">
-              <!-- Cột trái: Tên SP, Thương hiệu, Mô tả -->
+              <!-- Cột trái: Tên SP, Giá, Thương hiệu, Mô tả -->
               <div class="col-12 col-lg-7">
                 <div class="mb-3">
                   <label class="form-label fw-semibold" for="inp_product_name">Tên sản phẩm <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="inp_product_name" name="product_name" placeholder="giày af1..">
+                  <input type="text" class="form-control" id="inp_product_name" name="product_name" placeholder="Ví dụ: Áo thun Oversize Unisex..">
                 </div>
 
-                <div class="mb-3">
-                  <label class="form-label fw-semibold" for="inp_brand">Thương hiệu</label>
-                  <input type="text" class="form-control" id="inp_brand" name="brand" placeholder="Thương hiệu*..">
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold" for="inp_price">Giá bán (₫) <span class="text-danger">*</span></label>
+                    <input type="number" min="0" step="1000" class="form-control" id="inp_price" name="price" placeholder="VD: 250000">
+                    <small class="text-muted" style="font-size:11px;">(Tự động đồng bộ theo giá biến thể thấp nhất nếu có)</small>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold" for="inp_original_price">Giá gốc / Giá niêm yết (₫)</label>
+                    <input type="number" min="0" step="1000" class="form-control" id="inp_original_price" name="original_price" placeholder="VD: 350000">
+                  </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold" for="inp_brand">Thương hiệu</label>
+                    <input type="text" class="form-control" id="inp_brand" name="brand" placeholder="Ví dụ: Bunny Wear..">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold" for="inp_sku">Mã SKU</label>
+                    <input type="text" class="form-control" id="inp_sku" name="sku" placeholder="VD: BW-AT01">
+                  </div>
                 </div>
 
                 <div class="mb-3">
@@ -767,8 +785,9 @@ $BASE = BASE_URL;
                     'hidden' => ['Ẩn', 'secondary'],
                     default  => ['Đang bán', 'success'],
                   };
-                  $stockPct = min(100, ($p['quantity'] > 0 ? min(100, $p['quantity'] / 2) : 0));
-                  $stockColor = $p['quantity'] == 0 ? 'danger' : ($p['quantity'] < 10 ? 'warning' : 'success');
+                  $qty = intval($p['quantity'] ?? 0);
+                  $stockPct = min(100, ($qty > 0 ? min(100, $qty / 2) : 0));
+                  $stockColor = $qty == 0 ? 'danger' : ($qty < 10 ? 'warning' : 'success');
                   $sizes = htmlspecialchars($p['sizes'] ?? '');
                   $sizeTags = '';
                   if ($sizes) {
@@ -789,14 +808,15 @@ $BASE = BASE_URL;
                       <?php if ($imgSrc): ?>
                         <img class="product-img-thumb" src="<?= $imgSrc ?>" alt="<?= htmlspecialchars($p['product_name']) ?>" onerror="this.src='<?= $BASE ?>assets/uploads/products/default.jpg'">
                       <?php else: ?>
-                        <span class="product-img-placeholder"><i class="bi bi-image"></i></span>
+                        <div class="product-img-thumb bg-secondary-subtle d-flex align-items-center justify-content-center text-muted">
+                          <i class="bi bi-image fs-6"></i>
+                        </div>
                       <?php endif; ?>
                       <div>
-                        <p class="fw-semibold mb-0" style="white-space:nowrap;"><?= htmlspecialchars($p['product_name']) ?></p>
-                        <p class="text-muted small mb-0">
-                          <?php if (!empty($p['sku'])): ?>SKU: <?= htmlspecialchars($p['sku']) ?> &middot; <?php endif; ?>
-                          <?= htmlspecialchars($p['brand'] ?? '') ?>
-                        </p>
+                        <a class="product-title-link" href="javascript:void(0);" onclick="editProduct(<?= $p['id'] ?>)">
+                          <?= htmlspecialchars($p['product_name']) ?>
+                        </a>
+                        <small class="text-muted d-block font-monospace">SKU: <?= htmlspecialchars($p['sku'] ?? 'N/A') ?></small>
                       </div>
                     </div>
                   </td>
@@ -820,7 +840,7 @@ $BASE = BASE_URL;
                   <td>
                     <div class="d-flex align-items-center gap-2">
                       <div class="stock-bar"><div class="stock-bar-fill bg-<?= $stockColor ?>" style="width:<?= $stockPct ?>%"></div></div>
-                      <span class="small fw-semibold <?= $p['quantity'] == 0 ? 'text-danger' : '' ?>"><?= intval($p['quantity'] ?? 0) ?></span>
+                      <span class="small fw-semibold <?= $qty == 0 ? 'text-danger' : '' ?>"><?= $qty ?></span>
                     </div>
                   </td>
                   <td><span class="badge text-bg-<?= $statusLabel[1] ?>"><?= $statusLabel[0] ?></span></td>
@@ -889,6 +909,21 @@ $BASE = BASE_URL;
 <script src="<?= $BASE ?>admin/assets/js/bootstrap.bundle.min.js"></script>
 <script src="<?= $BASE ?>admin/assets/js/main.js"></script>
 <script>
+<?php
+  $sizesList = $sizesList ?? ['S', 'M', 'L', 'XL', 'XXL', 'Freesize'];
+  $colorsList = $colorsList ?? [
+      ['name' => 'Trắng', 'hex' => '#ffffff'],
+      ['name' => 'Đen', 'hex' => '#000000'],
+      ['name' => 'Xám', 'hex' => '#6b7280'],
+      ['name' => 'Đỏ', 'hex' => '#ef4444'],
+      ['name' => 'Xanh dương', 'hex' => '#3b82f6'],
+      ['name' => 'Vàng', 'hex' => '#eab308'],
+      ['name' => 'Hồng', 'hex' => '#ec4899'],
+      ['name' => 'Be', 'hex' => '#f5f5dc'],
+      ['name' => 'Nâu', 'hex' => '#78350f'],
+  ];
+?>
+const BASE_URL = '<?= BASE_URL ?>';
 const AVAILABLE_SIZES = <?= json_encode($sizesList) ?>;
 const AVAILABLE_COLORS_DATA = <?= json_encode($colorsList) ?>;
 const AVAILABLE_COLORS = <?= json_encode(array_column($colorsList, 'name')) ?>;
@@ -1232,7 +1267,10 @@ document.addEventListener('click', function(e) {
         document.getElementById("btnToggleAddProductText").textContent = "Đóng Form";
         document.getElementById("formProductId").value = p.id;
         document.getElementById("inp_product_name").value = p.product_name || "";
+        document.getElementById("inp_price").value = p.price ? parseInt(p.price) : "";
+        document.getElementById("inp_original_price").value = p.original_price ? parseInt(p.original_price) : "";
         document.getElementById("inp_brand").value = p.brand || "";
+        document.getElementById("inp_sku").value = p.sku || "";
         document.getElementById("inp_category_id").value = p.category_id || "";
         document.getElementById("richEditorArea").innerHTML = p.description || "";
 

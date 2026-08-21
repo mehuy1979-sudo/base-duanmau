@@ -231,8 +231,8 @@ class ProductModel extends BaseModel
                 return true;
             }
 
-            $sql = "INSERT INTO product_variants (product_id, size, color, original_price, sale_price, quantity, sku)
-                    VALUES (:product_id, :size, :color, :original_price, :sale_price, :quantity, :sku)";
+            $sql = "INSERT INTO product_variants (product_id, size, color, price, original_price, sale_price, quantity, sku)
+                    VALUES (:product_id, :size, :color, :price, :original_price, :sale_price, :quantity, :sku)";
             $stmt = $this->pdo->prepare($sql);
 
             $totalQty = 0;
@@ -273,10 +273,13 @@ class ProductModel extends BaseModel
                         $minOrigPrice = $origPrice;
                     }
 
+                    $variantPrice = $salePrice > 0 ? $salePrice : ($origPrice > 0 ? $origPrice : 0);
+
                     $stmt->execute([
                         'product_id'     => $productId,
                         'size'           => $size,
                         'color'          => $color,
+                        'price'          => $variantPrice,
                         'original_price' => $origPrice,
                         'sale_price'     => $salePrice,
                         'quantity'       => $qty,
@@ -290,14 +293,16 @@ class ProductModel extends BaseModel
             $uniqueColors = implode(', ', array_unique(array_filter($colors)));
 
             $updateData = [
-                'sizes'          => $uniqueSizes,
-                'colors'         => $uniqueColors,
-                'quantity'       => $totalQty,
+                'sizes'    => $uniqueSizes,
+                'colors'   => $uniqueColors,
+                'quantity' => $totalQty,
             ];
-            if ($minSalePrice !== null) {
+            if ($minSalePrice !== null && $minSalePrice > 0) {
                 $updateData['price'] = $minSalePrice;
+            } elseif ($minOrigPrice !== null && $minOrigPrice > 0) {
+                $updateData['price'] = $minOrigPrice;
             }
-            if ($minOrigPrice !== null) {
+            if ($minOrigPrice !== null && $minOrigPrice > 0) {
                 $updateData['original_price'] = $minOrigPrice;
             }
 
