@@ -6,6 +6,22 @@ class AdminProductController
 
     public function __construct()
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Chỉ cho phép tài khoản có quyền "admin" truy cập
+        if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+            $isAjax = isset($_GET['ajax']) && $_GET['ajax'] !== '';
+            if ($isAjax) {
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode(['success' => false, 'message' => 'Bạn cần đăng nhập quyền admin.']);
+                exit;
+            }
+            header('Location: ' . BASE_URL . '?action=/login');
+            exit;
+        }
+
         $this->model = new ProductModel();
     }
 
@@ -97,7 +113,6 @@ class AdminProductController
                 }
             }
         }
-
         // Mặc định ban đầu nếu chưa có giá
         if (!isset($data['price'])) $data['price'] = 0;
         if (!isset($data['quantity'])) $data['quantity'] = 0;
@@ -211,7 +226,6 @@ class AdminProductController
                 }
             }
         }
-
         $ok = $this->model->updateProduct($id, $data);
 
         // Upload thêm album ảnh nếu có

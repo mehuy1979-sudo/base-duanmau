@@ -478,7 +478,7 @@ $BASE = BASE_URL;
   <!-- SIDEBAR (Original Dark Theme) -->
   <aside class="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
     <div class="sidebar-header">
-      <a class="brand-mark" href="<?= $BASE ?>?action=/" aria-label="adminHMD dashboard">
+      <a class="brand-mark" href="<?= $BASE ?>admin/index.php?action=dashboard" aria-label="adminHMD dashboard">
         <span class="brand-icon"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i></span>
         <span class="brand-copy">
           <span class="brand-title">adminHMD</span>
@@ -488,7 +488,7 @@ $BASE = BASE_URL;
     </div>
 
     <nav class="sidebar-nav">
-      <a class="nav-link" href="<?= $BASE ?>?action=/">
+      <a class="nav-link" href="<?= $BASE ?>admin/index.php?action=dashboard">
         <span class="nav-icon"><i class="bi bi-speedometer2"></i></span>
         <span class="nav-text">Dashboard</span>
       </a>
@@ -496,15 +496,15 @@ $BASE = BASE_URL;
         <span class="nav-icon"><i class="bi bi-bag-heart"></i></span>
         <span class="nav-text">Sản Phẩm</span>
       </a>
-      <a class="nav-link" href="<?= $BASE ?>admin/html/users.html">
+      <a class="nav-link" href="<?= $BASE ?>admin/index.php?action=account/list">
         <span class="nav-icon"><i class="bi bi-people"></i></span>
         <span class="nav-text">Users</span>
       </a>
-      <a class="nav-link" href="<?= $BASE ?>admin/html/charts.html">
+      <a class="nav-link" href="<?= $BASE ?>admin/index.php?action=stats">
         <span class="nav-icon"><i class="bi bi-bar-chart-line"></i></span>
         <span class="nav-text">Charts</span>
       </a>
-      <a class="nav-link" href="<?= $BASE ?>admin/html/settings.html">
+      <a class="nav-link" href="<?= $BASE ?>admin/index.php?action=settings">
         <span class="nav-icon"><i class="bi bi-gear"></i></span>
         <span class="nav-text">Settings</span>
       </a>
@@ -816,7 +816,10 @@ $BASE = BASE_URL;
                         <a class="product-title-link" href="javascript:void(0);" onclick="editProduct(<?= $p['id'] ?>)">
                           <?= htmlspecialchars($p['product_name']) ?>
                         </a>
-                        <small class="text-muted d-block font-monospace">SKU: <?= htmlspecialchars($p['sku'] ?? 'N/A') ?></small>
+                        <small class="text-muted d-block font-monospace">
+                          <?php if (!empty($p['sku'])): ?>SKU: <?= htmlspecialchars($p['sku']) ?> &middot; <?php endif; ?>
+                          <?= htmlspecialchars($p['brand'] ?? '') ?>
+                        </small>
                       </div>
                     </div>
                   </td>

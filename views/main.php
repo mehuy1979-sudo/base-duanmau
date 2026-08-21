@@ -113,15 +113,15 @@
 							</li>
 
 							<li>
-								<a href="<?= BASE_URL ?>?action=/admin/products">Admin</a>
-							</li>
-
-							<li>
 								<a href="<?= BASE_URL ?>?action=/compare">So sánh</a>
 							</li>
 
 							<li>
 								<a href="<?= BASE_URL ?>?action=/order-history">Lịch sử đơn hàng</a>
+							</li>
+
+							<li>
+								<a href="<?= BASE_URL ?>?action=/admin/products">Admin</a>
 							</li>
 						</ul>
 					</div>	

@@ -1,13 +1,24 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 require_once __DIR__ . '/../configs/env.php';
+require_once __DIR__ . '/../configs/database.php';
 require_once __DIR__ . '/../models/BaseModel.php';
 require_once __DIR__ . '/../models/CommentModel.php';
 
-function e($value)
-{
-    return htmlspecialchars((string) ($value ?? ''), ENT_QUOTES, 'UTF-8');
+// Chỉ cho phép admin đã đăng nhập truy cập trang này
+if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+    header('Location: ' . BASE_URL . '?action=/login');
+    exit;
+}
+
+if (!function_exists('e')) {
+    function e($value)
+    {
+        return htmlspecialchars((string) ($value ?? ''), ENT_QUOTES, 'UTF-8');
+    }
 }
 
 $model = new CommentModel();
@@ -83,7 +94,7 @@ try {
 <div class="admin-shell">
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-header">
-            <a class="brand-mark" href="html/index.html">
+            <a class="brand-mark" href="index.php?action=dashboard">
                 <span class="brand-icon"><i class="bi bi-grid-1x2-fill"></i></span>
                 <span class="brand-copy">
                     <span class="brand-title">adminHMD</span>
@@ -93,11 +104,11 @@ try {
         </div>
 
         <nav class="sidebar-nav">
-            <a class="nav-link" href="html/index.html">
+            <a class="nav-link" href="index.php?action=dashboard">
                 <span class="nav-icon"><i class="bi bi-speedometer2"></i></span>
                 <span class="nav-text">Dashboard</span>
             </a>
-            <a class="nav-link" href="html/users.html">
+            <a class="nav-link" href="index.php?action=account/list">
                 <span class="nav-icon"><i class="bi bi-people"></i></span>
                 <span class="nav-text">Users</span>
             </a>
@@ -105,15 +116,15 @@ try {
                 <span class="nav-icon"><i class="bi bi-chat-left-text"></i></span>
                 <span class="nav-text">Bình luận & đánh giá</span>
             </a>
-            <a class="nav-link" href="../database/comment_management.sql" target="_blank">
+            <a class="nav-link" href="../database/merge_features.sql" target="_blank">
                 <span class="nav-icon"><i class="bi bi-database"></i></span>
                 <span class="nav-text">SQL bình luận</span>
             </a>
-            <a class="nav-link" href="html/tables.html">
+            <a class="nav-link" href="index.php?action=products">
                 <span class="nav-icon"><i class="bi bi-table"></i></span>
                 <span class="nav-text">Tables</span>
             </a>
-            <a class="nav-link" href="html/settings.html">
+            <a class="nav-link" href="index.php?action=settings">
                 <span class="nav-icon"><i class="bi bi-gear"></i></span>
                 <span class="nav-text">Settings</span>
             </a>

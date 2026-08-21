@@ -48,6 +48,8 @@ class ProductModel extends BaseModel
                     $sql .= " ORDER BY id DESC";
                     break;
             }
+        } else {
+            $sql .= " ORDER BY id DESC";
         }
         
         $stmt = $this->pdo->prepare($sql);

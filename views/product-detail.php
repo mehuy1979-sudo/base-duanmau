@@ -76,6 +76,7 @@
             border-radius: 4px;
             font-weight: 600;
         }
+<<<<<<< HEAD
         /* Review and Rating Styles */
         .rating-overview-box {
             background: #f8fafc;
@@ -131,6 +132,8 @@
         .review-item-card:last-child {
             border-bottom: none;
         }
+=======
+>>>>>>> origin/hhbach305
     </style>
 </head>
 <body class="animsition">
@@ -161,13 +164,17 @@
                         <ul class="main-menu">
                             <li><a href="<?= BASE_URL ?>">Trang chủ</a></li>
                             <li class="active-menu"><a href="<?= BASE_URL ?>?action=/product">Cửa hàng</a></li>
+<<<<<<< HEAD
                             <li><a href="<?= BASE_URL ?>?action=/wishlist">Danh Mục Yêu Thích</a></li>
+=======
+>>>>>>> origin/hhbach305
                             <li><a href="<?= BASE_URL ?>?action=/compare&p1=<?= $product['id'] ?? 0 ?>">So sánh</a></li>
                             <li><a href="<?= BASE_URL ?>?action=/admin/products">Admin</a></li>
                         </ul>
                     </div>
 
                     <div class="wrap-icon-header flex-w flex-r-m">
+<<<<<<< HEAD
                         <a href="<?= BASE_URL ?>?action=/product" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11" title="Tìm kiếm / Cửa hàng">
                             <i class="zmdi zmdi-search"></i>
                         </a>
@@ -175,6 +182,14 @@
                         <a href="<?= BASE_URL ?>?action=/wishlist" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-wishlist-noti" data-notify="<?= isset($_SESSION['wishlist']) ? count($_SESSION['wishlist']) : 0 ?>" title="Danh Mục Yêu Thích">
                             <i class="zmdi zmdi-favorite-outline"></i>
                         </a>
+=======
+                        <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
+                            <i class="zmdi zmdi-search"></i>
+                        </div>
+                        <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
+                            <i class="zmdi zmdi-shopping-cart"></i>
+                        </div>
+>>>>>>> origin/hhbach305
                     </div>
                 </nav>
             </div>
@@ -319,6 +334,7 @@
                                     Thêm vào giỏ
                                 </button>
 
+<<<<<<< HEAD
                                 <a href="<?= BASE_URL ?>?action=/compare&p1=<?= $product['id'] ?>" class="flex-c-m stext-101 cl2 size-101 bg0 bor1 hov-btn1 p-lr-15 trans-04 m-l-10" style="border: 1px solid #717fe0; color: #717fe0;" title="So sánh sản phẩm">
                                     <i class="fa fa-columns m-r-6"></i> So sánh
                                 </a>
@@ -327,6 +343,11 @@
                                 <button type="button" id="btnToggleWishlistDetail" onclick="toggleWishlistDetail(<?= $product['id'] ?? 0 ?>)" class="flex-c-m stext-101 size-101 bor1 hov-btn1 p-lr-15 trans-04 m-l-10 <?= $isFav ? 'bg-danger text-white' : 'bg0 text-danger' ?>" style="border: 1px solid #e11d48;" title="Thêm vào Danh Mục Yêu Thích">
                                     <i class="zmdi <?= $isFav ? 'zmdi-favorite' : 'zmdi-favorite-outline' ?> m-r-6"></i> <span id="wishlistDetailText"><?= $isFav ? 'Đã yêu thích' : 'Yêu thích' ?></span>
                                 </button>
+=======
+                                <a href="<?= BASE_URL ?>?action=/compare&p1=<?= $product['id'] ?>" class="flex-c-m stext-101 cl2 size-101 bg0 bor1 hov-btn1 p-lr-15 trans-04 m-l-10" style="border: 1px solid #717fe0; color: #717fe0;">
+                                    <i class="fa fa-columns m-r-6"></i> So sánh
+                                </a>
+>>>>>>> origin/hhbach305
                             </div>
                         </div>
                     </div>
@@ -346,7 +367,11 @@
                             <a class="nav-link" data-toggle="tab" href="#information" role="tab">Bảng biến thể & Tồn kho</a>
                         </li>
                         <li class="nav-item p-b-10">
+<<<<<<< HEAD
                             <a class="nav-link" data-toggle="tab" href="#reviews" role="tab">Đánh giá (<span id="totalReviewsCount"><?= $ratingSummary['total'] ?? count($reviews ?? []) ?></span>)</a>
+=======
+                            <a class="nav-link" data-toggle="tab" href="#reviews" role="tab">Đánh giá (5★)</a>
+>>>>>>> origin/hhbach305
                         </li>
                     </ul>
 
@@ -402,6 +427,7 @@
                         <!-- Reviews Tab -->
                         <div class="tab-pane fade" id="reviews" role="tabpanel">
                             <div class="row">
+<<<<<<< HEAD
                                 <div class="col-sm-10 col-md-8 col-lg-8 m-lr-auto">
                                     
                                     <!-- Rating Overview -->
@@ -579,7 +605,6 @@
                                             </button>
                                         </div>
                                     <?php endif; ?>
-
                                 </div>
                             </div>
                         </div>
@@ -882,7 +907,6 @@
                 }
             });
         }
-
         // Initialize variant display
         updateVariantInfo();
     </script>

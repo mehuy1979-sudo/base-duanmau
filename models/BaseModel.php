@@ -23,7 +23,8 @@ class BaseModel
         }
     }
 
-    protected function isConnected()
+    // Kiểm tra đã kết nối CSDL thành công hay chưa
+    protected function isConnected(): bool
     {
         return $this->connected && $this->pdo !== null;
     }
